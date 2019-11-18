@@ -16,7 +16,8 @@ def ScaledDotProduct(queries: FloatTensor, keys: FloatTensor, values: FloatTenso
                      mask: Optional[LongTensor] = None) -> FloatTensor:
     dk = keys.shape[-1]
     dividend = torch.tensor(dk, device=queries.device, dtype=torch.float)
-    weights = torch.bmm(queries, keys.transpose(2, 1)) / dividend  # [B, M, N]
+
+    weights = torch.bmm(queries, keys.transpose(2, 1)) / torch.sqrt(dividend)  # [B, M, N]
     if mask is not None:
         weights = weights.masked_fill_(mask == 0, value=-1e10)
     weights = F.softmax(weights, dim=-1)  # [B, M, N] -- each m thing attends a probability distribution over N things
@@ -38,3 +39,18 @@ class MultiHeadAttention(Module):
                 mask: Optional[LongTensor] = None) -> FloatTensor:
         return MultiHeadAttentionFn(queries, keys, values, self.q_transformations, self.k_transformations,
                                     self.v_transformations, self.Wo, mask)
+
+
+class PositionwiseFeedForward(Module):
+    def __init__(self, d_model: int, activation_fn: tensor_map, d_ff: int, dropout_rate: float = 0.1) -> None:
+        super(PositionwiseFeedForward, self).__init__()
+        self.w_1 = Linear(d_model, d_ff)
+        self.w_2 = Linear(d_ff, d_model)
+        self.activation_fn = activation_fn
+        self.dropout_rate = dropout_rate
+
+    def forward(self, x):
+        w1 = self.w_1(x)
+        w2 = self.activation_fn(self.w_2(w1))
+        
+        return F.dropout(w2, self.dropout_rate)
