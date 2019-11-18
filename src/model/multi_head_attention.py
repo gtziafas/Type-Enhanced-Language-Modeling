@@ -51,6 +51,6 @@ class PositionwiseFeedForward(Module):
 
     def forward(self, x):
         w1 = self.w_1(x)
-        w2 = self.activation_fn(self.w_2(w1))
+        w1 = F.dropout(self.activation_fn(w1), self.dropout_rate)
         
-        return F.dropout(w2, self.dropout_rate)
+        return self.w2(w1)
