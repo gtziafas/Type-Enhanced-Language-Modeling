@@ -3,12 +3,12 @@ from src.utils.imports import *
 
 def MultiHeadAttentionFn(queries: FloatTensor, keys: FloatTensor, values: FloatTensor,
                          qts: tensor_maps, kts: tensor_maps, vts: tensor_maps, wo: tensor_map,
-                         mask: Optional[LongTensor] = None) -> FloatTensor:
+                         mask: Optional[LongTensor] = None, dropout_rate: float = 0.1) -> FloatTensor:
     qs = [qt(queries) for qt in qts]
     ks = [kt(keys) for kt in kts]
     vs = [vt(values) for vt in vts]
     outputs = [ScaledDotProduct(qs[i], ks[i], vs[i], mask) for i in range(len(qs))]
-    outputs = torch.cat(outputs, dim=-1)
+    outputs = F.dropout(torch.cat(outputs, dim=-1), dropout_rate)
     return wo(outputs)
 
 
