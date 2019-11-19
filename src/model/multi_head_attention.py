@@ -8,7 +8,7 @@ def MultiHeadAttentionFn(queries: FloatTensor, keys: FloatTensor, values: FloatT
     ks = [kt(keys) for kt in kts]
     vs = [vt(values) for vt in vts]
     outputs = [ScaledDotProduct(qs[i], ks[i], vs[i], mask) for i in range(len(qs))]
-    outputs = F.dropout(torch.cat(outputs, dim=-1), dropout_rate)
+    outputs = F.dropout(torch.cat(outputs, dim=-1), dropout_rate) #Dropout here or maybe after w0 ?
     return wo(outputs)
 
 
