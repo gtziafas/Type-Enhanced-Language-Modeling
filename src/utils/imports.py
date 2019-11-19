@@ -1,4 +1,4 @@
-from torch.nn import Module, Sequential, ModuleList, Linear
+from torch.nn import Module, Sequential, ModuleList, Linear, LayerNorm
 from torch.nn import functional as F
 from torch import FloatTensor, LongTensor, Tensor
 
