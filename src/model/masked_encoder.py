@@ -1,11 +1,9 @@
 from src.utils.imports import *
 from src.model.multi_head_attention import MultiHeadAttention, PositionwiseFeedForward
-from torch.nn import LayerNorm
-
 
 def MaskedEncoder(module_maker: Module, num_layers: int, *args, **kwargs) -> Module:
-    return Sequential(*[module_maker(*args, **kwargs) for _ in range(num_layers)])
-
+    layers = [module_maker(*args, **kwargs) for _ in range(num_layers)]
+    return Sequential(*layers)
 
 class MaskedEncoderLayer(Module):
     def __init__(self, num_heads: int, d_k: int, d_model: int, d_v: int, d_ff: int = 2048, dropout_rate: float = 0.1) -> None:
@@ -27,6 +25,7 @@ class MaskedEncoderLayer(Module):
         transformed = attended_norm + transformed
         transformed_norm = self.layer_norm_2(transformed)
         transformed_norm = F.dropout(transformed_norm, self.dropout_rate)
+        
         return transformed_norm, mask
 
 
