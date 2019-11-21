@@ -6,5 +6,7 @@ import torch
 
 from typing import Tuple, Optional, Callable, Sequence, TypeVar, Any
 
-tensor_map = Callable[[Tensor], Tensor]
+tensor_map = Callable[[FloatTensor], FloatTensor]
 tensor_maps = Sequence[tensor_map]
+
+ints = Sequence[int]

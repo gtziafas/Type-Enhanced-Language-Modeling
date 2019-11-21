@@ -22,6 +22,6 @@ def mask_indices(sen_len: int, random_chance: float) -> Sequence[int]:
 _T1 = TypeVar('_T1')
 
 
-def mask_sampling(sentence: Sequence[_T1], masked_indices: Sequence[int],
+def mask_sampling(sentence: Sequence[_T1], masked_indices: ints,
                   sampling_strategy: Callable[[Any], _T1], *args, **kwargs) -> Sequence[_T1]:
     return [t if i not in masked_indices else sampling_strategy(*args, **kwargs) for i, t in enumerate(sentence)]
