@@ -1,15 +1,17 @@
 from src.utils.imports import *
-from src.model.multi_head_attention import MultiHeadAttention, PositionwiseFeedForward
+from src.model.multi_head_attention import MultiHeadAttention, PositionWiseFeedForward
+
 
 def MaskedEncoder(module_maker: Module, num_layers: int, *args, **kwargs) -> Module:
     layers = [module_maker(*args, **kwargs) for _ in range(num_layers)]
     return Sequential(*layers)
 
+
 class MaskedEncoderLayer(Module):
     def __init__(self, num_heads: int, d_k: int, d_model: int, d_v: int, d_ff: int = 2048, dropout_rate: float = 0.1) -> None:
         super(MaskedEncoderLayer, self).__init__()
-        self.position_wise = PositionwiseFeedForward(d_model=d_model, d_ff=d_ff, activation_fn=F.gelu)
-        self.mha = MultiHeadAttention(num_heads, d_k, d_model, d_v)
+        self.position_wise = PositionWiseFeedForward(d_model=d_model, d_ff=d_ff, activation_fn=F.gelu)
+        self.mha = MultiHeadAttention(num_heads=num_heads, d_k=d_k, d_model=d_model, d_v=d_v)
         self.layer_norm_1 = LayerNorm(d_model)
         self.layer_norm_2 = LayerNorm(d_model)
         self.dropout_rate = dropout_rate
@@ -25,7 +27,7 @@ class MaskedEncoderLayer(Module):
         transformed = attended_norm + transformed
         transformed_norm = self.layer_norm_2(transformed)
         transformed_norm = F.dropout(transformed_norm, self.dropout_rate)
-        
+
         return transformed_norm, mask
 
 
