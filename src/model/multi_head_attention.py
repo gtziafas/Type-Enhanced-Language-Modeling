@@ -1,19 +1,19 @@
 from src.utils.imports import *
 
 
-def MultiHeadAttentionFn(queries: FloatTensor, keys: FloatTensor, values: FloatTensor,
-                         qts: tensor_maps, kts: tensor_maps, vts: tensor_maps, wo: tensor_map,
-                         mask: Optional[LongTensor] = None, dropout_rate: float = 0.1) -> FloatTensor:
+def multihead_attn_fn(queries: FloatTensor, keys: FloatTensor, values: FloatTensor,
+                      qts: tensor_maps, kts: tensor_maps, vts: tensor_maps, wo: tensor_map,
+                      mask: Optional[LongTensor] = None, dropout_rate: float = 0.1) -> FloatTensor:
     qs = [qt(queries) for qt in qts]
     ks = [kt(keys) for kt in kts]
     vs = [vt(values) for vt in vts]
-    outputs = [ScaledDotProduct(qs[i], ks[i], vs[i], mask) for i in range(len(qs))]
+    outputs = [scaled_dot_product(qs[i], ks[i], vs[i], mask) for i in range(len(qs))]
     outputs = F.dropout(torch.cat(outputs, dim=-1), dropout_rate)
     return wo(outputs)
 
 
-def ScaledDotProduct(queries: FloatTensor, keys: FloatTensor, values: FloatTensor,
-                     mask: Optional[LongTensor] = None) -> FloatTensor:
+def scaled_dot_product(queries: FloatTensor, keys: FloatTensor, values: FloatTensor,
+                       mask: Optional[LongTensor] = None) -> FloatTensor:
     dk = keys.shape[-1]
     dividend = torch.tensor(dk, device=queries.device, dtype=torch.float)
 
@@ -37,8 +37,8 @@ class MultiHeadAttention(Module):
 
     def forward(self, queries: FloatTensor, keys: FloatTensor, values: FloatTensor,
                 mask: Optional[LongTensor] = None) -> FloatTensor:
-        return MultiHeadAttentionFn(queries, keys, values, self.q_transformations, self.k_transformations,
-                                    self.v_transformations, self.Wo, mask)
+        return multihead_attn_fn(queries, keys, values, self.q_transformations, self.k_transformations,
+                                 self.v_transformations, self.Wo, mask)
 
 
 class PositionWiseFeedForward(Module):
