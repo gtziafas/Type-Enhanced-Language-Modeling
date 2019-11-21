@@ -8,7 +8,7 @@ def MultiHeadAttentionFn(queries: FloatTensor, keys: FloatTensor, values: FloatT
     ks = [kt(keys) for kt in kts]
     vs = [vt(values) for vt in vts]
     outputs = [ScaledDotProduct(qs[i], ks[i], vs[i], mask) for i in range(len(qs))]
-    outputs = F.dropout(torch.cat(outputs, dim=-1), dropout_rate) #Dropout here or maybe after w0 ?
+    outputs = F.dropout(torch.cat(outputs, dim=-1), dropout_rate)
     return wo(outputs)
 
 
@@ -41,9 +41,9 @@ class MultiHeadAttention(Module):
                                     self.v_transformations, self.Wo, mask)
 
 
-class PositionwiseFeedForward(Module):
+class PositionWiseFeedForward(Module):
     def __init__(self, d_model: int, activation_fn: tensor_map, d_ff: int, dropout_rate: float = 0.1) -> None:
-        super(PositionwiseFeedForward, self).__init__()
+        super(PositionWiseFeedForward, self).__init__()
         self.w_1 = Linear(d_model, d_ff)
         self.w_2 = Linear(d_ff, d_model)
         self.activation_fn = activation_fn
