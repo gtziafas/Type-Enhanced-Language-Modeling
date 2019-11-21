@@ -8,9 +8,10 @@ def make_encoder(module_maker: Module, num_layers: int, *args, **kwargs) -> Modu
 
 
 class EncoderLayer(Module):
-    def __init__(self, num_heads: int, d_k: int, d_model: int, d_v: int, d_ff: int = 2048, dropout_rate: float = 0.1) -> None:
+    def __init__(self, num_heads: int, d_k: int, d_model: int, d_v: int, activation_fn: tensor_map, d_ff: int = 2048,
+                 dropout_rate: float = 0.1) -> None:
         super(EncoderLayer, self).__init__()
-        self.position_wise = PositionWiseFeedForward(d_model=d_model, d_ff=d_ff, activation_fn=F.gelu)
+        self.position_wise = PositionWiseFeedForward(d_model=d_model, d_ff=d_ff, activation_fn=activation_fn)
         self.mha = MultiHeadAttention(num_heads=num_heads, d_k=d_k, d_model=d_model, d_v=d_v)
         self.layer_norm_1 = LayerNorm(d_model)
         self.layer_norm_2 = LayerNorm(d_model)
@@ -31,9 +32,9 @@ class EncoderLayer(Module):
         return transformed_norm, mask
 
 
-class MultiOutputEncoder(Module):
+class DoubleOutputEncoder(Module):
     def __init__(self, module_maker: Module, bottom_depth: int, top_depth: int, *args, **kwargs) -> None:
-        super(MultiOutputEncoder, self).__init__()
+        super(DoubleOutputEncoder, self).__init__()
         self.bottom = make_encoder(module_maker, bottom_depth, *args, **kwargs)
         self.top = make_encoder(module_maker, top_depth, *args, **kwargs)
 
@@ -42,11 +43,3 @@ class MultiOutputEncoder(Module):
         intermediate = self.bottom(x)
         final = self.top(intermediate)
         return intermediate, final
-
-
-
-
-
-
-
-

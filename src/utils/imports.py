@@ -4,7 +4,7 @@ from torch import FloatTensor, LongTensor, Tensor
 
 import torch
 
-from typing import Tuple, Optional, Callable, Iterable
+from typing import Tuple, Optional, Callable, Sequence, TypeVar, Any
 
 tensor_map = Callable[[Tensor], Tensor]
-tensor_maps = Iterable[tensor_map]
+tensor_maps = Sequence[tensor_map]
