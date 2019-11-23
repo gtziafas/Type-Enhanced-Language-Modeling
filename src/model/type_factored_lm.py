@@ -23,6 +23,17 @@ class TypeFactoredLM(Module):
         return word_preds, type_preds
 
 
+class EndToEnd(Module):
+    def __init__(self, type_factored_lm: TypeFactoredLM, word_embedder: Module):
+        super(EndToEnd, self).__init__()
+        self.word_embedder = word_embedder
+        self.type_factored_lm = type_factored_lm
+
+    def forward(self, word_ids: LongTensor, mask: LongTensor) -> Tuple[FloatTensor, FloatTensor]:
+        word_embeds = self.word_embedder(word_ids)
+        return self.type_factored_lm(word_embeds, mask)
+
+
 def test():
     d_model = 512 
     d_ff = 2048
