@@ -49,3 +49,12 @@ class WeightedLayerEncoder(Module):
         stacked = torch.stack(xs[1::])
         layer_weights = F.softmax(self.layer_weights, dim=0).view(-1, 1, 1, 1)
         return (layer_weights * stacked).sum(dim=0), xs[-1]
+
+
+# hacks:
+        # complicated nonsense
+#        linear_ids = torch.tensor([entities.shape[1]]).repeat(entities.shape[0])
+ #       linear_ids = linear_ids.cumsum(dim=0) - entity_embeddings.shape[1]
+  #      entity_ids = entity_ids.view(-1) + linear_ids
+   #     entity_embeddings = entity_embeddings.view(-1, self.dimensionality)[entity_ids]
+
