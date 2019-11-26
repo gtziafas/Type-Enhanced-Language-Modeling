@@ -1,5 +1,5 @@
-from src.utils.imports import *
-from src.model.multi_head_attention import MultiHeadAttention, PositionWiseFeedForward
+from TypeLM.utils.imports import *
+from TypeLM.model.multi_head_attention import MultiHeadAttention, PositionWiseFeedForward
 
 
 class EncoderLayer(Module):

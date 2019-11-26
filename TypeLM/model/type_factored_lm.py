@@ -1,6 +1,6 @@
-from src.utils.imports import *
-from src.utils.utils import positional_encoding
-from src.model.masked_encoder import EncoderLayer, WeightedLayerEncoder
+from TypeLM.utils.imports import *
+from TypeLM.utils.utils import positional_encoding
+from TypeLM.model.masked_encoder import EncoderLayer, WeightedLayerEncoder
 
 
 class TypeFactoredLM(Module):

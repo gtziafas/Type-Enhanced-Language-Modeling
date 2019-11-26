@@ -1,4 +1,4 @@
-from src.utils.imports import *
+from TypeLM.utils.imports import *
 from torch.nn.utils.rnn import pad_sequence
 
 

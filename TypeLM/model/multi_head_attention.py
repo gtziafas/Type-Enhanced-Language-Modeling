@@ -1,4 +1,4 @@
-from src.utils.imports import *
+from TypeLM.utils.imports import *
 
 
 def multihead_attn_fn(queries: Tensor, keys: Tensor, values: Tensor,
