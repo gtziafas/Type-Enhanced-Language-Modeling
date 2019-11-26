@@ -7,6 +7,7 @@ import os
 from functools import reduce
 import subprocess
 
+
 Sample = Sequence[Tuple[str, str]]
 Samples = Sequence[Sample]
 
@@ -62,21 +63,13 @@ class DatasetMaker(object):
         print('Added a total of {} compressed files.'.format(len(self.filelist)))
 
     def file_to_trees(self, file: str) -> Sequence[et.ElementTree]:
-        return list(map(et.fromstring, split_xml(unzip(file))))
+        blocks = split_xml(unzip(file))
+        blocks = list(map(lambda block: block[0], blocks))
+        return list(map(lambda block: et.ElementTree(et.fromstring(block)), blocks))
 
-
+    def file_to_projections(self, file: str, projector) \
+            -> Sequence[Tuple[Sequence[str], Sequence[str]]]:
+        return list(filter(lambda x: x is not None,
+                           map(lambda tree: tuple(projector(tree)[0:2]), self.file_to_trees(file))))
 
 dsmk = DatasetMaker(directory, lambda: None)
-
-
-def convert_indices_to_bool_masks(masks: Sequence[LongTensor]) -> LongTensor:
-    """
-        take a list of B LongTensors indexing masked elements
-        return a boolean matrix OUT of size B x S where S the max seq len,
-            where OUT[b, s] = 1 IFF s in masks[b]
-                                else 0
-    """
-    # init a zero tensor
-    # set tensor[idx] = 1 where idx each idx specified by in
-
-
