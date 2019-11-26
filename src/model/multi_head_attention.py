@@ -1,9 +1,9 @@
 from src.utils.imports import *
 
 
-def multihead_attn_fn(queries: FloatTensor, keys: FloatTensor, values: FloatTensor,
+def multihead_attn_fn(queries: Tensor, keys: Tensor, values: Tensor,
                       qts: tensor_maps, kts: tensor_maps, vts: tensor_maps, wo: tensor_map,
-                      mask: Optional[LongTensor] = None, dropout_rate: float = 0.1) -> FloatTensor:
+                      mask: Optional[LongTensor] = None, dropout_rate: float = 0.1) -> Tensor:
     qs = [qt(queries) for qt in qts]
     ks = [kt(keys) for kt in kts]
     vs = [vt(values) for vt in vts]
@@ -12,15 +12,15 @@ def multihead_attn_fn(queries: FloatTensor, keys: FloatTensor, values: FloatTens
     return wo(outputs)
 
 
-def scaled_dot_product(queries: FloatTensor, keys: FloatTensor, values: FloatTensor,
-                       mask: Optional[LongTensor] = None) -> FloatTensor:
+def scaled_dot_product(queries: Tensor, keys: Tensor, values: Tensor,
+                       mask: Optional[LongTensor] = None) -> Tensor:
     dk = keys.shape[-1]
     dividend = torch.tensor(dk, device=queries.device, dtype=torch.float)
 
     weights = torch.bmm(queries, keys.transpose(2, 1)) / torch.sqrt(dividend)  # [B, M, N]
     if mask is not None:
         weights = weights.masked_fill_(mask == 0, value=-1e10)
-    weights = F.softmax(weights, dim=-1)  # [B, M, N] -- each m thing attends a probability distribution over N things
+    weights = F.softmax(weights, dim=-1)
     return torch.bmm(weights, values)
 
 
@@ -35,8 +35,8 @@ class MultiHeadAttention(Module):
                                              for _ in range(num_heads)])
         self.Wo = Linear(in_features=num_heads * d_v, out_features=d_model, bias=False)
 
-    def forward(self, queries: FloatTensor, keys: FloatTensor, values: FloatTensor,
-                mask: Optional[LongTensor] = None) -> FloatTensor:
+    def forward(self, queries: Tensor, keys: Tensor, values: Tensor,
+                mask: Optional[LongTensor] = None) -> Tensor:
         return multihead_attn_fn(queries, keys, values, self.q_transformations, self.k_transformations,
                                  self.v_transformations, self.Wo, mask)
 

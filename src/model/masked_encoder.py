@@ -12,7 +12,7 @@ class EncoderLayer(Module):
         self.layer_norm_2 = LayerNorm(d_model)
         self.dropout_rate = dropout_rate
 
-    def forward(self, x: Tuple[FloatTensor, LongTensor]) -> Tuple[Tensor, LongTensor]:
+    def forward(self, x: Tuple[Tensor, LongTensor]) -> Tuple[Tensor, LongTensor]:
         inputs, mask = x[0], x[1]
         attended = self.mha(inputs, inputs, inputs, mask)
         attended = attended + inputs
@@ -32,7 +32,7 @@ class Encoder(Module):
         super(Encoder, self).__init__()
         self.network = Sequential(*[module_maker(*args, **kwargs) for _ in range(num_layers)])
 
-    def forward(self, x: FloatTensor, mask: LongTensor) -> Tensor:
+    def forward(self, x: Tensor, mask: LongTensor) -> Tensor:
         return self.network((x, mask))[0]
 
 
@@ -42,19 +42,11 @@ class WeightedLayerEncoder(Module):
         self.layers = ModuleList([module_maker(*args, **kwargs) for _ in range(num_layers)])
         self.layer_weights = torch.nn.Parameter(torch.rand(num_layers), requires_grad=True)
 
-    def forward(self, x: FloatTensor, mask: LongTensor) -> Tuple[Tensor, Tensor]:
+    def forward(self, x: Tensor, mask: LongTensor) -> Tuple[Tensor, Tensor]:
         xs = [x]
         for layer in self.layers:
             xs = xs + [layer((xs[-1], mask))[0]]
         stacked = torch.stack(xs[1::])
         layer_weights = F.softmax(self.layer_weights, dim=0).view(-1, 1, 1, 1)
         return (layer_weights * stacked).sum(dim=0), xs[-1]
-
-
-# hacks:
-        # complicated nonsense
-#        linear_ids = torch.tensor([entities.shape[1]]).repeat(entities.shape[0])
- #       linear_ids = linear_ids.cumsum(dim=0) - entity_embeddings.shape[1]
-  #      entity_ids = entity_ids.view(-1) + linear_ids
-   #     entity_embeddings = entity_embeddings.view(-1, self.dimensionality)[entity_ids]
 

@@ -10,7 +10,7 @@ class TypeFactoredLM(Module):
         self.type_classifier = type_classifier
         self.word_classifier = word_classifier
 
-    def forward(self, word_embeds: FloatTensor, msk: LongTensor) -> Tuple[FloatTensor, FloatTensor]:
+    def forward(self, word_embeds: Tensor, msk: LongTensor) -> Tuple[Tensor, Tensor]:
         batch_size, num_words, d_model = word_embeds.shape[0:3]
 
         positional_encodings = positional_encoding(b=batch_size, n=num_words, d_model=d_model,
@@ -29,7 +29,7 @@ class EndToEnd(Module):
         self.word_embedder = word_embedder
         self.type_factored_lm = type_factored_lm
 
-    def forward(self, word_ids: LongTensor, mask: LongTensor) -> Tuple[FloatTensor, FloatTensor]:
+    def forward(self, word_ids: LongTensor, mask: LongTensor) -> Tuple[Tensor, Tensor]:
         word_embeds = self.word_embedder(word_ids)
         return self.type_factored_lm(word_embeds, mask)
 
