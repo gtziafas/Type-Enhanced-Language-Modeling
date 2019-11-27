@@ -67,15 +67,21 @@ class DatasetMaker(object):
         self.filelist = sorted(filelist)
         print('Added a total of {} compressed files.'.format(len(self.filelist)))
 
-    def file_to_trees(self, file: str) -> Sequence[Tuple[str, et.ElementTree]]:
+    @staticmethod
+    def file_to_trees(file: str) -> Sequence[Tuple[str, et.ElementTree]]:
         blocks = split_xml(unzip(file))
         blocks, names = list(zip(*blocks))
         names = list(map(lambda name: file+name, names))
         return list(zip(names, list(map(lambda block: et.ElementTree(et.fromstring(block)), blocks))))
 
-    def file_to_projections(self, file: str, projector: Callable[[et.ElementTree], _T1]) -> Sequence[_T1]:
-        return list(filter(lambda x: x is not None,
-                           list(map(lambda tree: projector(tree), self.file_to_trees(file)))))
+    @staticmethod
+    def file_to_projections(file: str, projector: Callable[[et.ElementTree], _T1]) -> Sequence[_T1]:
+        try:
+            return list(filter(lambda x: x is not None,
+                               list(map(lambda tree: projector(tree), DatasetMaker.file_to_trees(file)))))
+        except TimeoutError:
+            print('Timed out on file {}'.format(file))
+            return []
 
     def iterate_data(self, projector: Callable[[et.ElementTree], _T1], save_to: str = 'dump', start_from: int = 0):
         with open(save_to, 'a') as f:
@@ -84,7 +90,8 @@ class DatasetMaker(object):
                 xmls = '\n'.join(list(map(lambda p: self.projection_to_xml(*p), projections)))
                 f.write(xmls)
 
-    def projection_to_xml(self, name: str, words: Sequence[str], types: Sequence[str]) -> str:
+    @staticmethod
+    def projection_to_xml(name: str, words: Sequence[str], types: Sequence[str]) -> str:
         word_str = '\t<words>\n\t\t' + \
                    '\n\t\t'.join(list(map(lambda word: '<word>"' + word + '"</word>', words))) + \
                    '\n\t</words>'
@@ -95,4 +102,10 @@ class DatasetMaker(object):
         return '<sentence id="' + name + '">' + '\n' + word_str + '\n' + type_str + '\n</sentence>'
 
 
-dsmk = DatasetMaker(directory)
+def do_single_file(file: str, projector):
+    return DatasetMaker.file_to_projections(file, projector)
+
+# dsmk = DatasetMaker(directory)
+# from LassyExtraction.main2 import compose
+
+# dsmk.iterate_data(compose)
