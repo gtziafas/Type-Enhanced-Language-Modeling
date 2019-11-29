@@ -69,10 +69,12 @@ class DatasetMaker(object):
         with open(save_to, 'a') as f:
             if start_from == 0:
                 f.write('<?xml version="1.0"?>\n<sentences>\n')
-            for file in tqdm(self.filelist[start_from:]):
+            for i, file in tqdm(enumerate(self.filelist[start_from:])):
                 projections = list(chain.from_iterable(self.file_to_projections(file, projector)))
                 xmls = '\n'.join(list(map(lambda p: self.projection_to_xml(*p), projections)))
                 f.write(xmls)
+                with open('last_file.txt', 'w') as g:
+                    g.write(str(i+start_from))
 
     @staticmethod
     def projection_to_xml(name: str, words: Sequence[str], types: Sequence[str]) -> str:
