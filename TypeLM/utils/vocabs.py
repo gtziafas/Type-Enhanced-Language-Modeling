@@ -43,7 +43,7 @@ def get_vocabs_multi_thread(files: Sequence[str], nthr: int = 2) -> Tuple[Dict[s
 	step = len(files) // ntrhr
 	chunks = [files[x*step:(x+1)*step] for x in range(0, nthr)]
 	for idx in range(nthr):
-		t = Thread(target=get_vocabs_thread_callback, args=(chunks[idx], idx, ))
+		t = Thread(target=get_vocabs_one_thread, args=(chunks[idx], idx, ))
 		threads.append(t)
 		t.start()
 
@@ -52,11 +52,14 @@ def get_vocabs_multi_thread(files: Sequence[str], nthr: int = 2) -> Tuple[Dict[s
 
 
 def go():
-	fs = ['x00', 'x00']
+	fs = list(range(100))
+	fs = ['x0'+str(idx) if idx<10 else 'x' + str(idx) for idx in fs]
 	words, types = get_vocabs_one_thread(fs, 0, len(fs))
 
 	print(len(words))
 	print(len(types))
+
+	return words, types
 
 
 if __name__ == "__main__":

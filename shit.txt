@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<sentence id="hoksfpaflmybvde">
+	<words>
+		<word>"zxfzkqydrnzk""</word>
+		<word>"t"</word>
+	</words>
+	<types>
+		<type>"yhmqksxqmlqly"</type>
+		<type>"cblyfocsj"</type>
+	</types>
+</sentence>
+<sentence id="utwiivaxi">
+	<words>
+		<word>"fjdw"</word>
+		<word>"idhyfuuxajq"</word>
+		<word>"canhejw"</word>
+		<word>"alz"</word>
+		<word>"khwrjnqy"</word>
+		<word>"yvmbk"</word>
+		<word>"yfxfpzpubpv"</word>
+		<word>"apwov"</word>
+	</words>
+	<types>
+		<type>"ekfz"</type>
+		<type>"yyrvehnbqpuvhg"</type>
+		<type>"hvtx"</type>
+		<type>"sdyyqruvjetcz"</type>
+		<type>"xbw"</type>
+		<type>"yaynomoqmgdf"</type>
+		<type>"adakkvdqijz"</type>
+		<type>"gqzv"</type>
+	</types>
+</sentence>
