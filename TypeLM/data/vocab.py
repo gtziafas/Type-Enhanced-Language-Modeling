@@ -60,7 +60,7 @@ def pair_preprocess(pair: Pair) -> Pairs:
         A pair is a tuple (word, type)
     """
     words = word_preprocess(pair[0])
-    types = [MWU if i > 0 else type_preprocess(pair[1]) for i in range(len(words))]
+    types = [MWU if i > 0 else type_preprocess(pair[1])[0] for i in range(len(words))]
     return list(zip(words, types))
 
 
@@ -141,11 +141,12 @@ def normalize_corpus(files: strs):
 
     partial = [], []
     samples = []
+
     for file in files:
         with open(file, 'r') as i_buffer:
             i_wrapper = i_buffer.__iter__()
             full, partial = get_partial_samples(i_wrapper, partial)
-        samples.append(full)
+        samples.extend(full)
     return samples
 
 
