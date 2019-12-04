@@ -29,7 +29,7 @@ def merge_dicts(dicts: Iterable[Dict[str, int]]) -> Dict[str, int]:
 
 def word_preprocess(word: str) -> strs:
     if word == EOS:
-        return EOS
+        return [EOS]
 
     def normalize_accents(word_: str) -> str:
         return unicodedata.normalize('NFKD', word_)
