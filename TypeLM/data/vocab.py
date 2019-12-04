@@ -6,10 +6,12 @@ from operator import add
 
 from collections import defaultdict
 
+from itertools import chain
+
 from string import ascii_letters, digits
 import unicodedata
 
-from TypeLM.utils.token_definitions import NUM, PROC, UNK
+from TypeLM.utils.token_definitions import NUM, PROC, UNK, MWU
 
 _keep = ascii_letters + digits
 
@@ -41,6 +43,22 @@ def word_preprocess(word: str) -> List[str]:
 def type_preprocess(type_: str) -> List[str]:
     # todo.
     return [type_]
+
+
+def pair_preprocess(pair: Tuple[str, str]) -> Sequence[Tuple[str, str]]:
+    """
+        A pair is a tuple (word, type)
+    """
+    words = word_preprocess(pair[0])
+    types = [MWU if i > 0 else type_preprocess(pair[1]) for i in range(len(words))]
+    return list(zip(words, types))
+
+
+def sentence_preprocess(sentence: Sequence[Tuple[str, str]]) -> Sequence[Tuple[str, str]]:
+    """
+        A sentence is a sequence of (word, type) tuples.
+    """
+    return list(chain.from_iterable(list(map(pair_preprocess, sentence))))
 
 
 def get_vocabs_one_file(file: str) -> Tuple[Dict[str, int], Dict[str, int]]:
@@ -91,18 +109,3 @@ def map_to_idx(counter: Dict[str, int], defaults: Dict[str, int]) -> Dict[str, i
     keys = map(lambda x: x[0], keys)
     keys = {**defaults, **{k: i + len(defaults) for i, k in enumerate(keys)}}
     return defaultdict(lambda: keys[UNK], keys)
-
-
-def go():
-    fs = list(range(100))
-    fs = ['x0'+str(idx) if idx < 10 else 'x' + str(idx) for idx in fs]
-    words, types = get_vocabs_one_thread(fs, 0, len(fs))
-
-    print(len(words))
-    print(len(types))
-
-    return words, types
-
-
-if __name__ == "__main__":
-    go()

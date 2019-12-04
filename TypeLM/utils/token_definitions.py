@@ -8,5 +8,6 @@ UNK = '[UNK]'       # Input word truncated by frequency threshold
 # Lexical Output
 PAD = '[PAD]'       # Padded output word
 
-
+# Type Output
+MWU = '[MWU]'       # Untyped MWU expression
 
