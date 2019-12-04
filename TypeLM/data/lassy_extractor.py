@@ -78,7 +78,6 @@ class DatasetMaker(object):
 
     @staticmethod
     def projection_to_xml(name: str, words: Sequence[str], types: Sequence[str]) -> str:
-        words = list(map(DatasetMaker.sanitize_word, words))
         word_str = '\t<words>\n\t\t' + \
                    '\n\t\t'.join(list(map(lambda word: '<word>"' + word + '"</word>', words))) + \
                    '\n\t</words>'
@@ -88,13 +87,6 @@ class DatasetMaker(object):
 
         return '<sentence id="' + name + '">' + '\n' + word_str + '\n' + type_str + '\n</sentence>'
 
-    @staticmethod
-    def sanitize_word(word: str) -> str:
-        return word
-
-
-def do_single_file(file: str, projector):
-    return DatasetMaker.file_to_projections(file, projector)
 
 # dsmk = DatasetMaker(directory)
 # dsmk.iterate_data(compose)

@@ -8,9 +8,10 @@ from collections import defaultdict
 
 from string import ascii_letters, digits
 import unicodedata
-_keep = ascii_letters + digits
 
-from TypeLM.utils.vocab.tokens import NUM, PROC
+from TypeLM.utils.token_definitions import NUM, PROC, UNK
+
+_keep = ascii_letters + digits
 
 
 def merge_dicts(dicts: Iterable[Dict[str, int]]) -> Dict[str, int]:
@@ -85,14 +86,15 @@ def threshold(counter: Dict[str, int], cutoff: int) -> Dict[str, int]:
     return {k: v for k, v in filter(lambda pair: pair[1] > cutoff, counter.items())}
 
 
-def map_to_idx(counter: Dict[str, int]) -> Dict[str, int]:
-    NotImplemented
-    pass
+def map_to_idx(counter: Dict[str, int], defaults: Dict[str, int]) -> Dict[str, int]:
+    kv = sorted((k, v) for k, v in counter.items())
+    kv = {**defaults, **{k: v + len(defaults) for k, v in kv}}
+    return defaultdict(lambda: kv[UNK], kv)
 
 
 def go():
     fs = list(range(100))
-    fs = ['x0'+str(idx) if idx<10 else 'x' + str(idx) for idx in fs]
+    fs = ['x0'+str(idx) if idx < 10 else 'x' + str(idx) for idx in fs]
     words, types = get_vocabs_one_thread(fs, 0, len(fs))
 
     print(len(words))
