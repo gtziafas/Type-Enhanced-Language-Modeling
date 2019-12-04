@@ -87,9 +87,10 @@ def threshold(counter: Dict[str, int], cutoff: int) -> Dict[str, int]:
 
 
 def map_to_idx(counter: Dict[str, int], defaults: Dict[str, int]) -> Dict[str, int]:
-    kv = sorted((k, v) for k, v in counter.items())
-    kv = {**defaults, **{k: v + len(defaults) for k, v in kv}}
-    return defaultdict(lambda: kv[UNK], kv)
+    keys = sorted(((k, v) for k, v in counter.items()), key=lambda x: x[1], reverse=True)
+    keys = map(lambda x: x[0], keys)
+    keys = {**defaults, **{k: i + len(defaults) for i, k in enumerate(keys)}}
+    return defaultdict(lambda: keys[UNK], keys)
 
 
 def go():
