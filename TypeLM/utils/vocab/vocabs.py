@@ -6,14 +6,35 @@ from operator import add
 
 from collections import defaultdict
 
+from string import ascii_letters, digits
+import unicodedata
+_keep = ascii_letters + digits
+
+from TypeLM.utils.vocab.tokens import NUM, PROC
+
 
 def merge_dicts(dicts: Iterable[Dict[str, int]]) -> Dict[str, int]:
     return reduce(add, dicts, dict())
 
 
 def word_preprocess(word: str) -> List[str]:
-    # todo.
-    return word.lower().split()
+    def normalize_accents(word_: str) -> str:
+        return unicodedata.normalize('NFKD', word_)
+
+    def replace_nums(word_: str) -> str:
+        return NUM if word_.isnumeric() else word_
+
+    def remove_weird_chars(word_: str) -> str:
+        return ''.join((c for c in word_ if c in _keep))
+
+    def rename_empty(word_: str) -> str:
+        return word_ if len(word_) else PROC
+
+    norm = normalize_accents(word.lower())
+    splits = norm.split()
+    return list(map(lambda subword:
+                    rename_empty(replace_nums(remove_weird_chars(subword))),
+                    splits))
 
 
 def type_preprocess(type_: str) -> List[str]:
@@ -44,7 +65,7 @@ def get_vocabs_one_thread(files: Sequence[str], start: int, end: int) -> Tuple[D
 
 
 def normalize_vocab(counter: Dict[str, int], normalize_fn: Callable[[str], List[str]]) -> Dict[str, int]:
-    new_dict = defaultdict(lambda : 0)
+    new_dict = defaultdict(lambda: 0)
     for key_ in counter.keys():
         subkeys = normalize_fn(key_)
         for subkey in subkeys:
