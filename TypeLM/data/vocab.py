@@ -2,7 +2,7 @@ from collections import Counter
 from typing import Sequence, Iterable, Dict, Tuple, Callable, List, Iterator
 
 from functools import reduce 
-from operator import add  
+from operator import add, lt, ge
 
 from collections import defaultdict
 
@@ -126,8 +126,64 @@ def normalize_type_vocab(type_vocab: Dict[str, int]) -> Dict[str, int]:
     return normalize_vocab(type_vocab, type_preprocess)
 
 
-def threshold(counter: Dict[str, int], cutoff: int) -> Dict[str, int]:
-    return {k: v for k, v in filter(lambda pair: pair[1] > cutoff, counter.items())}
+def threshold(counter: Dict[str, int], cutoff: int, op: Callable[[int, int], bool]=lt) -> Dict[str, int]:
+    return {k: v for k, v in filter(lambda pair: op(cutoff, pair[1]), counter.items())}
+
+
+def pile_of_shit(counter: Dict[Sequence[str], int], pref_merges, suf_merges, wrap_merges) -> Dict[Sequence[str], int]:
+
+    # suf_pref_dict : Dict[Tuple[str, str], int]
+    suf_pref_dict = defaultdict(lambda : 0)
+    suf_dict = defaultdict(lambda: 0)
+    pref_dict = defaultdict(lambda : 0)
+
+    for word in counter.keys():
+        if len(word) == 1:
+            continue
+
+        first_ngram = word[0]
+        last_ngram = word[-1]
+        suf_pref_dict[(first_ngram, last_ngram)] = suf_pref_dict[(first_ngram, last_ngram)] + counter[word]
+        suf_dict[last_ngram] = suf_dict[last_ngram] + counter[word]
+        pref_dict[first_ngram] = pref_dict[first_ngram] + counter[word]
+
+    most_common_pref = sorted(pref_dict.items(), key=lambda pair: pair[1], reverse=True)[0]
+    most_common_suf = sorted(suf_dict.items(), key=lambda pair: pair[1], reverse=True)[0]
+    most_common_wrap = sorted(suf_pref_dict.items(), key=lambda pair: pair[1], reverse=True)[0]
+
+    pref_merges[most_common_pref[0]] = most_common_pref[1]
+    if len(most_common_pref[0]) > 1:
+        pref_merges[most_common_pref[0][1:]] = pref_merges[most_common_pref[0][1:]] - most_common_pref[1]
+
+    suf_merges[most_common_suf[0]] = most_common_suf[1]
+    if len(most_common_suf[0]) > 1:
+        suf_merges[most_common_suf[0][:-1]] = suf_merges[most_common_suf[0][:-1]] - most_common_suf[1]
+
+    wrap_merges[most_common_wrap[0]] = most_common_wrap[1]
+    if len(most_common_wrap[0][0]) > 1:
+        wrap_merges[(most_common_wrap[0][0][:-1], most_common_wrap[0][1])] = \
+            wrap_merges(most_common_wrap[0][0][:-1], most_common_wrap[0][1]) - \
+            most_common_wrap[1]
+    if len(most_common_wrap[0][1]) > 1:
+        wrap_merges[(most_common_wrap[0][0], most_common_wrap[0][1][1:])] = \
+            wrap_merges(most_common_wrap[0][0], most_common_wrap[0][1][1:]) - \
+            most_common_wrap[1]
+
+    newcounter = {
+        (word if len(word) == 1 else
+         word if word[0] != most_common_pref[0] and word[-1] != most_common_suf[0] else
+         NotImplemented
+         ): value for word, value in counter.items()}
+    return newcounter, merges
+
+
+def fuck(counter: Dict[str, int], n: int):
+    counter = {tuple(k): v for k, v in counter.items()}
+    begin = dict()
+    for i in range(n):
+        counter, begin = pile_of_shit(counter, begin)
+    return counter, begin
+
 
 
 def make_idx_map(counter: Dict[str, int], defaults: Dict[str, int]) -> Dict[str, int]:
