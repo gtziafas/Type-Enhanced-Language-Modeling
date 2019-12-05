@@ -2,15 +2,15 @@ from collections import Counter
 from typing import Sequence, Iterable, Dict, Tuple, Callable, List
 
 from functools import reduce 
-from operator import add  
+from operator import add, le, ge
 
 from collections import defaultdict
 
 from string import ascii_letters, digits
 import unicodedata
-_keep = ascii_letters + digits
-
 from TypeLM.utils.vocab.tokens import NUM, PROC
+
+_keep = ascii_letters + digits
 
 
 def merge_dicts(dicts: Iterable[Dict[str, int]]) -> Dict[str, int]:
@@ -81,8 +81,8 @@ def normalize_type_vocab(type_vocab: Dict[str, int]) -> Dict[str, int]:
     return normalize_vocab(type_vocab, type_preprocess)
 
 
-def threshold(counter: Dict[str, int], cutoff: int) -> Dict[str, int]:
-    return {k: v for k, v in filter(lambda pair: pair[1] > cutoff, counter.items())}
+def threshold(counter: Dict[str, int], cutoff: int, op: Callable[[int, int], bool]=le) -> Dict[str, int]:
+    return {k: v for k, v in filter(lambda pair: op(cutoff, pair[1]), counter.items())}
 
 
 def map_to_idx(counter: Dict[str, int]) -> Dict[str, int]:
