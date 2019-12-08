@@ -15,6 +15,8 @@ from TypeLM.utils.token_definitions import NUM, PROC, UNK, MWU, EOS
 
 
 _keep = ascii_letters + digits
+_tokens = {NUM, PROC, UNK, MWU, EOS}
+
 
 
 strs = List[str]
@@ -130,60 +132,46 @@ def threshold(counter: Dict[str, int], cutoff: int, op: Callable[[int, int], boo
     return {k: v for k, v in filter(lambda pair: op(cutoff, pair[1]), counter.items())}
 
 
-def pile_of_shit(counter: Dict[Sequence[str], int], pref_merges, suf_merges, wrap_merges) -> Dict[Sequence[str], int]:
+def get_most_common_something(counter: Dict[str, int], get_something, get_something_else, len_threshold,
+                              num_repeats, min_freq):
 
-    # suf_pref_dict : Dict[Tuple[str, str], int]
-    suf_pref_dict = defaultdict(lambda : 0)
-    suf_dict = defaultdict(lambda: 0)
-    pref_dict = defaultdict(lambda : 0)
+    def get_next_most_common_something(counter_: Dict[Sequence[str], int]) \
+            -> Tuple[Dict[Sequence[str], int], Tuple[Tuple[str, str], int]]:
 
-    for word in counter.keys():
-        if len(word) == 1:
-            continue
+        words = filter(lambda word:
+                       len(word) > len_threshold and word not in list(map(tuple, _tokens)),
+                       counter_.keys())
 
-        first_ngram = word[0]
-        last_ngram = word[-1]
-        suf_pref_dict[(first_ngram, last_ngram)] = suf_pref_dict[(first_ngram, last_ngram)] + counter[word]
-        suf_dict[last_ngram] = suf_dict[last_ngram] + counter[word]
-        pref_dict[first_ngram] = pref_dict[first_ngram] + counter[word]
+        somethings_ = Counter()
 
-    most_common_pref = sorted(pref_dict.items(), key=lambda pair: pair[1], reverse=True)[0]
-    most_common_suf = sorted(suf_dict.items(), key=lambda pair: pair[1], reverse=True)[0]
-    most_common_wrap = sorted(suf_pref_dict.items(), key=lambda pair: pair[1], reverse=True)[0]
+        for word in words:
+            something = get_something(word)
+            somethings_[something] = counter_[word]
 
-    pref_merges[most_common_pref[0]] = most_common_pref[1]
-    if len(most_common_pref[0]) > 1:
-        pref_merges[most_common_pref[0][1:]] = pref_merges[most_common_pref[0][1:]] - most_common_pref[1]
+        topk, topv = somethings_.most_common()[0]
 
-    suf_merges[most_common_suf[0]] = most_common_suf[1]
-    if len(most_common_suf[0]) > 1:
-        suf_merges[most_common_suf[0][:-1]] = suf_merges[most_common_suf[0][:-1]] - most_common_suf[1]
+        newcounter = {
+            (key if len(key) <= len_threshold
+             else key if get_something(key) != topk
+             else get_something_else(key)): value for key, value in counter_.items()
+        }
+        return newcounter, (topk, topv)
 
-    wrap_merges[most_common_wrap[0]] = most_common_wrap[1]
-    if len(most_common_wrap[0][0]) > 1:
-        wrap_merges[(most_common_wrap[0][0][:-1], most_common_wrap[0][1])] = \
-            wrap_merges(most_common_wrap[0][0][:-1], most_common_wrap[0][1]) - \
-            most_common_wrap[1]
-    if len(most_common_wrap[0][1]) > 1:
-        wrap_merges[(most_common_wrap[0][0], most_common_wrap[0][1][1:])] = \
-            wrap_merges(most_common_wrap[0][0], most_common_wrap[0][1][1:]) - \
-            most_common_wrap[1]
-
-    newcounter = {
-        (word if len(word) == 1 else
-         word if word[0] != most_common_pref[0] and word[-1] != most_common_suf[0] else
-         NotImplemented
-         ): value for word, value in counter.items()}
-    return newcounter, merges
+    somethings = Counter()
+    for i in range(num_repeats):
+        counter, (topk, topv) = get_next_most_common_something(counter)
+        if topv < min_freq:
+            break
+        somethings[topk] = topv
+    return somethings
 
 
-def fuck(counter: Dict[str, int], n: int):
+def get_most_common_wraps(counter: Dict[str, int], num_repeats: int, min_freq: int):
     counter = {tuple(k): v for k, v in counter.items()}
-    begin = dict()
-    for i in range(n):
-        counter, begin = pile_of_shit(counter, begin)
-    return counter, begin
-
+    get_wrap = lambda word: (word[0], word[-1])
+    get_body = lambda word: (word[0] + word[1],) + word[2:-2] + (word[-2] + word[-1],)
+    len_threshold = 4
+    return get_most_common_something(counter, get_wrap, get_body, len_threshold, num_repeats, min_freq)
 
 
 def make_idx_map(counter: Dict[str, int], defaults: Dict[str, int]) -> Dict[str, int]:
