@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import Sequence, Iterable, Dict, Tuple, Callable, List, Iterator
+from typing import Sequence, Iterable, Dict, Tuple, Callable, List, TypeVar
 
 from functools import reduce 
 from operator import add, lt, ge
@@ -132,30 +132,41 @@ def threshold(counter: Dict[str, int], cutoff: int, op: Callable[[int, int], boo
     return {k: v for k, v in filter(lambda pair: op(cutoff, pair[1]), counter.items())}
 
 
-def get_most_common_something(counter: Dict[str, int], get, merge, norm, len_threshold,
-                              num_repeats, min_freq):
+_Something = TypeVar('_Something')
+
+
+def get_most_common_something(counter: Dict[Sequence[str], int],
+                              get: Callable[[Sequence[str]], _Something],
+                              merge: Callable[[Sequence[str]], List[Sequence[str]]],
+                              norm: Callable[[_Something], _Something],
+                              len_threshold: int,
+                              num_repeats: int,
+                              min_freq: int,
+                              cond: Callable[[Sequence[str]], bool] = lambda word: True,
+                              count_unique: bool = False) -> Dict[_Something, int]:
 
     def get_next_most_common_something(counter_: Dict[Sequence[str], int]) \
             -> Tuple[Dict[Sequence[str], int], Tuple[Tuple[str, str], int]]:
 
         words = filter(lambda word:
-                       len(word) > len_threshold and word not in list(map(tuple, _tokens)),
+                       len(word) > len_threshold and word not in list(map(tuple, _tokens)) and cond(word),
                        counter_.keys())
 
         somethings_ = Counter()
 
         for word in words:
             something = get(word)
-            somethings_[something] += counter_[word]
+            somethings_[something] += 1 if count_unique else count[word]
 
         topk, topv = somethings_.most_common()[0]
 
-        newcounter = {
-            (key if len(key) <= len_threshold
-             else key if get(key) != topk
-             else merge(key)): value for key, value in counter_.items()
-        }
-
+        newcounter = dict()
+        for key, value in counter_.items():
+            if len(key) <= len_threshold or get(key) != topk:
+                newcounter[key] = value
+            else:
+                for subkey in merge(key):
+                    newcounter[subkey] = value
         return newcounter, (topk, topv)
 
     somethings = Counter()
@@ -175,27 +186,38 @@ def get_most_common_something(counter: Dict[str, int], get, merge, norm, len_thr
 def get_most_common_wraps(counter: Dict[str, int], num_repeats: int, min_freq: int):
     counter = {tuple(k): v for k, v in counter.items()}
     get = lambda word: (word[0], word[-1])
-    merge = lambda word: (word[0] + word[1],) + word[2:-2] + (word[-2] + word[-1],)
-    norm = lambda wrap: None
+    merge = lambda word: [(word[0] + word[1],) + word[2:-2] + (word[-2] + word[-1],),
+                          (word[0] + word[1],) + word[2:-1] + (word[-1],),
+                          (word[0],) + word[1:-2] + (word[-2] + word[-1],)]
+    norm = lambda wrap: (wrap[0][:-1], wrap[1][1:]) if len(wrap[0]) > 1 and len(wrap[1]) > 1 else None
     len_threshold = 4
-    return sorted(get_most_common_something(counter, get, merge, norm, len_threshold, num_repeats, min_freq).items(),
+    return sorted(get_most_common_something(counter, get, merge, norm, len_threshold,
+                                            num_repeats, min_freq,
+                                            count_unique=True).items(),
                   key=lambda pair: pair[1], reverse=True)
 
 
-def get_most_common_prefixes(counter: Dict[str, int], num_repeats: int, min_freq: int):
+def get_most_common_prefixes(counter: Dict[str, int],
+                             num_repeats: int,
+                             min_freq: int,
+                             wraps: Sequence[Tuple[str, str]]=()):
+
     counter = {tuple(k): v for k, v in counter.items()}
     get = lambda word: word[0]
-    merge = lambda word: (word[0] + word[1],) + word[2:]
+    merge = lambda word: [(word[0] + word[1],) + word[2:]]
     norm = lambda prefix: prefix[:-1] if len(prefix) > 1 else None
     len_threshold = 4
-    return sorted(get_most_common_something(counter, get, merge, norm, len_threshold, num_repeats, min_freq).items(),
+    cond = lambda word: not any(map(lambda wrap: word.startswith(wrap[0]) and word.endswith(wrap[1]), wraps))
+
+    return sorted(get_most_common_something(counter, get, merge, norm, len_threshold, num_repeats,
+                                            min_freq, cond).items(),
                   key=lambda pair: pair[1], reverse=True)
 
 
 def get_most_common_suffixes(counter: Dict[str, int], num_repeats: int, min_freq: int):
     counter = {tuple(k): v for k, v in counter.items()}
     get = lambda word: word[-1]
-    merge = lambda word: word[:-2] + (word[-2] + word[-1],)
+    merge = lambda word: [word[:-2] + (word[-2] + word[-1],)]
     norm = lambda suffix: suffix[1:] if len(suffix) > 1 else None
     len_threshold = 4
     return sorted(get_most_common_something(counter, get, merge, norm, len_threshold, num_repeats, min_freq).items(),
