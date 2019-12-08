@@ -132,7 +132,7 @@ def threshold(counter: Dict[str, int], cutoff: int, op: Callable[[int, int], boo
     return {k: v for k, v in filter(lambda pair: op(cutoff, pair[1]), counter.items())}
 
 
-def get_most_common_something(counter: Dict[str, int], get_something, get_something_else, len_threshold,
+def get_most_common_something(counter: Dict[str, int], get, merge, norm, len_threshold,
                               num_repeats, min_freq):
 
     def get_next_most_common_something(counter_: Dict[Sequence[str], int]) \
@@ -145,16 +145,17 @@ def get_most_common_something(counter: Dict[str, int], get_something, get_someth
         somethings_ = Counter()
 
         for word in words:
-            something = get_something(word)
-            somethings_[something] = counter_[word]
+            something = get(word)
+            somethings_[something] += counter_[word]
 
         topk, topv = somethings_.most_common()[0]
 
         newcounter = {
             (key if len(key) <= len_threshold
-             else key if get_something(key) != topk
-             else get_something_else(key)): value for key, value in counter_.items()
+             else key if get(key) != topk
+             else merge(key)): value for key, value in counter_.items()
         }
+
         return newcounter, (topk, topv)
 
     somethings = Counter()
@@ -163,15 +164,42 @@ def get_most_common_something(counter: Dict[str, int], get_something, get_someth
         if topv < min_freq:
             break
         somethings[topk] = topv
+        normed = norm(topk)
+        if normed is not None:
+            somethings[normed] -= topv
+            if somethings[normed] < min_freq:
+                del somethings[normed]
     return somethings
 
 
 def get_most_common_wraps(counter: Dict[str, int], num_repeats: int, min_freq: int):
     counter = {tuple(k): v for k, v in counter.items()}
-    get_wrap = lambda word: (word[0], word[-1])
-    get_body = lambda word: (word[0] + word[1],) + word[2:-2] + (word[-2] + word[-1],)
+    get = lambda word: (word[0], word[-1])
+    merge = lambda word: (word[0] + word[1],) + word[2:-2] + (word[-2] + word[-1],)
+    norm = lambda wrap: None
     len_threshold = 4
-    return get_most_common_something(counter, get_wrap, get_body, len_threshold, num_repeats, min_freq)
+    return sorted(get_most_common_something(counter, get, merge, norm, len_threshold, num_repeats, min_freq).items(),
+                  key=lambda pair: pair[1], reverse=True)
+
+
+def get_most_common_prefixes(counter: Dict[str, int], num_repeats: int, min_freq: int):
+    counter = {tuple(k): v for k, v in counter.items()}
+    get = lambda word: word[0]
+    merge = lambda word: (word[0] + word[1],) + word[2:]
+    norm = lambda prefix: prefix[:-1] if len(prefix) > 1 else None
+    len_threshold = 4
+    return sorted(get_most_common_something(counter, get, merge, norm, len_threshold, num_repeats, min_freq).items(),
+                  key=lambda pair: pair[1], reverse=True)
+
+
+def get_most_common_suffixes(counter: Dict[str, int], num_repeats: int, min_freq: int):
+    counter = {tuple(k): v for k, v in counter.items()}
+    get = lambda word: word[-1]
+    merge = lambda word: word[:-2] + (word[-2] + word[-1],)
+    norm = lambda suffix: suffix[1:] if len(suffix) > 1 else None
+    len_threshold = 4
+    return sorted(get_most_common_something(counter, get, merge, norm, len_threshold, num_repeats, min_freq).items(),
+                  key=lambda pair: pair[1], reverse=True)
 
 
 def make_idx_map(counter: Dict[str, int], defaults: Dict[str, int]) -> Dict[str, int]:
