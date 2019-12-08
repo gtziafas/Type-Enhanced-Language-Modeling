@@ -156,7 +156,7 @@ def get_most_common_something(counter: Dict[Sequence[str], int],
 
         for word in words:
             something = get(word)
-            somethings_[something] += 1 if count_unique else count[word]
+            somethings_[something] += 1 if count_unique else counter[word]
 
         topk, topv = somethings_.most_common()[0]
 
