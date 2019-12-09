@@ -11,4 +11,7 @@ PAD = '[PAD]'       # Padded output word
 # Type Output
 MWU = '[MWU]'       # Untyped MWU expression
 
+
+lexical_input_tokens = {EOS, MASK, NUM, PROC, UNK}
+
 tokens = {EOS, MASK, NUM, PROC, UNK, PAD, MWU}
