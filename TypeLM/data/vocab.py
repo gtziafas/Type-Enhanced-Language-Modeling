@@ -6,12 +6,12 @@ from operator import add, lt, ge
 
 from collections import defaultdict
 
-from itertools import chain, product
+from itertools import chain
 
 from string import ascii_letters, digits
 import unicodedata
 
-from TypeLM.utils.token_definitions import NUM, PROC, UNK, MWU, EOS, tokens
+from TypeLM.utils.token_definitions import NUM, PROC, MWU, EOS, tokens
 
 
 _keep = ascii_letters + digits
@@ -218,11 +218,13 @@ def get_most_common_suffixes(counter: Dict[str, int], num_repeats: int, min_freq
                   key=lambda pair: pair[1], reverse=True)
 
 
-def make_idx_map(counter: Dict[str, int], defaults: Dict[str, int]) -> Dict[str, int]:
-    keys = sorted(((k, v) for k, v in counter.items()), key=lambda x: x[1], reverse=True)
-    keys = map(lambda x: x[0], keys)
-    keys = {**defaults, **{k: i + len(defaults) for i, k in enumerate(keys)}}
-    return defaultdict(lambda: keys[UNK], keys)
+def make_idx_map(tokens: Set[str], default: int) -> Dict[str, int]:
+    return defaultdict(lambda: default, {k: i for i, k in enumerate(tokens)})
+
+
+def make_lexical_input_idx_map(vocab: Set[str], prefixes: Set[str], suffixes: Set[str],
+                               tokens: Set[str]) -> Dict[str, int]:
+    return make_idx_map()
 
 
 def normalize_corpus(files: strs):
@@ -258,43 +260,6 @@ def get_partial_samples(i_wrapper: Iterator[str], current: Tuple[strs, strs]) \
             samples.append(sentence_preprocess(pairs))
             words, types = [], []
     return samples, (words, types)
-
-
-class Tokenizer(object):
-    def __init__(self, vocab: Set[str], prefixes: Set[str], suffixes: Set[str], tokens: Set[str]):
-        self.vocab = vocab
-        self.prefixes = prefixes
-        self.suffixes = suffixes
-        self.tokens = tokens
-        self.wraps = sorted(product(prefixes, suffixes),
-                            key=lambda pair: (len(pair[0]) + len(pair[1]), len(pair[0])),
-                            reverse=True)
-
-    def __call__(self, sentence: str) -> List[str]:
-        preprocessed = word_preprocess(sentence)
-        return list(map(self.tokenize_word, preprocessed))
-
-
-    def tokenize_word(self, word: str):
-        return word if word in self.vocab.union(self.tokens) else self.wrap(word)
-
-
-    def wrap(self, word: str) -> str:
-        wraps = filter(lambda wrap:
-                       len(wrap[0]) < len(word) and len(wrap[1]) < len(word) and sum(map(len, wrap)) < len(word),
-                       self.wraps)
-        for prefix, suffix in wraps:
-            if word.startswith(prefix) and word.endswith(suffix):
-                return prefix + '##' + suffix
-        prefixes = filter(lambda prefix: len(prefix) < len(word), self.prefixes)
-        for prefix in prefixes:
-            if word.startswith(prefix):
-                return prefix + '##'
-        suffixes = filter(lambda suffix: len(prefix) < len(word), self.suffixes)
-        for suffix in suffixes:
-            if word.endswith(suffix):
-                return '##' + suffix
-        return UNK
 
 
 
