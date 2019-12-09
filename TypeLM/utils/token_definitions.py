@@ -11,3 +11,4 @@ PAD = '[PAD]'       # Padded output word
 # Type Output
 MWU = '[MWU]'       # Untyped MWU expression
 
+tokens = {EOS, MASK, NUM, PROC, UNK, PAD, MWU}

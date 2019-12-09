@@ -1,22 +1,20 @@
 from collections import Counter
-from typing import Sequence, Iterable, Dict, Tuple, Callable, List, TypeVar
+from typing import Sequence, Iterable, Dict, Tuple, Callable, List, TypeVar, Iterator, Set
 
 from functools import reduce 
 from operator import add, lt, ge
 
 from collections import defaultdict
 
-from itertools import chain
+from itertools import chain, product
 
 from string import ascii_letters, digits
 import unicodedata
 
-from TypeLM.utils.token_definitions import NUM, PROC, UNK, MWU, EOS
+from TypeLM.utils.token_definitions import NUM, PROC, UNK, MWU, EOS, tokens
 
 
 _keep = ascii_letters + digits
-_tokens = {NUM, PROC, UNK, MWU, EOS}
-
 
 
 strs = List[str]
@@ -137,7 +135,7 @@ _Something = TypeVar('_Something')
 
 def get_most_common_something(counter: Dict[Sequence[str], int],
                               get: Callable[[Sequence[str]], _Something],
-                              merge: Callable[[Sequence[str]], List[Sequence[str]]],
+                              merge: Callable[[Sequence[str]], Sequence[str]],
                               norm: Callable[[_Something], _Something],
                               len_threshold: int,
                               num_repeats: int,
@@ -149,7 +147,7 @@ def get_most_common_something(counter: Dict[Sequence[str], int],
             -> Tuple[Dict[Sequence[str], int], Tuple[Tuple[str, str], int]]:
 
         words = filter(lambda word:
-                       len(word) > len_threshold and word not in list(map(tuple, _tokens)) and cond(word),
+                       len(word) > len_threshold and word not in list(map(tuple, tokens)) and cond(word),
                        counter_.keys())
 
         somethings_ = Counter()
@@ -160,13 +158,7 @@ def get_most_common_something(counter: Dict[Sequence[str], int],
 
         topk, topv = somethings_.most_common()[0]
 
-        newcounter = dict()
-        for key, value in counter_.items():
-            if len(key) <= len_threshold or get(key) != topk:
-                newcounter[key] = value
-            else:
-                for subkey in merge(key):
-                    newcounter[subkey] = value
+        newcounter = {(k if len(k) <= len_threshold or get(k) != topk else merge(k)): v for k, v in counter.items()}
         return newcounter, (topk, topv)
 
     somethings = Counter()
@@ -186,10 +178,12 @@ def get_most_common_something(counter: Dict[Sequence[str], int],
 def get_most_common_wraps(counter: Dict[str, int], num_repeats: int, min_freq: int):
     counter = {tuple(k): v for k, v in counter.items()}
     get = lambda word: (word[0], word[-1])
-    merge = lambda word: [(word[0] + word[1],) + word[2:-2] + (word[-2] + word[-1],),
-                          (word[0] + word[1],) + word[2:-1] + (word[-1],),
-                          (word[0],) + word[1:-2] + (word[-2] + word[-1],)]
-    norm = lambda wrap: (wrap[0][:-1], wrap[1][1:]) if len(wrap[0]) > 1 and len(wrap[1]) > 1 else None
+    merge = lambda word: [(word[0] + word[1],) + word[2:-2] + (word[-2] + word[-1],),]
+                          #(word[0] + word[1],) + word[2:-1] + (word[-1],),
+                          #(word[0],) + word[1:-2] + (word[-2] + word[-1],)]
+    norm = lambda wrap: (wrap[0][:-1], wrap[1][1:]) if len(wrap[0]) > 1 and len(wrap[1]) > 1 else \
+            (wrap[0][:-1], wrap[1]) if len(wrap[0]) > 1 and len(wrap[1]) == 1 else \
+            (wrap[0], wrap[1][1:]) if len(wrap[0]) == 1 and len(wrap[1]) > 1 else None
     len_threshold = 4
     return sorted(get_most_common_something(counter, get, merge, norm, len_threshold,
                                             num_repeats, min_freq,
@@ -204,7 +198,7 @@ def get_most_common_prefixes(counter: Dict[str, int],
 
     counter = {tuple(k): v for k, v in counter.items()}
     get = lambda word: word[0]
-    merge = lambda word: [(word[0] + word[1],) + word[2:]]
+    merge = lambda word: (word[0] + word[1],) + word[2:]
     norm = lambda prefix: prefix[:-1] if len(prefix) > 1 else None
     len_threshold = 4
     cond = lambda word: not any(map(lambda wrap: word.startswith(wrap[0]) and word.endswith(wrap[1]), wraps))
@@ -217,7 +211,7 @@ def get_most_common_prefixes(counter: Dict[str, int],
 def get_most_common_suffixes(counter: Dict[str, int], num_repeats: int, min_freq: int):
     counter = {tuple(k): v for k, v in counter.items()}
     get = lambda word: word[-1]
-    merge = lambda word: [word[:-2] + (word[-2] + word[-1],)]
+    merge = lambda word: word[:-2] + (word[-2] + word[-1],)
     norm = lambda suffix: suffix[1:] if len(suffix) > 1 else None
     len_threshold = 4
     return sorted(get_most_common_something(counter, get, merge, norm, len_threshold, num_repeats, min_freq).items(),
@@ -264,6 +258,45 @@ def get_partial_samples(i_wrapper: Iterator[str], current: Tuple[strs, strs]) \
             samples.append(sentence_preprocess(pairs))
             words, types = [], []
     return samples, (words, types)
+
+
+class Tokenizer(object):
+    def __init__(self, vocab: Set[str], prefixes: Set[str], suffixes: Set[str], tokens: Set[str]):
+        self.vocab = vocab
+        self.prefixes = prefixes
+        self.suffixes = suffixes
+        self.tokens = tokens
+        self.wraps = sorted(product(prefixes, suffixes),
+                            key=lambda pair: (len(pair[0]) + len(pair[1]), len(pair[0])),
+                            reverse=True)
+
+    def __call__(self, sentence: str) -> List[str]:
+        preprocessed = word_preprocess(sentence)
+        return list(map(self.tokenize_word, preprocessed))
+
+
+    def tokenize_word(self, word: str):
+        return word if word in self.vocab.union(self.tokens) else self.wrap(word)
+
+
+    def wrap(self, word: str) -> str:
+        wraps = filter(lambda wrap:
+                       len(wrap[0]) < len(word) and len(wrap[1]) < len(word) and sum(map(len, wrap)) < len(word),
+                       self.wraps)
+        for prefix, suffix in wraps:
+            if word.startswith(prefix) and word.endswith(suffix):
+                return prefix + '##' + suffix
+        prefixes = filter(lambda prefix: len(prefix) < len(word), self.prefixes)
+        for prefix in prefixes:
+            if word.startswith(prefix):
+                return prefix + '##'
+        suffixes = filter(lambda suffix: len(prefix) < len(word), self.suffixes)
+        for suffix in suffixes:
+            if word.endswith(suffix):
+                return '##' + suffix
+        return UNK
+
+
 
 
 
