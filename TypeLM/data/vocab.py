@@ -11,7 +11,7 @@ from itertools import chain
 from string import ascii_letters, digits
 import unicodedata
 
-from TypeLM.utils.token_definitions import NUM, PROC, MWU, EOS, tokens
+from TypeLM.utils.token_definitions import NUM, PROC, MWU, EOS
 
 
 _keep = ascii_letters + digits
@@ -51,8 +51,7 @@ def word_preprocess(word: str) -> strs:
 
 
 def type_preprocess(type_: str) -> strs:
-    # todo.
-    return [type_]
+    return [type_.replace('VNW', 'NP').replace('SPEC', 'NP')]
 
 
 def pair_preprocess(pair: Pair) -> Pairs:
@@ -126,8 +125,8 @@ def normalize_type_vocab(type_vocab: Dict[str, int]) -> Dict[str, int]:
     return normalize_vocab(type_vocab, type_preprocess)
 
 
-def threshold(counter: Dict[str, int], cutoff: int, op: Callable[[int, int], bool]=lt) -> Dict[str, int]:
-    return {k: v for k, v in filter(lambda pair: op(cutoff, pair[1]), counter.items())}
+def threshold(counter: Dict[str, int], cutoff: int, op: Callable[[int, int], bool] = lt) -> Dict[str, int]:
+    return {k: v for k, v in filter(lambda pair: op(pair[1], cutoff), counter.items())}
 
 
 _Something = TypeVar('_Something')
