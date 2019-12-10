@@ -71,6 +71,17 @@ class Indexer(object):
         self.type2index = {PAD: 0, **self.make_any_indices(tokenizer.types, 1)}
         self.word2index = {**self.vocab2index, **self.wrap2index, **self.prefix2index, **self.suffix2index}
 
+
+    def dump(self):
+        with open('./TypeLM/data/indexer_data.p', 'wb') as f:
+            pickle.dump([self.vocab2index, self.wrap2index, self.prefix2index,
+                         self.suffix2index, self.type2index, self.word2index], f)
+
+    def load(self):
+        with open('./TypeLM/data/indexer_data.p', 'rb') as f:
+            self.vocab2index, self.wrap2index, self.prefix2index, \
+            self.suffix2index, self.type2index, self.word2index = pickle.load(f)
+
     @staticmethod
     def make_any_indices(vocab: Iterable[str], start_from: int) -> Dict[str, int]:
         return {w: i + start_from for i, w in enumerate(vocab)}
@@ -90,3 +101,10 @@ class Indexer(object):
     def index_typed_sentence(self, sentence: Pairs) -> Tuple[List[int], List[int]]:
         words, types = zip(*sentence)
         return self.index_sentence(words), self.index_type_sequence(types)
+
+
+def default_indexer():
+    t = default_tokenizer()
+    indexer = Indexer(t)
+    indexer.load()
+    return indexer
