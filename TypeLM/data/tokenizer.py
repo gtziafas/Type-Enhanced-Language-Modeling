@@ -1,7 +1,7 @@
 from typing import Set, List
 from itertools import product
 from TypeLM.utils.token_definitions import UNK, lexical_input_tokens
-from TypeLM.data.vocab import word_preprocess
+from TypeLM.data.vocab import word_preprocess, sentence_preprocess, Pairs
 import pickle
 
 
@@ -16,11 +16,18 @@ class Tokenizer(object):
                             reverse=True)
 
     def __call__(self, sentence: str) -> List[str]:
-        preprocessed = word_preprocess(sentence)
-        return list(map(self.tokenize_word, preprocessed))
+        return self.tokenize_sentence(sentence)
 
     def tokenize_word(self, word: str):
         return word if word in self.vocab.union(self.tokens) else self.wrap(word)
+
+    def tokenize_sentence(self, sentence: str) -> List[str]:
+        preprocessed = word_preprocess(sentence)
+        return list(map(self.tokenize_word, preprocessed))
+
+    def tokenize_typed_sentence(self, sentence: Pairs) -> Pairs:
+        preprocessed = sentence_preprocess(sentence)
+        return list(map(lambda pair: (self.tokenize_word(pair[0]), pair[1]), preprocessed))
 
     def wrap(self, word: str) -> str:
         wraps = filter(lambda wrap:
