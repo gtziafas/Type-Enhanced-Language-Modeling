@@ -2,7 +2,7 @@ from collections import Counter
 from typing import Sequence, Iterable, Dict, Tuple, Callable, List, TypeVar, Iterator, Set
 
 from functools import reduce 
-from operator import add, lt, ge
+from operator import add, le, gt
 
 from collections import defaultdict
 
@@ -11,7 +11,7 @@ from itertools import chain
 from string import ascii_letters, digits
 import unicodedata
 
-from TypeLM.utils.token_definitions import NUM, PROC, MWU, EOS
+from TypeLM.utils.token_definitions import NUM, PROC, MWU, EOS, word_input_tokens
 
 
 _keep = ascii_letters + digits
@@ -125,7 +125,7 @@ def normalize_type_vocab(type_vocab: Dict[str, int]) -> Dict[str, int]:
     return normalize_vocab(type_vocab, type_preprocess)
 
 
-def threshold(counter: Dict[str, int], cutoff: int, op: Callable[[int, int], bool] = lt) -> Dict[str, int]:
+def threshold(counter: Dict[str, int], cutoff: int, op: Callable[[int, int], bool] = gt) -> Dict[str, int]:
     return {k: v for k, v in filter(lambda pair: op(pair[1], cutoff), counter.items())}
 
 
@@ -139,14 +139,13 @@ def get_most_common_something(counter: Dict[Sequence[str], int],
                               len_threshold: int,
                               num_repeats: int,
                               min_freq: int,
-                              cond: Callable[[Sequence[str]], bool] = lambda word: True,
                               count_unique: bool = False) -> Dict[_Something, int]:
 
     def get_next_most_common_something(counter_: Dict[Sequence[str], int]) \
             -> Tuple[Dict[Sequence[str], int], Tuple[Tuple[str, str], int]]:
 
         words = filter(lambda word:
-                       len(word) > len_threshold and word not in list(map(tuple, tokens)) and cond(word),
+                       len(word) > len_threshold and word not in list(map(tuple, word_input_tokens)),
                        counter_.keys())
 
         somethings_ = Counter()
@@ -174,40 +173,20 @@ def get_most_common_something(counter: Dict[Sequence[str], int],
     return somethings
 
 
-def get_most_common_wraps(counter: Dict[str, int], num_repeats: int, min_freq: int):
-    counter = {tuple(k): v for k, v in counter.items()}
-    get = lambda word: (word[0], word[-1])
-    merge = lambda word: [(word[0] + word[1],) + word[2:-2] + (word[-2] + word[-1],),]
-                          #(word[0] + word[1],) + word[2:-1] + (word[-1],),
-                          #(word[0],) + word[1:-2] + (word[-2] + word[-1],)]
-    norm = lambda wrap: (wrap[0][:-1], wrap[1][1:]) if len(wrap[0]) > 1 and len(wrap[1]) > 1 else \
-            (wrap[0][:-1], wrap[1]) if len(wrap[0]) > 1 and len(wrap[1]) == 1 else \
-            (wrap[0], wrap[1][1:]) if len(wrap[0]) == 1 and len(wrap[1]) > 1 else None
-    len_threshold = 4
-    return sorted(get_most_common_something(counter, get, merge, norm, len_threshold,
-                                            num_repeats, min_freq,
-                                            count_unique=True).items(),
-                  key=lambda pair: pair[1], reverse=True)
-
-
-def get_most_common_prefixes(counter: Dict[str, int],
-                             num_repeats: int,
-                             min_freq: int,
-                             wraps: Sequence[Tuple[str, str]]=()):
+def get_most_common_prefixes(counter: Dict[str, int], num_repeats: int, min_freq: int) -> List[Tuple[str, int]]:
 
     counter = {tuple(k): v for k, v in counter.items()}
     get = lambda word: word[0]
     merge = lambda word: (word[0] + word[1],) + word[2:]
     norm = lambda prefix: prefix[:-1] if len(prefix) > 1 else None
     len_threshold = 4
-    cond = lambda word: not any(map(lambda wrap: word.startswith(wrap[0]) and word.endswith(wrap[1]), wraps))
 
     return sorted(get_most_common_something(counter, get, merge, norm, len_threshold, num_repeats,
-                                            min_freq, cond).items(),
+                                            min_freq).items(),
                   key=lambda pair: pair[1], reverse=True)
 
 
-def get_most_common_suffixes(counter: Dict[str, int], num_repeats: int, min_freq: int):
+def get_most_common_suffixes(counter: Dict[str, int], num_repeats: int, min_freq: int) -> List[Tuple[str, int]]:
     counter = {tuple(k): v for k, v in counter.items()}
     get = lambda word: word[-1]
     merge = lambda word: word[:-2] + (word[-2] + word[-1],)
@@ -215,43 +194,3 @@ def get_most_common_suffixes(counter: Dict[str, int], num_repeats: int, min_freq
     len_threshold = 4
     return sorted(get_most_common_something(counter, get, merge, norm, len_threshold, num_repeats, min_freq).items(),
                   key=lambda pair: pair[1], reverse=True)
-
-
-def normalize_corpus(files: strs) -> Sentences:
-
-    partial = [], []
-    samples = []
-
-    for file in files:
-        with open(file, 'r') as i_buffer:
-            i_wrapper = i_buffer.__iter__()
-            full, partial = get_partial_samples(i_wrapper, partial)
-        samples.extend(full)
-    return samples
-
-
-def get_partial_samples(i_wrapper: Iterator[str], current: Tuple[strs, strs]) \
-        -> Tuple[Sentences,
-                 Tuple[strs, strs]]:
-
-    def is_eos(line_: str) -> bool:
-        return line_.startswith('</sentence>')
-
-    words, types = current
-    samples = []
-
-    for line in i_wrapper:
-        if is_word(line):
-            words.append(extract_word(line))
-        elif is_type(line):
-            types.append(extract_type(line))
-        elif is_eos(line):
-            pairs = list(zip(words, types))
-            samples.append(sentence_preprocess(pairs))
-            words, types = [], []
-    return samples, (words, types)
-
-
-
-
-
