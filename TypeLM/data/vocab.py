@@ -217,16 +217,7 @@ def get_most_common_suffixes(counter: Dict[str, int], num_repeats: int, min_freq
                   key=lambda pair: pair[1], reverse=True)
 
 
-def make_idx_map(tokens: Set[str], default: int) -> Dict[str, int]:
-    return defaultdict(lambda: default, {k: i for i, k in enumerate(tokens)})
-
-
-def make_lexical_input_idx_map(vocab: Set[str], prefixes: Set[str], suffixes: Set[str],
-                               tokens: Set[str]) -> Dict[str, int]:
-    return make_idx_map()
-
-
-def normalize_corpus(files: strs):
+def normalize_corpus(files: strs) -> Sentences:
 
     partial = [], []
     samples = []
