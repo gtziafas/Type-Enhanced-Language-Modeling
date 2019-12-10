@@ -17,7 +17,7 @@ class Indexer(object):
                                 self.tokenizer.tokens
         word2index = {w: i for i, w in enumerate(self.tokenizer)}
         with open('./TypeLM/data/indexer_data.p', 'wb') as f:
-            pickle.dump(word2index)
+            pickle.dump(word2index, f)
 
     def create_type_indices(self):
         pass
