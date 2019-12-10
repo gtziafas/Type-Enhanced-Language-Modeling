@@ -90,3 +90,44 @@ class Indexer(object):
     def index_typed_sentence(self, sentence: Pairs) -> Tuple[List[int], List[int]]:
         words, types = zip(*sentence)
         return self.index_sentence(words), self.index_type_sequence(types)
+
+
+def stringify(words: List[int], types: List[int]) -> str:
+    return ' '.join(map(str, words)) + '\t' + ' '.join(map(str, types)) + '\n'
+
+
+# todo : lazy processor and writer
+# def normalize_corpus(files: strs) -> Sentences:
+#
+#     partial = [], []
+#     samples = []
+#
+#     for file in files:
+#         with open(file, 'r') as i_buffer:
+#             i_wrapper = i_buffer.__iter__()
+#             full, partial = get_partial_samples(i_wrapper, partial)
+#         samples.extend(full)
+#     return samples
+#
+#
+# def get_partial_samples(i_wrapper: Iterator[str], current: Tuple[strs, strs]) \
+#         -> Tuple[Sentences,
+#                  Tuple[strs, strs]]:
+#
+#     def is_eos(line_: str) -> bool:
+#         return line_.startswith('</sentence>')
+#
+#     words, types = current
+#     samples = []
+#
+#     for line in i_wrapper:
+#         if is_word(line):
+#             words.append(extract_word(line))
+#         elif is_type(line):
+#             types.append(extract_type(line))
+#         elif is_eos(line):
+#             pairs = list(zip(words, types))
+#             samples.append(sentence_preprocess(pairs))
+#             words, types = [], []
+#     return samples, (words, types)
+
