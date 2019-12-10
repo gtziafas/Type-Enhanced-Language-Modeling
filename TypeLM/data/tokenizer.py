@@ -1,6 +1,6 @@
 from typing import Set, List
 from itertools import product
-from TypeLM.utils.token_definitions import UNK, PAD
+from TypeLM.utils.token_definitions import UNK, PAD, input_tokens
 from TypeLM.data.vocab import word_preprocess, sentence_preprocess, Pairs
 import pickle
 
@@ -55,5 +55,5 @@ class Tokenizer(object):
 
 def default_tokenizer():
     with open('./TypeLM/data/tokenizer_data.p', 'rb') as f:
-        top, prefixes, suffixes, _ = pickle.load(f)
-    return Tokenizer(top, prefixes, suffixes, lexical_input_tokens)
+        top, prefixes, suffixes, types = pickle.load(f)
+    return Tokenizer(top, prefixes, suffixes, input_tokens, types)

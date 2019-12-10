@@ -6,5 +6,5 @@ UNK = '[UNK]'       # Input word truncated by frequency threshold
 PAD = '[PAD]'       # Padded output word
 MWU = '[MWU]'       # Untyped MWU expression
 
-tokens = {EOS, MASK, NUM, PROC, UNK, PAD}
+input_tokens = {EOS, MASK, NUM, PROC, UNK, PAD}
 
