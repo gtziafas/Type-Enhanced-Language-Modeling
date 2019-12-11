@@ -1,7 +1,8 @@
-from typing import Set, List, Dict, Iterable, Tuple
+from typing import Set, List, Dict, Iterable, Tuple, TextIO
 from itertools import product
 from TypeLM.utils.token_definitions import UNK, PAD, EOS, PROC, word_input_tokens, type_input_tokens
 from TypeLM.data.vocab import word_preprocess, sentence_preprocess, Pairs
+from TypeLM.data.vocab import strs, is_type, is_word, extract_type, extract_word
 import pickle
 
 
@@ -96,38 +97,36 @@ def stringify(words: List[int], types: List[int]) -> str:
     return ' '.join(map(str, words)) + '\t' + ' '.join(map(str, types)) + '\n'
 
 
-# todo : lazy processor and writer
-# def normalize_corpus(files: strs) -> Sentences:
-#
-#     partial = [], []
-#     samples = []
-#
-#     for file in files:
-#         with open(file, 'r') as i_buffer:
-#             i_wrapper = i_buffer.__iter__()
-#             full, partial = get_partial_samples(i_wrapper, partial)
-#         samples.extend(full)
-#     return samples
-#
-#
-# def get_partial_samples(i_wrapper: Iterator[str], current: Tuple[strs, strs]) \
-#         -> Tuple[Sentences,
-#                  Tuple[strs, strs]]:
-#
-#     def is_eos(line_: str) -> bool:
-#         return line_.startswith('</sentence>')
-#
-#     words, types = current
-#     samples = []
-#
-#     for line in i_wrapper:
-#         if is_word(line):
-#             words.append(extract_word(line))
-#         elif is_type(line):
-#             types.append(extract_type(line))
-#         elif is_eos(line):
-#             pairs = list(zip(words, types))
-#             samples.append(sentence_preprocess(pairs))
-#             words, types = [], []
-#     return samples, (words, types)
+def index_corpus(read_from: strs, write_to: str) -> None:
 
+    tokenizer = default_tokenizer()
+    indexer = Indexer(tokenizer)
+
+    partial = [], []
+
+    with open(write_to, 'a') as output_wrapper:
+        for file in read_from:
+            with open(file, 'r') as input_wrapper:
+                partial = get_partial_samples(input_wrapper, output_wrapper, partial, tokenizer, indexer)
+
+
+def get_partial_samples(input_wrapper: TextIO, output_wrapper: TextIO, current: Tuple[strs, strs],
+                        tokenizer: Tokenizer, indexer: Indexer) -> Tuple[strs, strs]:
+    def is_eos(line_: str):
+        return line_.startswith('</sentence>')
+
+    words, types = current
+
+    for line in input_wrapper:
+        if is_word(line):
+            words.append(extract_word(line))
+        elif is_type(line):
+            types.append(extract_type(line))
+        elif is_eos(line):
+            sentence = list(zip(words, types))
+            tokenized = tokenizer.tokenize_typed_sentence(sentence)
+            indexed = indexer.index_typed_sentence(tokenized)
+            output_wrapper.write(stringify(*indexed))
+            words, types = [], []
+
+    return words, types
