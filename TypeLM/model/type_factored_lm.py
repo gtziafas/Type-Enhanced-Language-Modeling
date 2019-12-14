@@ -1,6 +1,6 @@
 from TypeLM.utils.imports import *
 from TypeLM.utils.utils import positional_encoding, count_parameters
-from TypeLM.model.masked_encoder import EncoderLayer, WeightedLayerEncoder
+from TypeLM.model.masked_encoder import EncoderLayer, LayerWeighter, Encoder
 
 
 class TypeFactoredLM(Module):
@@ -9,6 +9,7 @@ class TypeFactoredLM(Module):
                  padding_idx: int = 0) -> None:
         super(TypeFactoredLM, self).__init__()
         self.masked_encoder = masked_encoder(**masked_encoder_kwargs)
+        self.layer_weighter = LayerWeighter(masked_encoder_kwargs['num_layers']-2)
         self.type_classifier = type_classifier(**type_classifier_kwargs)
         self.word_embedder = Embedding(num_embeddings=num_words, embedding_dim=masked_encoder_kwargs['d_model'],
                                        padding_idx=padding_idx)
@@ -20,11 +21,13 @@ class TypeFactoredLM(Module):
                                                    device=word_embeds.device.__str__())
 
         word_embeds = word_embeds + positional_encodings
-        weighted, final = self.masked_encoder(word_embeds, msk)
 
-        word_preds = self.word_classifier(final)
+        layer_outputs = self.masked_encoder.forward_all(word_embeds, msk)
+
+        weighted = self.layer_weighter(layer_outputs[1:-2])
         type_preds = self.type_classifier(weighted)
 
+        word_preds = self.word_classifier(layer_outputs[-1])
         return word_preds, type_preds
 
     def word_classifier(self, final: Tensor) -> Tensor:
@@ -45,10 +48,10 @@ def test():
                       'd_ff': d_ff,
                       'd_k': d_k,
                       'd_v': d_v,
-                      'activation_fn': F.gelu}
+                      'activation_fn': F.relu}
     type_pred_params = {'in_features': d_model, 'out_features': type_vocab_size}
 
-    lm = TypeFactoredLM(masked_encoder=WeightedLayerEncoder,
+    lm = TypeFactoredLM(masked_encoder=Encoder,
                         type_classifier=Linear,
                         num_words=word_vocab_size,
                         masked_encoder_kwargs=encoder_params,

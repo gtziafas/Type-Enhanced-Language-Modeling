@@ -30,23 +30,25 @@ class EncoderLayer(Module):
 class Encoder(Module):
     def __init__(self, module_maker: Module, num_layers: int, *args, **kwargs) -> None:
         super(Encoder, self).__init__()
-        self.network = Sequential(*[module_maker(*args, **kwargs) for _ in range(num_layers)])
+        self.layers = ModuleList([module_maker(*args, **kwargs) for _ in range(num_layers)])
 
     def forward(self, x: Tensor, mask: LongTensor) -> Tensor:
-        return self.network((x, mask))[0]
+        for layer in self.layers:
+            x = layer((x, mask))[0]
+        return x
 
-
-class WeightedLayerEncoder(Module):
-    def __init__(self, module_maker: Module, num_layers: int, *args, **kwargs) -> None:
-        super(WeightedLayerEncoder, self).__init__()
-        self.layers = ModuleList([module_maker(*args, **kwargs) for _ in range(num_layers)])
-        self.layer_weights = torch.nn.Parameter(torch.rand(num_layers), requires_grad=True)
-
-    def forward(self, x: Tensor, mask: LongTensor) -> Tuple[Tensor, Tensor]:
+    def forward_all(self, x: Tensor, mask: LongTensor) -> Tensor:
         xs = [x]
         for layer in self.layers:
             xs = xs + [layer((xs[-1], mask))[0]]
-        stacked = torch.stack(xs[1::])
-        layer_weights = F.softmax(self.layer_weights, dim=0).view(-1, 1, 1, 1)
-        return (layer_weights * stacked).sum(dim=0), xs[-1]
+        return torch.stack(xs)
 
+
+class LayerWeighter(Module):
+    def __init__(self, num_layers: int) -> None:
+        super(LayerWeighter, self).__init__()
+        self.layer_weights = torch.nn.Parameter(torch.rand(num_layers), requires_grad=True)
+
+    def forward(self, x: Tensor) -> Tensor:
+        atn = F.softmax(self.layer_weights, dim=0).view(-1, 1, 1, 1)
+        return (atn * x).sum(dim=0)
