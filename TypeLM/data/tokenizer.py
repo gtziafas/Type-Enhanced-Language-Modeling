@@ -4,6 +4,19 @@ from TypeLM.utils.token_definitions import UNK, PAD, EOS, PROC, word_input_token
 from TypeLM.data.vocab import word_preprocess, sentence_preprocess, Pairs
 from TypeLM.data.vocab import strs, is_type, is_word, extract_type, extract_word
 import pickle
+from tqdm import tqdm
+
+from functools import lru_cache
+
+from multiprocessing import Pool, cpu_count
+
+
+_files = list(map(lambda x: './moved/' + x,
+                  list(map(lambda i: 'x0' + str(i) if i < 10 else 'x' + str(i),
+                           range(100)))
+                  ))
+
+_num_cores = cpu_count()
 
 
 class Tokenizer(object):
@@ -19,23 +32,24 @@ class Tokenizer(object):
     def __call__(self, sentence: str) -> List[str]:
         return self.tokenize_sentence(sentence)
 
-    def tokenize_word(self, word: str):
+    def tokenize_word(self, word: str) -> str:
         return word if word in self.vocab else self.wrap(word)
 
-    def tokenize_type(self, type_: str):
+    def tokenize_type(self, type_: str) -> str:
         return type_ if type_ in self.types else PAD
 
     def tokenize_sentence(self, sentence: str) -> List[str]:
         preprocessed = word_preprocess(sentence)
         return list(map(self.tokenize_word, preprocessed))
 
+    def tokenize_pair(self, pair: Tuple[str, str]) -> Tuple[str, str]:
+        return self.tokenize_word(pair[0]), self.tokenize_type(pair[1])
+
     def tokenize_typed_sentence(self, sentence: Pairs) -> Pairs:
         preprocessed = sentence_preprocess(sentence)
-        return list(map(lambda pair:
-                        (self.tokenize_word(pair[0]),
-                         self.tokenize_type(pair[1])),
-                        preprocessed))
+        return [self.tokenize_pair(pair) for pair in preprocessed]
 
+    @lru_cache(maxsize=512000)
     def wrap(self, word: str) -> str:
         wraps = filter(lambda wrap: sum(map(len, wrap)) < len(word), self.wraps)
         for prefix, suffix in wraps:
@@ -105,17 +119,22 @@ def index_corpus(read_from: strs, write_to: str) -> None:
     partial = [], []
 
     with open(write_to, 'a') as output_wrapper:
-        for file in read_from:
+        for file in tqdm(read_from):
             with open(file, 'r') as input_wrapper:
                 partial = get_partial_samples(input_wrapper, output_wrapper, partial, tokenizer, indexer)
+                print('Finished {}'.format(file))
 
 
 def get_partial_samples(input_wrapper: TextIO, output_wrapper: TextIO, current: Tuple[strs, strs],
                         tokenizer: Tokenizer, indexer: Indexer) -> Tuple[strs, strs]:
-    def is_eos(line_: str):
+
+    def is_eos(line_: str) -> bool:
         return line_.startswith('</sentence>')
 
     words, types = current
+
+    samples = []
+
 
     for line in input_wrapper:
         if is_word(line):
@@ -124,9 +143,12 @@ def get_partial_samples(input_wrapper: TextIO, output_wrapper: TextIO, current: 
             types.append(extract_type(line))
         elif is_eos(line):
             sentence = list(zip(words, types))
-            tokenized = tokenizer.tokenize_typed_sentence(sentence)
-            indexed = indexer.index_typed_sentence(tokenized)
-            output_wrapper.write(stringify(*indexed))
+            samples.append(sentence)
             words, types = [], []
 
+    with Pool(_num_cores) as pool:
+        tokenized = pool.map(tokenizer.tokenize_typed_sentence, samples)
+    indexed = [indexer.index_typed_sentence(sample) for sample in tokenized]
+    stringed = [stringify(*sample) for sample in indexed]
+    output_wrapper.write(''.join(stringed))
     return words, types
