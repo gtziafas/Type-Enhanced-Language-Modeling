@@ -8,8 +8,3 @@ from typing import Tuple, Optional, Callable, Sequence, TypeVar, Any, Dict
 
 tensor_map = Callable[[Tensor], Tensor]
 tensor_maps = Sequence[tensor_map]
-
-Sample = Sequence[Tuple[str, str]]
-Samples = Sequence[Sample]
-
-ints = Sequence[int]

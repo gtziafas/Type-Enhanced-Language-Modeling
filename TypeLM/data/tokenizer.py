@@ -49,7 +49,7 @@ class Tokenizer(object):
         preprocessed = sentence_preprocess(sentence)
         return [self.tokenize_pair(pair) for pair in preprocessed]
 
-    @lru_cache(maxsize=512000)
+    @lru_cache(maxsize=512)
     def wrap(self, word: str) -> str:
         wraps = filter(lambda wrap: sum(map(len, wrap)) < len(word), self.wraps)
         for prefix, suffix in wraps:
@@ -80,24 +80,24 @@ class Indexer(object):
         suffixes = list(map(lambda su: '##' + su, tokenizer.suffixes))
         types = sorted(tokenizer.types)
 
-        self._word_indices = self.make_any_indices(words + wraps + prefixes + suffixes, 1)
-        self._type_indices = {PAD: 0, **self.make_any_indices(types, 1)}
+        self.word_indices = self.make_any_indices(words + wraps + prefixes + suffixes, 1)
+        self.type_indices = {PAD: 0, **self.make_any_indices(types, 1)}
 
         masked_words = wraps + prefixes + suffixes + [EOS, UNK, PROC]
-        self._masked_words = {self._word_indices[k] for k in masked_words}
+        self.masked_words = {self.word_indices[k] for k in masked_words}
 
     @staticmethod
     def make_any_indices(vocab: Iterable[str], start_from: int) -> Dict[str, int]:
         return {w: i + start_from for i, w in enumerate(vocab)}
 
     def index_word(self, word: str) -> int:
-        return self._word_indices[word]
+        return self.word_indices[word]
 
     def index_sentence(self, sentence: List[str]) -> List[int]:
         return list(map(self.index_word, sentence))
 
     def index_type(self, type_: str) -> int:
-        return self._type_indices[type_]
+        return self.type_indices[type_]
 
     def index_type_sequence(self, type_sequence: List[str]) -> List[int]:
         return list(map(self.index_type, type_sequence))
@@ -135,7 +135,6 @@ def get_partial_samples(input_wrapper: TextIO, output_wrapper: TextIO, current: 
 
     samples = []
 
-
     for line in input_wrapper:
         if is_word(line):
             words.append(extract_word(line))
@@ -143,7 +142,8 @@ def get_partial_samples(input_wrapper: TextIO, output_wrapper: TextIO, current: 
             types.append(extract_type(line))
         elif is_eos(line):
             sentence = list(zip(words, types))
-            samples.append(sentence)
+            if len(sentence):
+                samples.append(sentence)
             words, types = [], []
 
     with Pool(_num_cores) as pool:
