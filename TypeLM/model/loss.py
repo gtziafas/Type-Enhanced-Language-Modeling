@@ -17,8 +17,8 @@ class MixedLoss(Module):
         self.type_loss = type_loss(**type_loss_kwargs)
         self.kappa = type_loss_weight
 
-    def forward(self, word_predictions: Tensor, word_truth: LongTensor, 
-    			type_predictions: Tensor, type_truth: LongTensor, mask: LongTensor) -> Tensor:
+    def forward(self, word_predictions: Tensor, word_truth: LongTensor,
+                type_predictions: Tensor, type_truth: LongTensor, mask: LongTensor) -> Tensor:
         language_loss = masked_loss_wrapper(self.language_loss)(word_predictions, word_truth, mask)
         type_loss = self.type_loss(type_predictions, type_truth)
         return language_loss + self.kappa * type_loss
