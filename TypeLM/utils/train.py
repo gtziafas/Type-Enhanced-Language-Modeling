@@ -2,39 +2,69 @@ from TypeLM.utils.imports import *
 from TypeLM.model.loss import MixedLoss
 from TypeLM.model.type_factored_lm import TypeFactoredLM
 from TypeLM.data.loader import DataLoader
+from TypeLM.data.masker import default_masker
 
-from torch.optim import Optimizer 
+from torch.optim import Optimizer
+
+from torch.nn.utils.rnn import pad_sequence as _pad_sequence
 
 
-def train_batch(model: TypeFactoredLM, words_batch_inp: LongTensor, words_batch_truth: LongTensor, types_batch: LongTensor, 
-			pad_mask: LongTensor, words_mask: LongTensor, loss_fn: MixedLoss, optimizer: Optimizer) -> float:
-	# total num of samples
-	num_samples = words_batch_inp.shape[0]  * words_batch_inp.shape[1]
+def pad_sequence(x):
+    return _pad_sequence(x, batch_first=True, padding_value=0)
 
-	# forward pass and loss
-	word_preds_batch, type_preds_batch = model(words_batch_inp, pad_mask)
-	batch_loss = loss_fn(word_preds_batch.view(num_samples,-1), words_batch_truth.flatten(),
-					 type_preds_batch.view(num_samples, -1), types_batch.flatten(), words_mask)
 
-	# backprop
-	batch_loss.backward()
-	optimizer.step()
-	optimizer.zero_grad()
+def default_dataloader():
+    masker = default_masker()
 
-	return batch_loss.item()
+    def post_processor(sentences: Samples) -> Tuple[LongTensor, LongTensor, LongTensor, LongTensor]:
+        # todo. pad shit
+        true_words, types = list(zip(*sentences))
+        masked_words, masked_indices = list(zip(*list(map(masker, true_words))))
+        masked_words = pad_sequence(list(map(LongTensor, masked_words)))
+        true_words = pad_sequence(list(map(LongTensor, true_words)))
+        types = pad_sequence(list(map(LongTensor, types)))
+        masked_indices = pad_sequence(list(map(LongTensor, masked_indices)))
+        return masked_words, true_words, types, masked_indices
 
-def train_nbatches(model: TypeFactoredLM, dl: DataLoader, loss_fn: MixedLoss, optimizer: Optimizer, nbatches: int, device: str) -> float:
-	epoch_loss = 0.
-	for batch_idx in range(nbatches):
-			batch = dl.__next__()
-			batch = list(map(lambda x: x.to(device), batch))
-			batch_loss = train_batch(model, *batch, loss_fn, optimizer)
-			epoch_loss += batch_loss
-	epoch_loss /= batch_idx
+    return DataLoader('./shit_5-1.txt', 10, 2, post_processor)
 
-	return epoch_loss
 
-# def train_model(model: TypeFactoredLM, dl: DataLoader, loss_fn: MixedLoss, optimizer: Optimizer, num_epochs: int, device: str) -> :
+def train_batch(model: TypeFactoredLM, masked_words: LongTensor, true_words: LongTensor, types: LongTensor,
+                pad: LongTensor, masked_indices: LongTensor, loss_fn: MixedLoss,
+                optimizer: Optimizer) -> float:
+
+    # total num of samples
+    num_samples = masked_words.shape[0] * masked_words.shape[1]
+
+    # forward pass and loss
+    word_preds_batch, type_preds_batch = model(masked_words, pad)
+    batch_loss = loss_fn(word_preds_batch.view(num_samples,-1), true_words.flatten(),
+                         type_preds_batch.view(num_samples, -1), types.flatten(), masked_indices)
+
+    # backprop
+    batch_loss.backward()
+    optimizer.step()
+    optimizer.zero_grad()
+
+    return batch_loss.item()
+
+
+def train_nbatches(model: TypeFactoredLM, dl: DataLoader, loss_fn: MixedLoss, optimizer: Optimizer, nbatches: int,
+                   device: str) -> float:
+    epoch_loss = 0.
+
+    for batch_idx in range(nbatches):
+        batch = dl.get_processed_batch()
+        words_input, words_truth, types, pad, words_mask = list(map(lambda x: x.to(device), batch))
+        batch_loss = train_batch(model, words_input, words_truth, types, pad, words_mask, loss_fn, optimizer)
+        epoch_loss += batch_loss
+    epoch_loss /= batch_idx
+
+    return epoch_loss
+
+
+# def train_model(model: TypeFactoredLM, dl: DataLoader, loss_fn: MixedLoss, optimizer: Optimizer,
+# num_epochs: int, device: str) -> :
 # 	print('\nStarted training')
 # 	losses = []
 # 	for epoch in range(num_epochs):
