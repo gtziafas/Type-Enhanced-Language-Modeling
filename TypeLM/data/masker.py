@@ -9,11 +9,11 @@ ints = List[int]
 
 
 def mask_indices(seq: ints, random_chance: float) -> ints:
-    return [0 if random() < random_chance else 1 for _ in range(len(seq))]
+    return [1 if random() < random_chance else 0 for _ in range(len(seq))]
 
 
 def mask_sampling(seq: ints, masked_indices: ints, sampling_strategy: Callable[[int], int]) -> ints:
-    return [sampling_strategy(t) if masked_indices[i] == 0 else t for i, t in enumerate(seq)]
+    return [sampling_strategy(t) if masked_indices[i] == 1 else t for i, t in enumerate(seq)]
 
 
 def random_replace(x: int, mask_token: int, mask_chance: float, keep_chance: float, replacement: ints) -> int:
@@ -21,7 +21,7 @@ def random_replace(x: int, mask_token: int, mask_chance: float, keep_chance: flo
 
 
 def unmask_indices(seq: ints, masks: ints, unpredictable: Set[int]) -> ints:
-    return [m if seq[i] not in unpredictable else 1 for i, m in enumerate(masks)]
+    return [m if seq[i] not in unpredictable else 0 for i, m in enumerate(masks)]
 
 
 class RandomReplacer(object):
