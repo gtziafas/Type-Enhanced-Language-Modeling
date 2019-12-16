@@ -1,8 +1,6 @@
-from typing import Tuple, List, Iterator
+from typing import Iterator, Callable, Any
 from random import sample
-
-Sample = Tuple[List[int], List[int]]
-Samples = List[Sample]
+from TypeLM.utils.imports import Sample, Samples
 
 
 def parse(line: str) -> Sample:
@@ -17,12 +15,13 @@ def shuffle_chunk(chunk: Samples) -> Samples:
 
 
 class DataLoader(object):
-    def __init__(self, filepath: str, chunk_size: int, batch_size: int):
+    def __init__(self, filepath: str, chunk_size: int, batch_size: int, post_proc: Callable[[Samples], Any]):
         self.filepath = filepath
         self.line_iterator = open(self.filepath, 'r')
         self.chunk_size = chunk_size
         self.batch_size = batch_size
         self.chunk = self.get_contiguous_chunk()
+        self.post_proc = post_proc
 
     def get_next_line(self) -> str:
         try:
@@ -43,3 +42,6 @@ class DataLoader(object):
 
     def get_batch(self) -> Samples:
         return [self.__next__() for _ in range(self.batch_size)]
+
+    def get_processed_batch(self) -> Any:
+        return self.post_proc(self.get_batch())

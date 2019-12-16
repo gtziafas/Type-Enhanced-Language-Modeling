@@ -1,11 +1,9 @@
-from typing import Set, List, Tuple, Callable
+from typing import Set, Tuple, Callable
 from random import random, choice
 
 from TypeLM.data.tokenizer import default_tokenizer, Indexer
-
+from TypeLM.utils.imports import ints
 from TypeLM.utils.token_definitions import MASK
-
-ints = List[int]
 
 
 def mask_indices(seq: ints, random_chance: float) -> ints:
