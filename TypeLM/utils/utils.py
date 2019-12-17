@@ -1,5 +1,20 @@
 from TypeLM.utils.imports import *
-from random import random
+
+
+def type_accuracy(predictions: LongTensor, truth: LongTensor,
+                  ignore_idx: int) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+    correct_items = torch.ones_like(predictions)
+    correct_items[predictions != truth] = 0
+    correct_items[truth == ignore_idx] = 1
+
+    correct_sentences = correct_items.prod(dim=1)
+    num_correct_sentences = correct_sentences.sum().item()
+
+    num_correct_items = correct_items.sum().item()
+    num_masked_items = len(truth[truth == ignore_idx])
+
+    return (predictions.shape[0], num_correct_sentences), \
+           (predictions.shape[0] * predictions.shape[1] - num_masked_items, num_correct_items - num_masked_items)
 
 
 def positional_encoding(b: int, n: int, d_model: int, freq: int = 10000, device: str = 'cpu',
