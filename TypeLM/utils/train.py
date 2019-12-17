@@ -76,3 +76,57 @@ def train_nbatches(model: TypeFactoredLM, dl: DataLoader, loss_fn: MixedLoss, op
 # 	return losses 
 
 
+def eval_batch(model: TypeFactoredLM, masked_words: LongTensor, true_words: LongTensor, types: LongTensor,
+                pad: LongTensor, masked_indices: LongTensor, loss_fn: MixedLoss) -> float:
+    model.eval()
+
+    num_samples = X_batch.shape[0] * X_batch.shape[1]
+
+    word_preds_batch, type_preds_batch = model(masked_words, pad)
+    batch_loss = loss_fn(word_preds_batch.view(num_samples,-1), true_words.flatten(),
+                        type_preds_batch.view(num_samples, -1), types.flatten(), masked_indices)
+
+    return batch_loss.item()
+
+
+def eval_nbatches(model: TypeFactoredLM, dl: DataLoader, loss_fn: MixedLoss, nbatches: int, device: str) -> float:
+    epoch_loss = 0.
+
+    for batch_idx in range(nbatches):
+        batch = dl.get_processed_batch()
+        words_input, words_truth, types, pad, words_mask = list(map(lambda x: x.to(device), batch))
+        batch_loss = eval_batch(model, words_input, words_truth, types, pad, words_mask, loss_fn)
+        epoch_loss += batch_idx
+    epoch_loss /= batch_idx
+    model.train()
+    
+    return epoch_loss
+
+def type_predictions_accuracy(type_preds: LongTensor, true_types: LongTensor, ignore_idx: int) -> Tuple[int, int]:
+    correct_types = torch.ones_like(type_preds)
+    correct_types[type_preds != true_types] = 0
+    correct_types[true_types == ignore_idx] = 1 
+
+    num_correct_types = correct_types.sum().item()
+    num_masked_types = len(true_types[true_types == ignore_idx])
+
+    # total number of non-ignored types 
+    total = type_preds.shape[0] * type_preds.shape[1] - num_masked_types
+
+    # total number of correctly predicted types 
+    num_correct_types -= num_masked_types
+
+    return total, num_correct_types
+
+
+def measure_type_predictions_accuracy(model: TypeFactoredLM, dl: DataLoader, nbatches: int) -> float:
+    correct = 0.
+    total = 0.
+    for batch_idx in range(nbatches):
+        batch = dl.get_processed_batch()
+        words_input, words_truth, types, pad, words_mask = list(map(lambda x: x.to(device), batch))
+        word_preds_batch, type_preds_batch = model(masked_words, pad)
+        local_total, local_correct = type_predictions_accuracy(type_preds_batch.argmax(dim=-1), types, ignore_idx=0)
+        correct += local_correct
+        total += local_total
+    return correct / total
