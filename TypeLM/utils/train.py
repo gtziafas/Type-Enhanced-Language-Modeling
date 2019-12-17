@@ -1,4 +1,5 @@
-from TypeLM.utils.imports import * 
+from TypeLM.utils.imports import *
+from TypeLM.utils.utils import type_accuracy
 from TypeLM.model.loss import MixedLoss
 from TypeLM.model.type_factored_lm import TypeFactoredLM
 from TypeLM.data.loader import DataLoader
@@ -7,6 +8,9 @@ from TypeLM.data.masker import default_masker
 from torch.optim import Optimizer
 
 from torch.nn.utils.rnn import pad_sequence as _pad_sequence
+
+
+two_ints = Tuple[int, int]
 
 
 def pad_sequence(x):
@@ -31,13 +35,15 @@ def default_dataloader():
 
 def train_batch(model: TypeFactoredLM, masked_words: LongTensor, true_words: LongTensor, types: LongTensor,
                 pad: LongTensor, masked_indices: LongTensor, loss_fn: MixedLoss,
-                optimizer: Optimizer) -> float:
+                optimizer: Optimizer) -> Tuple[float, two_ints, two_ints]:
+    model.train()
 
     # total num of samples
     num_samples = masked_words.shape[0] * masked_words.shape[1]
 
     # forward pass and loss
     word_preds, type_preds = model(masked_words, pad)
+    sent_stats, t_stats = type_accuracy(type_preds, types, 0)
     batch_loss = loss_fn(word_preds.view(num_samples, -1), true_words.flatten(),
                          type_preds.view(num_samples, -1), types.flatten(), masked_indices)
 
@@ -46,7 +52,7 @@ def train_batch(model: TypeFactoredLM, masked_words: LongTensor, true_words: Lon
     optimizer.step()
     optimizer.zero_grad()
 
-    return batch_loss.item()
+    return batch_loss.item(), sent_stats, t_stats
 
 
 def train_batches(model: TypeFactoredLM, dl: DataLoader, loss_fn: MixedLoss, optimizer: Optimizer, num_batches: int,
@@ -101,32 +107,3 @@ def eval_nbatches(model: TypeFactoredLM, dl: DataLoader, loss_fn: MixedLoss, nba
     model.train()
     
     return epoch_loss
-
-def type_predictions_accuracy(type_preds: LongTensor, true_types: LongTensor, ignore_idx: int) -> Tuple[int, int]:
-    correct_types = torch.ones_like(type_preds)
-    correct_types[type_preds != true_types] = 0
-    correct_types[true_types == ignore_idx] = 1 
-
-    num_correct_types = correct_types.sum().item()
-    num_masked_types = len(true_types[true_types == ignore_idx])
-
-    # total number of non-ignored types 
-    total = type_preds.shape[0] * type_preds.shape[1] - num_masked_types
-
-    # total number of correctly predicted types 
-    num_correct_types -= num_masked_types
-
-    return total, num_correct_types
-
-
-def measure_type_predictions_accuracy(model: TypeFactoredLM, dl: DataLoader, nbatches: int) -> float:
-    correct = 0.
-    total = 0.
-    for batch_idx in range(nbatches):
-        batch = dl.get_processed_batch()
-        words_input, words_truth, types, pad, words_mask = list(map(lambda x: x.to(device), batch))
-        word_preds_batch, type_preds_batch = model(masked_words, pad)
-        local_total, local_correct = type_predictions_accuracy(type_preds_batch.argmax(dim=-1), types, ignore_idx=0)
-        correct += local_correct
-        total += local_total
-    return correct / total
