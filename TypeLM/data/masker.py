@@ -57,7 +57,7 @@ class Masker(object):
         return masked, unmask_indices(masked, indices, self.unpredictable)
 
 
-def default_masker():
+def default_masker() -> Masker:
     tokenizer = default_tokenizer()
     indexer = Indexer(tokenizer)
     return Masker(outer_chance=0.15, mask_token=indexer.index_word(MASK), inner_chance=0.9, keep_chance=0.5,
