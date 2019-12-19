@@ -65,7 +65,14 @@ def main():
     dl = default_dataloader()
 
     num_epochs = 100
+    num_sentences = 67010114
+    batch_size = 128
+    nbatches_per_epoch = num_sentences // batch_size
 
     for epoch in range(num_epochs):
-        loss, s_acc, w_acc = train_batches(model, dl, loss_fn, opt, 20, 'cuda')
+        loss, s_acc, w_acc = train_batches(model, dl, loss_fn, opt, nbatches_per_epoch, 'cuda')
         print(loss, s_acc, w_acc)
+
+
+if __name__ == "__main__":
+  main()
