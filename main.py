@@ -2,10 +2,14 @@ from TypeLM.model.train import *
 from TypeLM.model.masked_encoder import EncoderLayer, Encoder
 import sys
 
-def default_dataloader(path: str = '/data/s3913171/Lassy-Large/out.txt', chunk_size = 10240, batch_size=128) -> DataLoader:
+
+def default_dataloader(path: str = '/data/s3913171/Lassy-Large/out.txt', chunk_size: int = 10240,
+                       batch_size: int = 128, len_threshold: int = 100) -> DataLoader:
     masker = default_masker()
 
     def post_processor(sentences: Samples) -> Tuple[LongTensor, LongTensor, LongTensor, LongTensor, LongTensor]:
+        sentences = list(filter(lambda sentence: len(sentence[0] < len_threshold), sentences))
+
         true_words, types = list(zip(*sentences))
         masked_words, masked_indices = list(zip(*list(map(masker, true_words))))
         masked_words = pad_sequence(list(map(LongTensor, masked_words)))
