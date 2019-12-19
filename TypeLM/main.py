@@ -1,8 +1,8 @@
 from TypeLM.model.train import *
 from TypeLM.model.masked_encoder import EncoderLayer, Encoder
+import sys
 
-
-def default_dataloader(path: str = './moved/out/txt', chunk_size = 10240, batch_size=128) -> DataLoader:
+def default_dataloader(path: str = '/data/s3913171/Lassy-Large/out.txt', chunk_size = 10240, batch_size=128) -> DataLoader:
     masker = default_masker()
 
     def post_processor(sentences: Samples) -> Tuple[LongTensor, LongTensor, LongTensor, LongTensor, LongTensor]:
@@ -55,7 +55,6 @@ def default_model() -> TypeFactoredLM:
 
 
 def main():
-
     model = default_model()
     opt = torch.optim.AdamW(model.parameters())
     x_entropy = torch.nn.CrossEntropyLoss
@@ -66,13 +65,15 @@ def main():
 
     num_epochs = 100
     num_sentences = 67010114
-    batch_size = 128
+    batch_size = 128 
     nbatches_per_epoch = num_sentences // batch_size
 
+    print('\nStarted training..') 
+    sys.stdout.flush()
     for epoch in range(num_epochs):
         loss, s_acc, w_acc = train_batches(model, dl, loss_fn, opt, nbatches_per_epoch, 'cuda')
         print(loss, s_acc, w_acc)
+        sys.stdout.flush()
 
-
-if __name__ == "__main__":
-  main()
+if __name__ == "__main__": 
+   main()
