@@ -1,5 +1,6 @@
 from TypeLM.model.train import *
 from TypeLM.model.masked_encoder import EncoderLayer, Encoder
+from TypeLM.utils.utils import CustomLRScheduler, linear_scheme
 import sys
 
 
@@ -58,26 +59,41 @@ def default_model() -> TypeFactoredLM:
                           ).to(device)
 
 
-def main():
-    model = default_model()
-    opt = torch.optim.AdamW(model.parameters())
+def default_loss() -> MixedLoss:
+    type_vocab_size, word_vocab_size = get_vocab_stats()
     x_entropy = torch.nn.CrossEntropyLoss
     loss_kwargs = {'ignore_index': 0, 'reduction': 'mean'}
-    loss_fn = MixedLoss(x_entropy, x_entropy, loss_kwargs, loss_kwargs, 0.15)
+    return MixedLoss(x_entropy, x_entropy, loss_kwargs, loss_kwargs, 1)
 
-    dl = default_dataloader()
+
+def main():
+
+    model = default_model()
+
+    batch_size = 256
+
+    _opt = torch.optim.AdamW(model.parameters(), weight_decay=1e-02)
+    opt = CustomLRScheduler(_opt, [linear_scheme], warmup_steps=10000, goal_lr=1e-04, decrease_rate=1e-10, min_lr=1e-06)
+
+    loss_fn = default_loss()
+
+    dl = default_dataloader(batch_size=batch_size)
 
     num_epochs = 100
     num_sentences = 67010114
-    batch_size = 128 
     nbatches_per_epoch = num_sentences // batch_size
+
+    norm_factor = 100
 
     print('\nStarted training..') 
     sys.stdout.flush()
-    for epoch in range(num_epochs):
-        loss, s_acc, w_acc = train_batches(model, dl, loss_fn, opt, nbatches_per_epoch, 'cuda')
-        print(loss, s_acc, w_acc)
+    for epoch in range(num_epochs * norm_factor):
+        loss, s_acc, w_acc = train_batches(model, dl, loss_fn, opt, nbatches_per_epoch // norm_factor, 'cuda')
+        print('\t' + ' '.join(map(str, [loss, s_acc, w_acc])))
+        if not epoch % norm_factor:
+            print('=' * 64)
         sys.stdout.flush()
+
 
 if __name__ == "__main__": 
    main()
