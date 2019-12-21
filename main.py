@@ -9,7 +9,7 @@ def default_dataloader(path: str = '/data/s3913171/Lassy-Large/out.txt', chunk_s
     masker = default_masker()
 
     def post_processor(sentences: Samples) -> Tuple[LongTensor, LongTensor, LongTensor, LongTensor, LongTensor]:
-        sentences = list(filter(lambda sentence: len(sentence[0] < len_threshold), sentences))
+        sentences = list(filter(lambda sentence: len(sentence[0]) < len_threshold, sentences))
 
         true_words, types = list(zip(*sentences))
         masked_words, masked_indices = list(zip(*list(map(masker, true_words))))
