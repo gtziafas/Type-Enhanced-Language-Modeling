@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name="bubbleshort"
-#SBATCH --time=24:00:00
+#SBATCH --time=72:00:00
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:v100:1  
 
