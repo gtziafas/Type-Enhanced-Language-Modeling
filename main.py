@@ -70,7 +70,7 @@ def main():
 
     model = default_model()
 
-    batch_size = 256
+    batch_size = 128
 
     _opt = torch.optim.AdamW(model.parameters(), weight_decay=1e-02)
     opt = CustomLRScheduler(_opt, [linear_scheme], warmup_steps=10000, goal_lr=1e-04, decrease_rate=1e-10, min_lr=1e-06)
@@ -90,7 +90,7 @@ def main():
     for epoch in range(num_epochs * print_every):
         loss, s_acc, w_acc = train_batches(model, dl, loss_fn, opt, num_minibatches_in_batch, 'cuda')
         per = (epoch + 1) * num_minibatches_in_batch / num_batches_in_dataset
-        print('\t' + ' '.join(['{:.2f}', '{:.4f}', '{:.4f}']).format(loss, s_acc, w_acc) + '\t' + '{:.2f}'.format(per))
+        print('\t' + ' '.join(['{:.2f}', '{:.4f}', '{:.4f}']).format(loss, s_acc, w_acc) + '\t' + '{:.3f}'.format(per))
         sys.stdout.flush()
 
 
