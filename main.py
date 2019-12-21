@@ -79,19 +79,18 @@ def main():
 
     dl = default_dataloader(batch_size=batch_size)
 
-    num_epochs = 100
+    num_epochs = 40
     num_sentences = 67010114
-    nbatches_per_epoch = num_sentences // batch_size
-
-    norm_factor = 100
+    num_batches_in_dataset = num_sentences // batch_size
+    print_every = 10000
+    num_minibatches_in_batch = num_batches_in_dataset // print_every
 
     print('\nStarted training..') 
     sys.stdout.flush()
-    for epoch in range(num_epochs * norm_factor):
-        loss, s_acc, w_acc = train_batches(model, dl, loss_fn, opt, nbatches_per_epoch // norm_factor, 'cuda')
-        print('\t' + ' '.join(map(str, [loss, s_acc, w_acc])))
-        if not epoch % norm_factor:
-            print('=' * 64)
+    for epoch in range(num_epochs * print_every):
+        loss, s_acc, w_acc = train_batches(model, dl, loss_fn, opt, num_minibatches_in_batch, 'cuda')
+        per = (epoch + 1) * num_minibatches_in_batch / num_batches_in_dataset
+        print('\t' + ' '.join(['{:.2f}', '{:.4f}', '{:.4f}']).format(loss, s_acc, w_acc) + '\t' + '{:.2f}'.format(per))
         sys.stdout.flush()
 
 
