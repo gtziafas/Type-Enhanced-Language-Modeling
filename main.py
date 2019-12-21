@@ -82,7 +82,7 @@ def main():
     num_epochs = 40
     num_sentences = 67010114
     num_batches_in_dataset = num_sentences // batch_size
-    print_every = 10000
+    print_every = 1000
     num_minibatches_in_batch = num_batches_in_dataset // print_every
 
     print('\nStarted training..') 
