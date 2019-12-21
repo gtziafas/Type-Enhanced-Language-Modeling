@@ -41,3 +41,40 @@ def count_parameters(model: Module) -> int:
                 print(name, ':', num_param)
             total_param += num_param
     return total_param
+
+
+class CustomLRScheduler(object):
+    def __init__(self, optimizer: torch.optim.Optimizer, update_fns: Sequence[Callable[[int, Any], float]],
+                 **kwargs: Any) -> None:
+        assert len(update_fns) == len(optimizer.param_groups)
+        self.opt = optimizer
+        self._step = 0
+        self.update_fns = update_fns
+        self.lrs = [None for _ in range(len(self.opt.param_groups))]
+        self.__dict__.update(kwargs)
+
+    def step(self) -> None:
+        self._step += 1
+        self.lrs = self.update(step=self._step, **{k: v for k, v in self.__dict__.items() if k not in
+                                                   ('_step', 'opt', 'update_fns', 'lrs')})
+        for i, p in enumerate(self.opt.param_groups):
+            p['lr'] = self.lrs[i]
+        self.opt.step()
+
+    def zero_grad(self) -> None:
+        self.opt.zero_grad()
+
+    def update(self, step: int, **kwargs) -> List[float]:
+        return [update_fn(step, **kwargs) for update_fn in self.update_fns]
+
+
+def noam_scheme(_step: int, d_model: int, warmup_steps: int, batch_size: int=2048) -> float:
+    return d_model**-0.5 * min(_step**-0.5, _step*warmup_steps**-1.5) * batch_size/2048
+
+
+def linear_scheme(_step: int, warmup_steps: int, goal_lr: float, decrease_rate: int, min_lr: float) -> float:
+    def threshold(x):
+        return x if x > min_lr else min_lr
+
+    return goal_lr * _step/warmup_steps if _step < warmup_steps \
+        else threshold(goal_lr - decrease_rate * (_step - warmup_steps))
