@@ -54,7 +54,7 @@ class Masker(object):
     def __call__(self, words: ints) -> Tuple[ints, ints]:
         indices = mask_indices(words, self.mask_chance)
         masked = mask_sampling(words, indices, self.random_replacer)
-        return masked, unmask_indices(masked, indices, self.unpredictable)
+        return masked, unmask_indices(words, indices, self.unpredictable)
 
 
 def default_masker() -> Masker:
