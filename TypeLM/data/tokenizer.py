@@ -16,7 +16,7 @@ _files = list(map(lambda x: './moved/' + x,
                            range(100)))
                   ))
 
-_num_cores = cpu_count()
+_num_cores = cpu_count() - 1
 
 
 class Tokenizer(object):
@@ -38,8 +38,8 @@ class Tokenizer(object):
     def tokenize_type(self, type_: str) -> str:
         return type_ if type_ in self.types else PAD
 
-    def tokenize_sentence(self, sentence: str) -> List[str]:
-        preprocessed = word_preprocess(sentence)
+    def tokenize_sentence(self, sentence: str, add_eos: bool = False) -> List[str]:
+        preprocessed = word_preprocess(sentence) + [EOS] if add_eos else word_preprocess(sentence)
         return list(map(self.tokenize_word, preprocessed))
 
     def tokenize_pair(self, pair: Tuple[str, str]) -> Tuple[str, str]:
