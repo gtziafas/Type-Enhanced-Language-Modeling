@@ -2,7 +2,7 @@ from TypeLM.utils.imports import *
 from TypeLM.utils.utils import type_accuracy
 from TypeLM.model.loss import MixedLoss
 from TypeLM.model.type_factored_lm import TypeFactoredLM
-from TypeLM.data.loader import DataLoader
+from TypeLM.data.loader import LazyLoader
 from TypeLM.data.tokenizer import default_tokenizer, Indexer
 from TypeLM.data.masker import default_masker
 
@@ -40,7 +40,7 @@ def train_batch(model: TypeFactoredLM, masked_words: LongTensor, true_words: Lon
     return batch_loss.item(), sent_stats, t_stats
 
 
-def train_batches(model: TypeFactoredLM, dl: DataLoader, loss_fn: MixedLoss, optimizer: Optimizer, num_batches: int,
+def train_batches(model: TypeFactoredLM, dl: LazyLoader, loss_fn: MixedLoss, optimizer: Optimizer, num_batches: int,
                   device: str) -> Tuple[float, float, float]:
     batch_idx, epoch_loss = 0, 0.
     sum_sent, sum_cor_sent, sum_words, sum_cor_words = 0, 0, 0, 0
