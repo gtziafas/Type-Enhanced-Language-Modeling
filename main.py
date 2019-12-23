@@ -5,25 +5,25 @@ import sys
 
 
 def default_dataloader(path: str = '/data/s3913171/Lassy-Large/out.txt', chunk_size: int = 10240,
-                       batch_size: int = 128, len_threshold: int = 100) -> DataLoader:
+                       batch_size: int = 128, len_threshold: int = 100) -> LazyLoader:
     masker = default_masker()
 
     def post_processor(sentences: Samples) -> Tuple[LongTensor, LongTensor, LongTensor, LongTensor, LongTensor]:
         sentences = list(filter(lambda sentence: len(sentence[0]) < len_threshold, sentences))
 
         true_words, types = list(zip(*sentences))
+        lens = list(map(len, true_words))
         masked_words, masked_indices = list(zip(*list(map(masker, true_words))))
         masked_words = pad_sequence(list(map(LongTensor, masked_words)))
         true_words = pad_sequence(list(map(LongTensor, true_words)))
         types = pad_sequence(list(map(LongTensor, types)))
         masked_indices = pad_sequence(list(map(LongTensor, masked_indices)))
-        lens = list(map(len, sentences))
         word_pads = torch.ones(true_words.shape[0], true_words.shape[1], true_words.shape[1])
         for i, l in enumerate(lens):
             word_pads[i, :, l::] = 0
         return masked_words, true_words, types, word_pads, masked_indices
 
-    return DataLoader(path, chunk_size, batch_size, post_processor)
+    return LazyLoader(path, chunk_size, batch_size, post_processor)
 
 
 def get_vocab_stats() -> two_ints:
