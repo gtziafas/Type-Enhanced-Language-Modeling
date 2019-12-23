@@ -3,8 +3,7 @@ from TypeLM.utils.utils import type_accuracy
 from TypeLM.model.loss import MixedLoss
 from TypeLM.model.type_factored_lm import TypeFactoredLM
 from TypeLM.data.loader import LazyLoader
-from TypeLM.data.tokenizer import default_tokenizer, Indexer
-from TypeLM.data.masker import default_masker
+
 
 from torch.optim import Optimizer
 
