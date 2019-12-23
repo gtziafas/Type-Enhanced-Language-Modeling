@@ -35,7 +35,7 @@ def eval_batches(model: TypeFactoredLM, dl: EagerLoader, loss_fn: MixedLoss, dev
     batch_idx, epoch_loss = 0, 0.
     sum_sent, sum_cor_sent, sum_words, sum_cor_words = 0, 0, 0, 0
 
-    dl.make_line_iterator()
+    dl.line_iterator = dl.make_line_iterator()
 
     while True:
         try:
