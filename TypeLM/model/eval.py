@@ -49,6 +49,7 @@ def eval_batches(model: TypeFactoredLM, dl: EagerLoader, loss_fn: MixedLoss, dev
         sum_cor_sent += num_cor_sent
         sum_words += num_words
         sum_cor_words += num_cor_words
+        batch_idx += 1
     epoch_loss /= (batch_idx+1)
 
     return epoch_loss, sum_cor_sent/sum_sent, sum_cor_words/sum_words
