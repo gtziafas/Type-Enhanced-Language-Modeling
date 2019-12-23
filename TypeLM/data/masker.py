@@ -63,3 +63,7 @@ def default_masker() -> Masker:
     return Masker(outer_chance=0.15, mask_token=indexer.index_word(MASK), inner_chance=0.9, keep_chance=0.5,
                   replacements=list(set(indexer.word_indices.values()) - indexer.masked_words),
                   unpredictable=indexer.masked_words)
+
+
+def non_masker() -> Callable[[ints], Tuple[ints, ints]]:
+    return lambda seq: (seq, [0 for _ in range(len(seq))])
