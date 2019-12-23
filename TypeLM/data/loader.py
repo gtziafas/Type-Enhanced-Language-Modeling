@@ -2,7 +2,6 @@ from typing import Iterator, Callable, Any
 from random import sample
 from TypeLM.utils.imports import Sample, Samples
 from abc import abstractmethod, ABC
-from itertools import cycle
 
 
 def parse(line: str) -> Sample:
@@ -65,17 +64,28 @@ class LazyLoader(DataLoader):
 
 class EagerLoader(DataLoader):
     def __init__(self, filepath: str, batch_size: int, post_proc: Callable[[Samples], Any]):
-        self.filepath = filepath
-        with open(self.filepath, 'r') as f:
-            self.line_iterator = cycle(list(map(parse, f.readlines())))
+        with open(filepath, 'r') as f:
+            self.lines = list(map(parse, f.readlines()))
+        self.line_iterator = self.make_line_iterator()
         self.batch_size = batch_size
         self.post_proc = post_proc
+
+    def make_line_iterator(self):
+        return iter(self.lines)
 
     def __next__(self) -> Sample:
         return self.line_iterator.__next__()
 
     def get_batch(self) -> Samples:
-        return [self.__next__() for _ in range(self.batch_size)]
+        batch = []
+        for i in range(self.batch_size):
+            try:
+                batch.append(self.__next__())
+            except StopIteration:
+                break
+        if i == 0:
+            raise StopIteration
+        return batch
 
     def get_processed_batch(self) -> Any:
         return self.post_proc(self.get_batch())
