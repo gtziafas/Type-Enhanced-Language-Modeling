@@ -124,9 +124,8 @@ def main():
             loss, s_acc, w_acc = eval_batches(model, eval_dl, loss_fn, 'cuda')
             print('\t' + ' '.join(['{:.2f}', '{:.4f}', '{:.4f}']).format(loss, s_acc, w_acc)
                   + '\t' + '{:.3f}'.format(per))
+            print('-' * 64)
             sys.stdout.flush()
-
-
 
 
 if __name__ == "__main__": 
