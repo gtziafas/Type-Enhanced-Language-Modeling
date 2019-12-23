@@ -25,8 +25,7 @@ def eval_batch(model: TypeFactoredLM, masked_words: LongTensor, true_words: Long
     # forward pass and loss
     word_preds, type_preds = model(masked_words, pad)
     sent_stats, t_stats = type_accuracy(type_preds.argmax(dim=-1), types, 0)
-    batch_loss = loss_fn(word_preds.view(num_samples, -1), true_words.flatten(),
-                         type_preds.view(num_samples, -1), types.flatten(), masked_indices.view(-1))
+    batch_loss = loss_fn.type_loss(type_preds.view(num_samples, -1), types.flatten())
 
     return batch_loss.item(), sent_stats, t_stats
 
@@ -50,6 +49,7 @@ def eval_batches(model: TypeFactoredLM, dl: EagerLoader, loss_fn: MixedLoss, dev
         sum_cor_sent += num_cor_sent
         sum_words += num_words
         sum_cor_words += num_cor_words
+        batch_idx += 1
     epoch_loss /= (batch_idx+1)
 
     return epoch_loss, sum_cor_sent/sum_sent, sum_cor_words/sum_words
