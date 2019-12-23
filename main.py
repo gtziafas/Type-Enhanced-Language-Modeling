@@ -1,6 +1,9 @@
 from TypeLM.model.train import *
+from TypeLM.model.eval import *
 from TypeLM.model.masked_encoder import EncoderLayer, Encoder
 from TypeLM.utils.utils import CustomLRScheduler, linear_scheme
+from TypeLM.data.masker import default_masker, non_masker
+from TypeLM.data.tokenizer import default_tokenizer, Indexer
 import sys
 
 
@@ -24,6 +27,29 @@ def default_dataloader(path: str = '/data/s3913171/Lassy-Large/out.txt', chunk_s
         return masked_words, true_words, types, word_pads, masked_indices
 
     return LazyLoader(path, chunk_size, batch_size, post_processor)
+
+
+def default_evaluator(path: str = '/data/s3913171/Lassy-Large/lassy_small.txt', batch_size: int = 128,
+                      len_threshold: int = 100) -> EagerLoader:
+
+    masker = non_masker()
+
+    def post_processor(sentences: Samples) -> Tuple[LongTensor, LongTensor, LongTensor, LongTensor, LongTensor]:
+        sentences = list(filter(lambda sentence: len(sentence[0]) < len_threshold, sentences))
+
+        true_words, types = list(zip(*sentences))
+        lens = list(map(len, true_words))
+        masked_words, masked_indices = list(zip(*list(map(masker, true_words))))
+        masked_words = pad_sequence(list(map(LongTensor, masked_words)))
+        true_words = pad_sequence(list(map(LongTensor, true_words)))
+        types = pad_sequence(list(map(LongTensor, types)))
+        masked_indices = pad_sequence(list(map(LongTensor, masked_indices)))
+        word_pads = torch.ones(true_words.shape[0], true_words.shape[1], true_words.shape[1])
+        for i, l in enumerate(lens):
+            word_pads[i, :, l::] = 0
+        return masked_words, true_words, types, word_pads, masked_indices
+
+    return EagerLoader(path, batch_size, post_processor)
 
 
 def get_vocab_stats() -> two_ints:
@@ -60,7 +86,6 @@ def default_model() -> TypeFactoredLM:
 
 
 def default_loss() -> MixedLoss:
-    type_vocab_size, word_vocab_size = get_vocab_stats()
     x_entropy = torch.nn.CrossEntropyLoss
     loss_kwargs = {'ignore_index': 0, 'reduction': 'mean'}
     return MixedLoss(x_entropy, x_entropy, loss_kwargs, loss_kwargs, 1)
@@ -77,7 +102,8 @@ def main():
 
     loss_fn = default_loss()
 
-    dl = default_dataloader(batch_size=batch_size)
+    train_dl = default_dataloader(batch_size=batch_size)
+    eval_dl = default_evaluator()
 
     num_epochs = 40
     num_sentences = 67010114
@@ -88,10 +114,19 @@ def main():
     print('\nStarted training..') 
     sys.stdout.flush()
     for epoch in range(num_epochs * print_every):
-        loss, s_acc, w_acc = train_batches(model, dl, loss_fn, opt, num_minibatches_in_batch, 'cuda')
+        loss, s_acc, w_acc = train_batches(model, train_dl, loss_fn, opt, num_minibatches_in_batch, 'cuda')
         per = (epoch + 1) * num_minibatches_in_batch / num_batches_in_dataset
         print('\t' + ' '.join(['{:.2f}', '{:.4f}', '{:.4f}']).format(loss, s_acc, w_acc) + '\t' + '{:.3f}'.format(per))
         sys.stdout.flush()
+        if not epoch % 10:
+            print('-' * 64)
+            print('\t {} steps'.format((epoch+1)*num_minibatches_in_batch))
+            loss, s_acc, w_acc = eval_batches(model, eval_dl, loss_fn, 'cuda')
+            print('\t' + ' '.join(['{:.2f}', '{:.4f}', '{:.4f}']).format(loss, s_acc, w_acc)
+                  + '\t' + '{:.3f}'.format(per))
+            sys.stdout.flush()
+
+
 
 
 if __name__ == "__main__": 
