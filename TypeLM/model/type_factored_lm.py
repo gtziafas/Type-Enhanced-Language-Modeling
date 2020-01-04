@@ -1,28 +1,31 @@
 from TypeLM.utils.imports import *
-from TypeLM.utils.utils import positional_encoding, count_parameters
+from TypeLM.utils.utils import PositionalEncoder, count_parameters
 from TypeLM.model.masked_encoder import EncoderLayer, LayerWeighter, Encoder
 
 
 class TypeFactoredLM(Module):
     def __init__(self, masked_encoder: Module, type_classifier: Module,
                  masked_encoder_kwargs: Dict, num_words: int, type_classifier_kwargs: Dict,
-                 padding_idx: int = 0) -> None:
+                 padding_idx: int = 0, dropout_rate: float = 0.1) -> None:
         super(TypeFactoredLM, self).__init__()
         self.masked_encoder = masked_encoder(**masked_encoder_kwargs)
         self.layer_weighter = LayerWeighter(masked_encoder_kwargs['num_layers']-2)
         self.type_classifier = type_classifier(**type_classifier_kwargs)
         self.word_embedder = Embedding(num_embeddings=num_words, embedding_dim=masked_encoder_kwargs['d_model'],
                                        padding_idx=padding_idx)
+        self.positional_encoder = PositionalEncoder(dropout_rate)
 
-    def forward(self, word_ids: LongTensor, msk: LongTensor) -> Tuple[Tensor, Tensor]:
+    def forward(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tuple[Tensor, Tensor]:
         word_embeds = self.word_embedder(word_ids)
         batch_size, num_words, d_model = word_embeds.shape[0:3]
-        positional_encodings = positional_encoding(b=batch_size, n=num_words, d_model=d_model,
-                                                   device=word_embeds.device.__str__())
+        positional_encodings = self.positional_encoder(b=batch_size, n=num_words, d_model=d_model,
+                                                       device=word_embeds.device.__str__())
 
         word_embeds = word_embeds + positional_encodings
 
-        layer_outputs = self.masked_encoder.forward_all(word_embeds, msk)
+        import pdb
+        pdb.set_trace()
+        layer_outputs = self.masked_encoder.forward_all(word_embeds, pad_mask)
 
         weighted = self.layer_weighter(layer_outputs[1:-2])
         type_preds = self.type_classifier(weighted)
@@ -32,6 +35,17 @@ class TypeFactoredLM(Module):
 
     def word_classifier(self, final: Tensor) -> Tensor:
         return final@self.word_embedder.weight.transpose(1, 0)
+
+    def get_vectors(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
+        word_embeds = self.word_embedder(word_ids)
+        batch_size, num_words, d_model = word_embeds.shape[0:3]
+        positional_encodings = positional_encoding(b=batch_size, n=num_words, d_model=d_model,
+                                                   device=word_embeds.device.__str__())
+
+        word_embeds = word_embeds + positional_encodings
+
+        layer_outputs = self.masked_encoder.forward_all(word_embeds, pad_mask)
+        return layer_outputs[-1]
 
 
 def test():

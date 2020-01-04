@@ -17,17 +17,23 @@ def type_accuracy(predictions: LongTensor, truth: LongTensor,
            (predictions.shape[0] * predictions.shape[1] - num_masked_items, num_correct_items - num_masked_items)
 
 
-def positional_encoding(b: int, n: int, d_model: int, freq: int = 10000, device: str = 'cpu',
-                        dropout_rate: float = 0.1) -> Tensor:
+def positional_encoding(b: int, n: int, d_model: int, freq: int = 10000, device: str = 'cpu') -> Tensor:
     pe = torch.zeros(n, d_model, device=device)
     position = torch.arange(0, n, device=device, dtype=torch.float).unsqueeze(1)
     div_term = torch.exp(torch.arange(0, d_model, 2, device=device, dtype=torch.float) *
                          - (torch.log(torch.tensor(freq, dtype=torch.float, device=device)) / d_model))
     pe[:, 0::2] = torch.sin(position * div_term)
     pe[:, 1::2] = torch.cos(position * div_term)
-    pe = pe.repeat(b, 1, 1)
+    return pe.repeat(b, 1, 1)
 
-    return F.dropout(pe, dropout_rate)
+
+class PositionalEncoder(Module):
+    def __init__(self, dropout_rate: float = 0.1):
+        super(PositionalEncoder, self).__init__()
+        self.dropout = Dropout(p=dropout_rate)
+
+    def forward(self, b: int, n: int, d_model: int, freq: int = 1000, device: str = 'cpu'):
+        return self.dropout(positional_encoding(b, n, d_model, freq, device))
 
 
 def count_parameters(model: Module) -> int:

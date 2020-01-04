@@ -2,14 +2,13 @@ from TypeLM.utils.imports import *
 
 
 def multihead_attn_fn(queries: Tensor, keys: Tensor, values: Tensor,
-                      qts: tensor_maps, kts: tensor_maps, vts: tensor_maps, wo: tensor_map,
-                      mask: Optional[LongTensor] = None, dropout_rate: float = 0.1) -> Tensor:
+                      qts: ModuleList, kts: ModuleList, vts: ModuleList,
+                      mask: Optional[LongTensor] = None) -> Tensor:
     qs = [qt(queries) for qt in qts]
     ks = [kt(keys) for kt in kts]
     vs = [vt(values) for vt in vts]
     outputs = [scaled_dot_product(qs[i], ks[i], vs[i], mask) for i in range(len(qs))]
-    outputs = F.dropout(torch.cat(outputs, dim=-1), dropout_rate)
-    return wo(outputs)
+    return torch.cat(outputs, dim=-1)
 
 
 def scaled_dot_product(queries: Tensor, keys: Tensor, values: Tensor,
@@ -25,7 +24,7 @@ def scaled_dot_product(queries: Tensor, keys: Tensor, values: Tensor,
 
 
 class MultiHeadAttention(Module):
-    def __init__(self, num_heads: int, d_model: int, d_k: int, d_v: int) -> None:
+    def __init__(self, num_heads: int, d_model: int, d_k: int, d_v: int, dropout_rate: float = 0.1) -> None:
         super(MultiHeadAttention, self).__init__()
         self.q_transformations = ModuleList([Linear(in_features=d_model, out_features=d_k, bias=False)
                                              for _ in range(num_heads)])
@@ -34,11 +33,14 @@ class MultiHeadAttention(Module):
         self.v_transformations = ModuleList([Linear(in_features=d_model, out_features=d_v, bias=False)
                                              for _ in range(num_heads)])
         self.Wo = Linear(in_features=num_heads * d_v, out_features=d_model, bias=False)
+        self.dropout = Dropout(dropout_rate)
 
     def forward(self, queries: Tensor, keys: Tensor, values: Tensor,
                 mask: Optional[LongTensor] = None) -> Tensor:
-        return multihead_attn_fn(queries, keys, values, self.q_transformations, self.k_transformations,
-                                 self.v_transformations, self.Wo, mask)
+        mha = multihead_attn_fn(queries, keys, values, self.q_transformations, self.k_transformations,
+                                self.v_transformations, mask)
+        mha = self.dropout(mha)
+        return self.Wo(mha)
 
 
 class PositionWiseFeedForward(Module):
@@ -47,10 +49,10 @@ class PositionWiseFeedForward(Module):
         self.w_1 = Linear(d_model, d_ff)
         self.w_2 = Linear(d_ff, d_model)
         self.activation_fn = activation_fn
-        self.dropout_rate = dropout_rate
+        self.dropout = Dropout(dropout_rate)
 
     def forward(self, x):
         w1 = self.w_1(x)
-        w1 = F.dropout(self.activation_fn(w1), self.dropout_rate)
+        w1 = self.dropout(self.activation_fn(w1))
         
         return self.w_2(w1)
