@@ -39,8 +39,8 @@ class TypeFactoredLM(Module):
     def get_vectors(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
         word_embeds = self.word_embedder(word_ids)
         batch_size, num_words, d_model = word_embeds.shape[0:3]
-        positional_encodings = positional_encoding(b=batch_size, n=num_words, d_model=d_model,
-                                                   device=word_embeds.device.__str__())
+        positional_encodings = self.positional_encoder(b=batch_size, n=num_words, d_model=d_model,
+                                                       device=word_embeds.device.__str__())
 
         word_embeds = word_embeds + positional_encodings
 
