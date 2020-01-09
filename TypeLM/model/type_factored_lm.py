@@ -22,9 +22,6 @@ class TypeFactoredLM(Module):
                                                        device=word_embeds.device.__str__())
 
         word_embeds = word_embeds + positional_encodings
-
-        import pdb
-        pdb.set_trace()
         layer_outputs = self.masked_encoder.forward_all(word_embeds, pad_mask)
 
         weighted = self.layer_weighter(layer_outputs[1:-2])
