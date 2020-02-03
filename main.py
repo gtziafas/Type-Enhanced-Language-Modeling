@@ -102,6 +102,7 @@ def main():
                             decrease_rate=1e-11, min_lr=1e-07)
 
     loss_fn = default_loss()
+    # st_only_loss = torch.nn.CrossEntropyLoss(ignore_index=0, reduction='mean')
 
     train_dl = default_dataloader(batch_size=batch_size)
     eval_dl = default_evaluator()
@@ -122,6 +123,7 @@ def main():
         if not epoch % 10:
             print('-' * 64)
             print('\t {} steps'.format((epoch+1)*num_minibatches_in_batch))
+            # remember: if using mixed loss, replace loss_fn by loss_fn.type_loss
             loss, s_acc, w_acc = eval_batches(model, eval_dl, loss_fn, 'cuda')
             print('\t' + ' '.join(['{:.2f}', '{:.4f}', '{:.4f}']).format(loss, s_acc, w_acc)
                   + '\t' + '{:.3f}'.format(per))
