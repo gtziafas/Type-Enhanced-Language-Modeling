@@ -1,5 +1,4 @@
 from TypeLM.utils.imports import *
-from TypeLM.model.type_factored_lm import TypeFactoredLM
 
 def type_accuracy(predictions: LongTensor, truth: LongTensor,
                   ignore_idx: int) -> Tuple[Tuple[int, int], Tuple[int, int]]:
@@ -86,7 +85,7 @@ def linear_scheme(_step: int, warmup_steps: int, goal_lr: float, decrease_rate: 
         else threshold(goal_lr - decrease_rate * (_step - warmup_steps))
 
 
-def save_model(model: TypeFactoredLM, save_id: int, 
+def save_model(model: Module, save_id: int, 
                opt: Optimizer, num_epochs: int, loss: Tensor,
                data_dir = "./checkpoints",
                ) -> None:
@@ -104,7 +103,7 @@ def save_model(model: TypeFactoredLM, save_id: int,
     }, save_to)
 
 
-def load_model(model_path: str, model: TypeFactoredLM, opt: Optimizer) -> Tuple[TypeFactoredLM, Optimizer, int, Tensor]:
+def load_model(model_path: str, model: Module, opt: Optimizer) -> Tuple[Module, Optimizer, int, Tensor]:
     checkpoint = torch.load(model_path)
     model.load_state_dict(checkpoint['model_state_dict'])
     opt.load_state_dict(checkpoint['optimizer_state_dict'])
