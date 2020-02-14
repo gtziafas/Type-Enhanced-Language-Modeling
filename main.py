@@ -91,7 +91,7 @@ def default_loss() -> MixedLoss:
     return MixedLoss(x_entropy, x_entropy, loss_kwargs, loss_kwargs, 1)
 
 
-def main(save_id: str):
+def main(load_id: Optional[str], save_id: Optional[str]):
 
     model = default_model()
 
@@ -112,6 +112,10 @@ def main(save_id: str):
     print_every = 1000
     num_minibatches_in_batch = num_batches_in_dataset // print_every
 
+    if load_id is not None:
+        model, opt, pre_train_epochs, _ = load_model(model_path=load_id, model=model, opt=opt)
+        num_epochs += pre_train_epochs
+
     print('\nStarted training..') 
     sys.stdout.flush()
     for epoch in range(num_epochs * print_every):
@@ -127,7 +131,10 @@ def main(save_id: str):
                   + '\t' + '{:.3f}'.format(per))
             print('-' * 64)
             sys.stdout.flush()
-    save_model(model=model, save_id=save_id, opt=opt, num_epochs=num_epochs, loss=loss)
+    if save_id is not None:
+        save_model(model=model, save_id=save_id, opt=opt, num_epochs=num_epochs, loss=loss)
 
 if __name__ == "__main__": 
-   main()
+    save_id = sys.argv[1] if len(sys.argv)>1 else None
+    load_id = sys.argv[2] if len(sys.argv)>2 else None
+    main(save_id, load_id)

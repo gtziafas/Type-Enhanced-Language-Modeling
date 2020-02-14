@@ -88,9 +88,14 @@ def linear_scheme(_step: int, warmup_steps: int, goal_lr: float, decrease_rate: 
 
 def save_model(model: TypeFactoredLM, save_id: int, 
                opt: Optimizer, num_epochs: int, loss: Tensor,
-               data_dir = "./checkpoints/typeLM_",
+               data_dir = "./checkpoints",
                ) -> None:
-    save_to = data_dir + save_id + '.pth'
+    # create dir if not there 
+    import os 
+    if not os.path.exists(data_dir):
+        os.makedirs(data_dir)
+        
+    save_to = data_dir + 'TypeLM_' + save_id + '.pth'
     torch.save({
         'epoch'                 :   num_epochs,
         'loss'                  :   loss,
