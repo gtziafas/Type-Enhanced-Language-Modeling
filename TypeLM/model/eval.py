@@ -15,17 +15,17 @@ def pad_sequence(x):
     return _pad_sequence(x, batch_first=True, padding_value=0)
 
 
-def eval_batch(model: TypeFactoredLM, masked_words: LongTensor, true_words: LongTensor, types: LongTensor,
-                pad: LongTensor, masked_indices: LongTensor, loss_fn: MixedLoss) -> Tuple[float, two_ints, two_ints]:
+def eval_batch(model: TypeFactoredLM, masked_words: LongTensor, types: LongTensor,
+               pad: LongTensor, loss_fn: Module) -> Tuple[float, two_ints, two_ints]:
     model.eval()
 
     # total num of samples
     num_samples = masked_words.shape[0] * masked_words.shape[1]
 
     # forward pass and loss
-    word_preds, type_preds = model(masked_words, pad)
+    type_preds = model.forward_st(masked_words, pad)
     sent_stats, t_stats = type_accuracy(type_preds.argmax(dim=-1), types, 0)
-    batch_loss = loss_fn.type_loss(type_preds.view(num_samples, -1), types.flatten())
+    batch_loss = loss_fn(type_preds.view(num_samples, -1), types.flatten())
 
     return batch_loss.item(), sent_stats, t_stats
 
@@ -42,7 +42,7 @@ def eval_batches(model: TypeFactoredLM, dl: EagerLoader, loss_fn: MixedLoss, dev
         except StopIteration:
             break
         words_input, words_truth, types, pad, words_mask = list(map(lambda x: x.to(device), batch))
-        batch_stats = eval_batch(model, words_input, words_truth, types, pad, words_mask, loss_fn)
+        batch_stats = eval_batch(model, words_input, types, pad, loss_fn)
         batch_loss, (num_sent, num_cor_sent), (num_words, num_cor_words) = batch_stats
         epoch_loss += batch_loss
         sum_sent += num_sent

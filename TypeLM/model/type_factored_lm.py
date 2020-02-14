@@ -16,33 +16,38 @@ class TypeFactoredLM(Module):
         self.positional_encoder = PositionalEncoder(dropout_rate)
 
     def forward(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tuple[Tensor, Tensor]:
-        word_embeds = self.word_embedder(word_ids)
-        batch_size, num_words, d_model = word_embeds.shape[0:3]
-        positional_encodings = self.positional_encoder(b=batch_size, n=num_words, d_model=d_model,
-                                                       device=word_embeds.device.__str__())
-
-        word_embeds = word_embeds + positional_encodings
-        layer_outputs = self.masked_encoder.forward_all(word_embeds, pad_mask)
-
+        layer_outputs = self.get_all_vectors(word_ids, pad_mask)
         weighted = self.layer_weighter(layer_outputs[1:-2])
         type_preds = self.type_classifier(weighted)
-
         word_preds = self.word_classifier(layer_outputs[-1])
         return word_preds, type_preds
 
-    def word_classifier(self, final: Tensor) -> Tensor:
-        return final@self.word_embedder.weight.transpose(1, 0)
+    def forward_st(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
+        layer_outputs = self.get_all_vectors(word_ids, pad_mask)
+        weighted = self.layer_weighter(layer_outputs[1:-2])
+        type_preds = self.type_classifier(weighted)
+        return type_preds
 
-    def get_vectors(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
+    def forward_lm(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
+        layer_outputs = self.get_all_vectors(word_ids, pad_mask)
+        word_preds = self.word_classifier(layer_outputs[-1])
+        return word_preds
+
+    def get_all_vectors(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
         word_embeds = self.word_embedder(word_ids)
         batch_size, num_words, d_model = word_embeds.shape[0:3]
         positional_encodings = self.positional_encoder(b=batch_size, n=num_words, d_model=d_model,
                                                        device=word_embeds.device.__str__())
 
         word_embeds = word_embeds + positional_encodings
+        return self.masked_encoder.forward_all(word_embeds, pad_mask)
 
-        layer_outputs = self.masked_encoder.forward_all(word_embeds, pad_mask)
+    def get_last_vectors(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
+        layer_outputs = self.get_all_vectors(word_ids, pad_mask)
         return layer_outputs[-1]
+
+    def word_classifier(self, final: Tensor) -> Tensor:
+        return final@self.word_embedder.weight.transpose(1, 0)
 
 
 def test():
