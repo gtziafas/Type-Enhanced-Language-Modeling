@@ -137,4 +137,4 @@ def main(load_id: Optional[str], save_id: Optional[str]):
 if __name__ == "__main__": 
     save_id = sys.argv[1] if len(sys.argv)>1 else None
     load_id = sys.argv[2] if len(sys.argv)>2 else None
-    main(save_id, load_id)
+    main(load_id, save_id)
