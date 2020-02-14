@@ -97,7 +97,7 @@ def main(load_id: Optional[str], save_id: Optional[str]):
 
     batch_size = 128
 
-    _opt = torch.optim.AdamW(model.parameters(), weight_decay=1e-03)
+    _opt = torch.optim.AdamW(model.parameters(), weight_decay=1e-07)
     opt = CustomLRScheduler(_opt, [linear_scheme], warmup_steps=100000, goal_lr=1e-04,
                             decrease_rate=1e-11, min_lr=1e-07)
 
@@ -128,7 +128,7 @@ def main(load_id: Optional[str], save_id: Optional[str]):
             print('-' * 64)
             print('\t {} steps'.format((epoch+1)*num_minibatches_in_batch))
             # remember: if using mixed loss, replace loss_fn by loss_fn.type_loss
-            loss, s_acc, w_acc = eval_batches(model, eval_dl, loss_fn, 'cuda')
+            loss, s_acc, w_acc = eval_batches(model, eval_dl, loss_fn.type_loss, 'cuda')
             print('\t' + ' '.join(['{:.2f}', '{:.4f}', '{:.4f}']).format(loss, s_acc, w_acc)
                   + '\t' + '{:.3f}'.format(per))
             print('-' * 64)
