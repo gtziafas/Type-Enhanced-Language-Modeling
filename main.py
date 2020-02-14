@@ -1,7 +1,7 @@
 from TypeLM.model.train import *
 from TypeLM.model.eval import *
 from TypeLM.model.masked_encoder import EncoderLayer, Encoder
-from TypeLM.utils.utils import CustomLRScheduler, linear_scheme
+from TypeLM.utils.utils import CustomLRScheduler, linear_scheme, save_model, load_model
 from TypeLM.data.masker import default_masker, non_masker
 from TypeLM.data.tokenizer import default_tokenizer, Indexer
 import sys
@@ -91,7 +91,7 @@ def default_loss() -> MixedLoss:
     return MixedLoss(x_entropy, x_entropy, loss_kwargs, loss_kwargs, 1)
 
 
-def main():
+def main(save_id: str):
 
     model = default_model()
 
@@ -127,7 +127,7 @@ def main():
                   + '\t' + '{:.3f}'.format(per))
             print('-' * 64)
             sys.stdout.flush()
-
+    save_model(model=model, save_id=save_id, opt=opt, num_epochs=num_epochs, loss=loss)
 
 if __name__ == "__main__": 
    main()

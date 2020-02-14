@@ -86,10 +86,11 @@ def linear_scheme(_step: int, warmup_steps: int, goal_lr: float, decrease_rate: 
         else threshold(goal_lr - decrease_rate * (_step - warmup_steps))
 
 
-def save_model(model: TypeFactoredLM, model_id: int, 
-               data_dir = "./checkpoints/typeLM_model_",
-               opt: Optimizer, num_epochs: int, loss: Tensor, ) -> None:
-    save_to = data_dir + str(model_id)
+def save_model(model: TypeFactoredLM, save_id: int, 
+               opt: Optimizer, num_epochs: int, loss: Tensor,
+               data_dir = "./checkpoints/typeLM_",
+               ) -> None:
+    save_to = data_dir + save_id + '.pth'
     torch.save({
         'epoch'                 :   num_epochs,
         'loss'                  :   loss,
