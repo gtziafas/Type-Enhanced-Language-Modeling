@@ -5,6 +5,7 @@ from TypeLM.utils.utils import CustomLRScheduler, linear_scheme, save_model, loa
 from TypeLM.data.masker import default_masker, non_masker
 from TypeLM.data.tokenizer import default_tokenizer, Indexer
 import sys
+import argparse
 
 
 def default_dataloader(path: str = '/data/s3913171/Lassy-Large/out.txt', chunk_size: int = 10240,
@@ -136,7 +137,11 @@ def main(load_id: Optional[str], save_id: Optional[str]):
     if save_id is not None:
         save_model(model=model, save_id=save_id, opt=opt, num_epochs=num_epochs, loss=loss)
 
-if __name__ == "__main__": 
-    save_id = sys.argv[1] if len(sys.argv)>1 else None
-    load_id = sys.argv[2] if len(sys.argv)>2 else None
-    main(load_id, save_id)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--save_id', help='where to save the model once training ends', type=str)
+    parser.add_argument('-l', '--load_id', help='which model to start loading from', type=str)
+
+    kwargs = vars(parser.parse_args())
+    main(**kwargs)
