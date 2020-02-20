@@ -1,5 +1,6 @@
 from TypeLM.utils.imports import *
 
+
 def type_accuracy(predictions: LongTensor, truth: LongTensor,
                   ignore_idx: int) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     correct_items = torch.ones_like(predictions)
@@ -85,16 +86,16 @@ def linear_scheme(_step: int, warmup_steps: int, goal_lr: float, decrease_rate: 
         else threshold(goal_lr - decrease_rate * (_step - warmup_steps))
 
 
-def save_model(model: Module, save_id: int, 
-               opt: Optimizer, num_epochs: int, loss: Tensor,
-               data_dir = "./TypeLM/checkpoints",
+def save_model(model: Module, save_id: str,
+               opt: Optimizer, num_epochs: int, loss: float,
+               data_dir="./TypeLM/checkpoints",
                ) -> None:
     # create dir if not there 
     import os 
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
         
-    save_to = data_dir + 'TypeLM_' + save_id + '.pth'
+    save_to = data_dir + 'TypeLM_' + str(save_id) + '.pth'
     torch.save({
         'epoch'                 :   num_epochs,
         'loss'                  :   loss,
@@ -103,12 +104,10 @@ def save_model(model: Module, save_id: int,
     }, save_to)
 
 
-def load_model(model_path: str, model: Module, opt: Optimizer) -> Tuple[Module, Optimizer, int, Tensor]:
+def load_model(model_path: str, model: Module, opt: Optimizer) -> Tuple[Module, Optimizer, int, float]:
     checkpoint = torch.load(model_path)
     model.load_state_dict(checkpoint['model_state_dict'])
     opt.load_state_dict(checkpoint['optimizer_state_dict'])
     num_epochs = checkpoint['epoch'] + 1
     loss = checkpoint['loss'] 
-    return (model, opt, num_epochs, loss)
-
-    
+    return model, opt, num_epochs, loss
