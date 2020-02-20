@@ -110,12 +110,12 @@ def main(load_id: Optional[str], save_id: Optional[str]):
     num_epochs = 40
     num_sentences = 67010114
     num_batches_in_dataset = num_sentences // batch_size
+    pre_train_epochs = 0
     print_every = 1000
     num_minibatches_in_batch = num_batches_in_dataset // print_every
 
     if load_id is not None:
         model, opt, pre_train_epochs, _ = load_model(model_path=load_id, model=model, opt=opt)
-        num_epochs += pre_train_epochs
 
     print('\nStarted training..') 
     sys.stdout.flush()
@@ -124,7 +124,7 @@ def main(load_id: Optional[str], save_id: Optional[str]):
         per = (epoch + 1) * num_minibatches_in_batch / num_batches_in_dataset
         print('\t' + ' '.join(['{:.2f}', '{:.4f}', '{:.4f}']).format(loss, s_acc, w_acc) + '\t' + '{:.3f}'.format(per))
         sys.stdout.flush()
-        if not epoch % 10:
+        if not epoch % 50:
             print('-' * 64)
             print('\t {} steps'.format((epoch+1)*num_minibatches_in_batch))
             # remember: if using mixed loss, replace loss_fn by loss_fn.type_loss
@@ -134,7 +134,7 @@ def main(load_id: Optional[str], save_id: Optional[str]):
             print('-' * 64)
             sys.stdout.flush()
     if save_id is not None:
-        save_model(model=model, save_id=save_id, opt=opt, num_epochs=num_epochs, loss=loss)
+        save_model(model=model, save_id=save_id, opt=opt, num_epochs=pre_train_epochs + num_epochs, loss=loss)
 
 if __name__ == "__main__": 
     save_id = sys.argv[1] if len(sys.argv)>1 else None
