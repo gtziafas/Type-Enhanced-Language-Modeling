@@ -88,7 +88,7 @@ def linear_scheme(_step: int, warmup_steps: int, goal_lr: float, decrease_rate: 
 
 def save_model(model: Module, save_id: str,
                opt: Optimizer, num_epochs: int, loss: float,
-               data_dir="./TypeLM/checkpoints",
+               data_dir="./TypeLM/checkpoints/",
                ) -> None:
     # create dir if not there 
     import os 

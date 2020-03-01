@@ -108,11 +108,12 @@ def main(load_id: Optional[str], save_id: Optional[str]):
     train_dl = default_dataloader(batch_size=batch_size)
     eval_dl = default_evaluator()
 
-    num_epochs = 40
+    num_epochs = 1
     num_sentences = 67010114
     num_batches_in_dataset = num_sentences // batch_size
     pre_train_epochs = 0
     print_every = 1000
+    loss = 0
     num_minibatches_in_batch = num_batches_in_dataset // print_every
 
     if load_id is not None:
@@ -135,7 +136,7 @@ def main(load_id: Optional[str], save_id: Optional[str]):
             print('-' * 64)
             sys.stdout.flush()
     if save_id is not None:
-        save_model(model=model, save_id=save_id, opt=opt, num_epochs=pre_train_epochs + num_epochs, loss=loss)
+        save_model(model=model, save_id=save_id, opt=_opt, num_epochs=pre_train_epochs + num_epochs, loss=loss)
 
 
 if __name__ == "__main__":
