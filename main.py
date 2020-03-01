@@ -107,27 +107,27 @@ def main(load_id: Optional[str], save_id: Optional[str]):
     num_epochs = 1
     num_sentences = 67010114
     num_batches_in_dataset = num_sentences // batch_size
-    print_every = 1000
-    num_minibatches_in_batch = num_batches_in_dataset // print_every
+    steps_per_epoch = 1000
+    num_minibatches_in_batch = num_batches_in_dataset // steps_per_epoch
 
     _opt = torch.optim.AdamW(model.parameters(), weight_decay=1e-07)
     pre_train_epochs = 0 
     if load_id is not None:
         model, _opt, pre_train_epochs, _ = load_model(model_path=load_id, model=model, opt=_opt)
 
-    opt = CustomLRScheduler(_opt, [linear_scheme], warmup_steps=1e05-pre_train_epochs*print_every, 
+    opt = CustomLRScheduler(_opt, [linear_scheme], warmup_steps=1e05 - pre_train_epochs*steps_per_epoch, 
                             goal_lr=1e-04, decrease_rate=1e-11, min_lr=1e-07)
 
     print('\nStarted training..') 
     sys.stdout.flush()
-    for epoch in range(num_epochs * print_every):
+    for step in range(num_epochs * steps_per_epoch):
         loss, s_acc, w_acc = train_batches(model, train_dl, loss_fn, opt, num_minibatches_in_batch, 'cuda')
-        per = (epoch + 1) * num_minibatches_in_batch / num_batches_in_dataset
+        per = (step + 1) * num_minibatches_in_batch / num_batches_in_dataset
         print('\t' + ' '.join(['{:.2f}', '{:.4f}', '{:.4f}']).format(loss, s_acc, w_acc) + '\t' + '{:.3f}'.format(per))
         sys.stdout.flush()
-        if not epoch % 50:
+        if not step % 50:
             print('-' * 64)
-            print('\t {} steps'.format((epoch+1)*num_minibatches_in_batch))
+            print('\t {} steps'.format((step+1)*num_minibatches_in_batch))
             # remember: if using mixed loss, replace loss_fn by loss_fn.type_loss
             loss, s_acc, w_acc = eval_batches(model, eval_dl, loss_fn.type_loss, 'cuda')
             print('\t' + ' '.join(['{:.2f}', '{:.4f}', '{:.4f}']).format(loss, s_acc, w_acc)
