@@ -97,11 +97,7 @@ def main(load_id: Optional[str], save_id: Optional[str]):
     model = default_model()
 
     batch_size = 128
-
-    _opt = torch.optim.AdamW(model.parameters(), weight_decay=1e-07)
-    opt = CustomLRScheduler(_opt, [linear_scheme], warmup_steps=100000, goal_lr=1e-04,
-                            decrease_rate=1e-11, min_lr=1e-07)
-
+    
     loss_fn = default_loss()
     # st_only_loss = torch.nn.CrossEntropyLoss(ignore_index=0, reduction='mean')
 
@@ -111,13 +107,16 @@ def main(load_id: Optional[str], save_id: Optional[str]):
     num_epochs = 1
     num_sentences = 67010114
     num_batches_in_dataset = num_sentences // batch_size
-    pre_train_epochs = 0
     print_every = 1000
-    loss = 0
     num_minibatches_in_batch = num_batches_in_dataset // print_every
 
+    _opt = torch.optim.AdamW(model.parameters(), weight_decay=1e-07)
+    pre_train_epochs = 0 
     if load_id is not None:
-        model, opt, pre_train_epochs, _ = load_model(model_path=load_id, model=model, opt=opt)
+        model, _opt, pre_train_epochs, _ = load_model(model_path=load_id, model=model, opt=_opt)
+
+    opt = CustomLRScheduler(_opt, [linear_scheme], warmup_steps=1e05-pre_train_epochs*print_every, 
+                            goal_lr=1e-04, decrease_rate=1e-11, min_lr=1e-07)
 
     print('\nStarted training..') 
     sys.stdout.flush()
