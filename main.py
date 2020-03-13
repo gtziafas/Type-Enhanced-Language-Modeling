@@ -114,9 +114,8 @@ def main(load_id: Optional[str], save_id: Optional[str]):
     pre_train_epochs = 0 
     if load_id is not None:
         model, _opt, pre_train_epochs, _ = load_model(model_path=load_id, model=model, opt=_opt)
-
-    opt = CustomLRScheduler(_opt, [linear_scheme], warmup_steps=1e05 - pre_train_epochs*steps_per_epoch, 
-                            goal_lr=1e-04, decrease_rate=1e-11, min_lr=1e-07)
+    _opt.step = pre_train_epochs * steps_per_epoch
+    opt = CustomLRScheduler(_opt, [linear_scheme], warmup_steps=1e05, goal_lr=1e-04, decrease_rate=1e-11, min_lr=1e-07)
 
     print('\nStarted training..') 
     sys.stdout.flush()
