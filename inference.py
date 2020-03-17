@@ -72,7 +72,8 @@ def main(sentence_str: Optional[str]=None, sentence_ints: Optional[List[int]]=No
     elif sentence_ints is not None:
         word_indices = list(map(eval, sentence_ints.split(' ')))        
     
-    infered_types = list(map(indexer.inverse_type, infer_types(word_indices, model)))
+    type_preds = infer_types(word_indices, model)
+    infered_types = list(map(indexer.inverse_type, type_preds))
 
     print('Infered types={}'.format(' '.join(infered_types)))
 

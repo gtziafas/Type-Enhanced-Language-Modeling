@@ -82,6 +82,8 @@ class Indexer(object):
 
         self.word_indices = self.make_any_indices(words + wraps + prefixes + suffixes, 1)
         self.type_indices = {PAD: 0, **self.make_any_indices(types, 1)}
+        self.inverse_words = {value:key for key, value in self.word_indices.items()}
+        self.inverse_types = {value:key for key, value in self.type_indices.items()}
 
         masked_words = wraps + prefixes + suffixes + [EOS, UNK, PROC]
         self.masked_words = {self.word_indices[k] for k in masked_words}
@@ -107,10 +109,10 @@ class Indexer(object):
         return self.index_sentence(words), self.index_type_sequence(types)
 
     def inverse_word(self, word_idx: int) -> str:
-        return {value:key for key,value in self.word_indices.items()}[word_idx]
+        return self.inverse_words[word_idx]
 
     def inverse_type(self, type_idx: int) -> str:
-        return {value:key for key,value in self.type_indices.items()}[type_idx]
+        return self.inverse_types[type_idx]
 
 
 def stringify(words: List[int], types: List[int]) -> str:
