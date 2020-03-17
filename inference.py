@@ -9,14 +9,14 @@ import torch
 import sys
 import argparse
 
-from typing import Tuple, List, Optional, Dict
+from typing import Tuple, List, Optional, Dict, Any
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 model_path = './TypeLM/checkpoints/TypeLM_wd1e-7_2.pth'
 
 
-def getkey(val: int, dic: Dict) -> str:
+def getkey(val: Any, dic: Dict) -> Any:
     for k, v in dic.items():
         if v == val:
             return k 
@@ -53,14 +53,14 @@ def get_default_model(vocab_stats: Tuple[int, int], load_id: str = model_path) -
 def infer_words(sentence: List[int], masked_indices: List[int], model: Module) -> List[int]:
     sentence = torch.tensor(sentence, dtype=torch.long, device=device)
     masked_words = sentence[list(map(lambda i: 1-i, masked_indices))]
-    pad_mask = torch.ones(masked_words.shape[0], masked_words.shape[0])
+    pad_mask = torch.ones(masked_words.shape[0], masked_words.shape[0], dtype=torch.long, device=device)
     word_preds = model.forward_lm(masked_words, pad_mask)
     return word_preds.argmax(dim=-1).tolist()
 
 
 def infer_types(sentence: List[int], model: Module) -> List[int]:
     sentence = torch.tensor(sentence, dtype=torch.long, device=device)
-    pad_mask = torch.ones(sentence.shape[0], sentence.shape[0])
+    pad_mask = torch.ones(sentence.shape[0], sentence.shape[0], dtype=torch.long, device=device)
     type_preds = model.forward_st(sentence, pad_mask)
     return type_preds.argmax(dim=-1).tolist()
 
