@@ -95,7 +95,7 @@ def save_model(model: Module, save_id: str,
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
         
-    save_to = data_dir + 'TypeLM_' + str(save_id) + '.pth'
+    save_to = data_dir' + str(save_id) + '.pth'
     torch.save({
         'epoch'                 :   num_epochs,
         'loss'                  :   loss,
