@@ -16,12 +16,6 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model_path = './TypeLM/checkpoints/TypeLM_wd1e-7_2.pth'
 
 
-def getkey(val: Any, dic: Dict) -> Any:
-    for k, v in dic.items():
-        if v == val:
-            return k 
-
-
 def get_default_model(vocab_stats: Tuple[int, int], load_id: str = model_path) -> TypeFactoredLM:
     num_words, num_types = vocab_stats
     d_model = 512
@@ -79,13 +73,13 @@ def main(sentence_str: Optional[str]=None, sentence_ints: Optional[List[int]]=No
         word_indices = list(map(eval, sentence_ints.split(' ')))        
     
     type_preds = infer_types(word_indices, model)
-    infered_types = list(map(lambda pred: getkey(pred, indexer.type_indices), type_preds))
+    infered_types = list(map(indexer.inverse_type, type_preds))
 
     print('Infered types={}'.format(' '.join(infered_types)))
 
     if masked_indices is not None:
         word_preds = infer_words(word_indices, list(map(eval, masked_indices.split(' '))), model)
-        infered_words = list(map(lambda pred: getkey(pred, indexer.word_indices), word_preds))
+        infered_words = list(map(indexer.inverse_word, word_preds))
         print('Infered sentence={}'.format(' '.join(infered_words)))
 
 

@@ -106,6 +106,12 @@ class Indexer(object):
         words, types = zip(*sentence)
         return self.index_sentence(words), self.index_type_sequence(types)
 
+    def inverse_word(self, word_idx: int) -> str:
+        return {value:key for key,value in self.word_indices.items()}[word_idx]
+
+    def inverse_type(self, type_idx: int) -> str:
+        return {value:key for key,value in self.type_indices.items()}[type_idx]
+
 
 def stringify(words: List[int], types: List[int]) -> str:
     return ' '.join(map(str, words)) + '\t' + ' '.join(map(str, types)) + '\n'
