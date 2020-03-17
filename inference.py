@@ -81,12 +81,12 @@ def main(sentence_str: Optional[str]=None, sentence_ints: Optional[List[int]]=No
     type_preds = infer_types(word_indices, model)
     infered_types = list(map(lambda pred: getkey(pred, indexer.type_indices), type_preds))
 
-    print('Infered types={}'.format(infered_types))
+    print('Infered types={}'.format(' '.join(infered_types)))
 
     if masked_indices is not None:
         word_preds = infer_words(word_indices, list(map(eval, masked_indices.split(' '))), model)
         infered_words = list(map(lambda pred: getkey(pred, indexer.word_indices), word_preds))
-        print('Infered sentence={}'.format(infered_words))
+        print('Infered sentence={}'.format(' '.join(infered_words)))
 
 
 
