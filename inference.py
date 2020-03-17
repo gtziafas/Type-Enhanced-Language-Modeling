@@ -29,7 +29,6 @@ def get_default_model(vocab_stats: Tuple[int, int], load_id: str = model_path) -
     d_k, d_v = d_model, d_model
     type_vocab_size, word_vocab_size = num_types, num_words
     num_layers = 8
-    device = 'cuda'
 
     encoder_params = {'module_maker': EncoderLayer,
                       'num_layers': num_layers,
@@ -59,7 +58,7 @@ def infer_words(sentence: List[int], masked_indices: List[int], model: Module) -
     return word_preds.argmax(dim=-1).tolist()
 
 
-def infer_type(sentence: List[int], model: Module) -> List[int]:
+def infer_types(sentence: List[int], model: Module) -> List[int]:
     sentence = torch.tensor(sentence, dtype=torch.long, device=device)
     pad_mask = torch.ones(sentence.shape[0], sentence.shape[0])
     type_preds = model.forward_st(sentence, pad_mask)
@@ -74,18 +73,18 @@ def main(sentence_str: Optional[str]=None, sentence_ints: Optional[List[int]]=No
     model = get_default_model(vocab_stats=(len(indexer.word_indices) + 1, len(indexer.type_indices)))
 
     if sentence_str is not None:
-        word_indices = indexer.index_sentence(tokenizer.tokenize_sentence(words))
+        word_indices = indexer.index_sentence(tokenizer.tokenize_sentence(sentence_str))
 
     elif sentence_ints is not None:
         word_indices = list(map(eval, sentence_ints.split(' ')))        
     
-    type_preds = infer_type(word_indices, model)
+    type_preds = infer_types(word_indices, model)
     infered_types = list(map(lambda pred: getkey(pred, indexer.type_indices), type_preds))
 
     print('Infered types={}'.format(infered_types))
 
     if masked_indices is not None:
-        word_preds = infer_words(word_indices, masked_indices, model)
+        word_preds = infer_words(word_indices, list(map(eval, masked_indices.split(' '))), model)
         infered_words = list(map(lambda pred: getkey(pred, indexer.word_indices), word_preds))
         print('Infered sentence={}'.format(infered_words))
 
