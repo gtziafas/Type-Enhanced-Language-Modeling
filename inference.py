@@ -45,9 +45,9 @@ def get_default_model(vocab_stats: Tuple[int, int], load_id: str = model_path) -
     return load_model(model_path=load_id, model=model, opt=torch.optim.Adam(model.parameters()))[0]
 
 
-def infer_words(sentence: List[int], masked_indices: List[int], model: Module) -> List[int]:
+def infer_words(sentence: List[int], masked_indices: List[int], model: Module, mask_token: int) -> List[int]:
     sentence = torch.tensor(sentence, dtype=torch.long, device=device)
-    sentence[masked_indices] = MASK
+    sentence[masked_indices] = mask_token
     pad_mask = torch.ones(sentence.shape[0], sentence.shape[0], dtype=torch.long, device=device)
     word_preds = model.forward_lm(sentence.unsqueeze(0), pad_mask).squeeze(0)
     return word_preds.argmax(dim=-1).tolist()
@@ -80,7 +80,8 @@ def main(sentence_str: Optional[str]=None, sentence_ints: Optional[List[int]]=No
     print('Infered types={}'.format('\n'.join(infered_types)))
 
     if masked_indices is not None:
-        word_preds = infer_words(word_indices, list(map(eval, masked_indices.split(' '))), model)
+        word_preds = infer_words(sentence=word_indices, masked_indices=list(map(eval, masked_indices.split(' '))), 
+                                 model=model, mask_token=indexer.index_word(tokenizer.tokenize_word(MASK)))
         infered_words = list(map(indexer.inverse_word, word_preds))
         print('Infered sentence={}'.format(' '.join(infered_words)))
 
