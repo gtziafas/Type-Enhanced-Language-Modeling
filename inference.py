@@ -64,7 +64,7 @@ def main(sentence_str: Optional[str]=None, sentence_ints: Optional[List[int]]=No
     tokenizer = default_tokenizer()
     indexer = Indexer(tokenizer)
 
-    model = get_default_model(vocab_stats=(len(indexer.word_indices) + 1, len(indexer.type_indices)))
+    model = get_default_model(vocab_stats=(len(indexer.word_indices) + 1, len(indexer.type_indices))).train()
 
     word_indices = []
     if sentence_str is not None:
