@@ -49,14 +49,14 @@ def infer_words(sentence: List[int], masked_indices: List[int], model: Module) -
     masked_words = sentence[list(map(lambda i: 1-i, masked_indices))]
     pad_mask = torch.ones(masked_words.shape[0], masked_words.shape[0], dtype=torch.long, device=device)
     word_preds = model.forward_lm(masked_words.unsqueeze(0), pad_mask)
-    return word_preds.argmax(dim=-1).tolist()
+    return word_preds.argmax(dim=-1).squeeze().tolist()
 
 
 def infer_types(sentence: List[int], model: Module) -> List[int]:
     sentence = torch.tensor(sentence, dtype=torch.long, device=device)
     pad_mask = torch.ones(sentence.shape[0], sentence.shape[0], dtype=torch.long, device=device)
     type_preds = model.forward_st(sentence.unsqueeze(0), pad_mask)
-    return type_preds.argmax(dim=-1).tolist()
+    return type_preds.argmax(dim=-1).squeeze().tolist()
 
 
 def main(sentence_str: Optional[str]=None, sentence_ints: Optional[List[int]]=None, masked_indices: Optional[List[int]]=None):
