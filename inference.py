@@ -68,7 +68,7 @@ def main(sentence_str: Optional[str]=None, sentence_ints: Optional[List[int]]=No
 
     word_indices = []
     if sentence_str is not None:
-        word_indices = indexer.index_sentence(tokenizer.tokenize_sentence(sentence_str))
+        word_indices = indexer.index_sentence(tokenizer.tokenize_sentence(sentence_str, add_eos=True))
 
     elif sentence_ints is not None:
         word_indices = list(map(eval, sentence_ints.split(' ')))        
