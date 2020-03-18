@@ -76,7 +76,7 @@ def main(sentence_str: Optional[str]=None, sentence_ints: Optional[List[int]]=No
     type_preds = infer_types(word_indices, model)
     infered_types = list(map(indexer.inverse_type, type_preds))
 
-    print('Infered types={}'.format('\n'.join(infered_types))
+    print('Infered types={}'.format('\n'.join(infered_types)))
 
     if masked_indices is not None:
         word_preds = infer_words(word_indices, list(map(eval, masked_indices.split(' '))), model)
