@@ -3,6 +3,7 @@ from TypeLM.utils.utils import load_model
 from TypeLM.data.tokenizer import default_tokenizer, Indexer 
 from TypeLM.model.masked_encoder import EncoderLayer, Encoder
 from TypeLM.model.type_factored_lm import TypeFactoredLM
+from TypeLM.utils.token_definitions import MASK
 
 import torch 
 
@@ -46,9 +47,9 @@ def get_default_model(vocab_stats: Tuple[int, int], load_id: str = model_path) -
 
 def infer_words(sentence: List[int], masked_indices: List[int], model: Module) -> List[int]:
     sentence = torch.tensor(sentence, dtype=torch.long, device=device)
-    masked_words = sentence[list(map(lambda i: 1-i, masked_indices))]
-    pad_mask = torch.ones(masked_words.shape[0], masked_words.shape[0], dtype=torch.long, device=device)
-    word_preds = model.forward_lm(masked_words.unsqueeze(0), pad_mask).squeeze(0)
+    sentence[masked_indices] = MASK
+    pad_mask = torch.ones(sentence.shape[0], sentence.shape[0], dtype=torch.long, device=device)
+    word_preds = model.forward_lm(sentence.unsqueeze(0), pad_mask).squeeze(0)
     return word_preds.argmax(dim=-1).tolist()
 
 
