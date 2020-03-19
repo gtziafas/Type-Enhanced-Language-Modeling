@@ -74,7 +74,7 @@ def main():
         word_indices = indexer.index_sentence(tokenizer.tokenize_sentence(sentence_str, add_eos=True))
 
         type_preds = infer_types(word_indices, model)
-        infered_types = list(map(indexer.inverse_type, type_preds))
+        infered_types = list(map(lambda preds: list(map(indexer.inverse_type, preds), type_preds))
 
         print('Infered types = \n{}'.format('\n'.join(infered_types)))
 
