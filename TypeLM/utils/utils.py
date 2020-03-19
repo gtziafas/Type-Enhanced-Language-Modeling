@@ -27,7 +27,7 @@ def positional_encoding(b: int, n: int, d_model: int, freq: int = 10000, device:
     return pe.repeat(b, 1, 1)
 
 
-def logsigsoftmax(logits):
+def logsigsoftmax(logits: Tensor) -> Tensor:
     max_values = torch.max(logits, 1, keepdim = True)[0]
     exp_logits_sigmoided = torch.exp(logits - max_values) * torch.sigmoid(logits)
     sum_exp_logits_sigmoided = exp_logits_sigmoided.sum(1, keepdim = True)
