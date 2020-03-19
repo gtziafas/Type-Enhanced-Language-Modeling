@@ -7,9 +7,7 @@ from TypeLM.utils.token_definitions import MASK
 
 import torch 
 
-import sys
-import argparse
-
+import random
 from typing import Tuple, List, Optional, Dict, Any
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -47,11 +45,10 @@ def get_default_model(vocab_stats: Tuple[int, int], load_id: str = model_path) -
 
 def infer_words(sentence: List[int], masked_indices: List[int], model: Module, mask_token: int, kappa: int=10) -> List[int]:
     sentence = torch.tensor(sentence, dtype=torch.long, device=device)
-    sentence[masked_indices] = mask_token
+    masked_indices = torch.tensor(masked_indices.append(0), dtype=torch.long, device=device)
+    sentence[masked_indices==1] = mask_token
     pad_mask = torch.ones(sentence.shape[0], sentence.shape[0], dtype=torch.long, device=device)
     word_preds = model.forward_lm(sentence.unsqueeze(0), pad_mask).squeeze(0)
-    import pdb 
-    pdb.set_trace()
     return word_preds[masked_indices].argmax(dim=-1).tolist()
 
 
@@ -62,41 +59,33 @@ def infer_types(sentence: List[int], model: Module) -> List[int]:
     return type_preds.argmax(dim=-1).tolist()
 
 
-def main(sentence_str: Optional[str]=None, sentence_ints: Optional[List[int]]=None, masked_indices: Optional[List[int]]=None):
+def main():
 
     tokenizer = default_tokenizer()
     indexer = Indexer(tokenizer)
 
     model = get_default_model(vocab_stats=(len(indexer.word_indices) + 1, len(indexer.type_indices))).train()
 
-    word_indices = []
-    if sentence_str is not None:
+    while True:
+        sentence_str = input('Give input sentence: ')
+        masked_indices = input('Give input mask (leave empty for only type inference)')
+
         word_indices = indexer.index_sentence(tokenizer.tokenize_sentence(sentence_str, add_eos=True))
 
-    elif sentence_ints is not None:
-        word_indices = list(map(eval, sentence_ints.split(' ')))        
-    
-    type_preds = infer_types(word_indices, model)
-    infered_types = list(map(indexer.inverse_type, type_preds))
+        type_preds = infer_types(word_indices, model)
+        infered_types = list(map(indexer.inverse_type, type_preds))
 
-    print('Infered types={}'.format('\n'.join(infered_types)))
+        print('Infered types = \n{}'.format('\n'.join(infered_types)))
 
-    if masked_indices is not None:
-        word_preds = infer_words(sentence=word_indices, masked_indices=list(map(eval, masked_indices.split(' '))), 
-                                 model=model, mask_token=indexer.index_word(tokenizer.tokenize_word(MASK)))
-        infered_words = list(map(indexer.inverse_word, word_preds))
-        print('Infered sentence={}'.format(' '.join(infered_words)))
+        if masked_indices is not '':
+            word_preds = infer_words(sentence=word_indices, masked_indices=list(map(eval, masked_indices.split(' '))), 
+                                     model=model, mask_token=indexer.index_word(tokenizer.tokenize_word(MASK)))
+            infered_words = list(map(indexer.inverse_word, word_preds))
+            print('Infered sentence = {}'.format(' '.join(infered_words)))
 
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-s', '--sentence_str', help='input sentence', type=str)
-    parser.add_argument('-i', '--sentence_ints', help='vocab indices of input sentence', type=str)
-    parser.add_argument('-m', '--masked_indices', help='0/1 vector of masked words', type=str)
-
-
-    kwargs = vars(parser.parse_args())
     main(**kwargs)
 
 
