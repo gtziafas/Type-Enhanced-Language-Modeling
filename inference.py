@@ -50,6 +50,8 @@ def infer_words(sentence: List[int], masked_indices: List[int], model: Module, m
     sentence[masked_indices] = mask_token
     pad_mask = torch.ones(sentence.shape[0], sentence.shape[0], dtype=torch.long, device=device)
     word_preds = model.forward_lm(sentence.unsqueeze(0), pad_mask).squeeze(0)
+    import pdb 
+    pdb.set_trace()
     return word_preds[masked_indices].argmax(dim=-1).tolist()
 
 
