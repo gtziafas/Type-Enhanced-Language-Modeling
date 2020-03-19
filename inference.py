@@ -45,6 +45,7 @@ def get_default_model(vocab_stats: Tuple[int, int], load_id: str = model_path) -
 
 def infer_words(sentence: List[int], masked_indices: List[int], model: Module, mask_token: int, kappa: int=10) -> List[int]:
     sentence = torch.tensor(sentence, dtype=torch.long, device=device)
+    print(masked_indices)
     masked_indices = torch.tensor(masked_indices.append(0), dtype=torch.long, device=device)
     sentence[masked_indices==1] = mask_token
     pad_mask = torch.ones(sentence.shape[0], sentence.shape[0], dtype=torch.long, device=device)
@@ -68,7 +69,7 @@ def main():
 
     while True:
         sentence_str = input('Give input sentence: ')
-        masked_indices = input('Give input mask (leave empty for only type inference)')
+        masked_indices = input('Give input mask (leave empty for only type inference): ')
 
         word_indices = indexer.index_sentence(tokenizer.tokenize_sentence(sentence_str, add_eos=True))
 
@@ -76,8 +77,7 @@ def main():
         infered_types = list(map(indexer.inverse_type, type_preds))
 
         print('Infered types = \n{}'.format('\n'.join(infered_types)))
-        print(masked_indices)
-        print(list(map(eval, masked_indices.split(' '))))
+
         if masked_indices is not '':
             word_preds = infer_words(sentence=word_indices, masked_indices=list(map(eval, masked_indices.split(' '))), 
                                      model=model, mask_token=indexer.index_word(tokenizer.tokenize_word(MASK)))
