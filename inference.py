@@ -45,7 +45,6 @@ def get_default_model(vocab_stats: Tuple[int, int], load_id: str = model_path) -
 
 def infer_words(sentence: List[int], masked_indices: List[int], model: Module, mask_token: int, kappa: int=10) -> List[int]:
     sentence = torch.tensor(sentence, dtype=torch.long, device=device)
-    masked_indices.append(0)
     masked_indices = torch.tensor(masked_indices, dtype=torch.long, device=device)
     sentence[masked_indices==1] = mask_token
     pad_mask = torch.ones(sentence.shape[0], sentence.shape[0], dtype=torch.long, device=device)

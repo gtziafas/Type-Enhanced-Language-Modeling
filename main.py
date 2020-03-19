@@ -92,13 +92,21 @@ def default_loss() -> MixedLoss:
     return MixedLoss(x_entropy, x_entropy, loss_kwargs, loss_kwargs, 1)
 
 
+def nll_lm_loss() -> MixedLoss:
+    x_entropy = torch.nn.CrossEntropyLoss
+    nll = torch.nn.NLLLoss 
+    loss_kwargs = {'ignore_index': 0, 'reduction': 'mean'}
+    return MixedLoss(nll, x_entropy, loss_kwargs, loss_kwargs, 1)
+
+
 def main(load_id: Optional[str], save_id: Optional[str]):
 
     model = default_model()
 
     batch_size = 128
     
-    loss_fn = default_loss()
+    loss_fn = nll_lm_loss()
+    # x_entropy_loss = default_loss()
     # st_only_loss = torch.nn.CrossEntropyLoss(ignore_index=0, reduction='mean')
 
     train_dl = default_dataloader(batch_size=batch_size)
