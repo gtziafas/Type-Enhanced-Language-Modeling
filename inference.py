@@ -74,15 +74,14 @@ def main():
         word_indices = indexer.index_sentence(tokenizer.tokenize_sentence(sentence_str, add_eos=True))
 
         type_preds = infer_types(word_indices, model)
-        infered_types = list(map(lambda preds: list(map(indexer.inverse_type, preds)), type_preds))
+        infered_types = list(map(indexer.inverse_type, type_preds))
 
         print('Infered types = \n{}'.format('\n'.join(infered_types)))
 
         if masked_indices is not '':
             word_preds = infer_words(sentence=word_indices, masked_indices=list(map(eval, masked_indices.split(' '))), 
                                      model=model, mask_token=indexer.index_word(tokenizer.tokenize_word(MASK)))
-            print(word_preds)
-            infered_words = list(map(indexer.inverse_word, word_preds))
+            infered_words = list(map(lambda preds: list(map(indexer.inverse_word, preds)), word_preds))
             print('Infered sentence = {}'.format(' '.join(infered_words)))
 
 
