@@ -50,7 +50,7 @@ def count_parameters(model: Module) -> int:
 
 
 class CustomLRScheduler(object):
-    def __init__(self, optimizer: torch.optim.Optimizer, update_fns: Sequence[Callable[[int, Any], float]],
+    def __init__(self, optimizer: Optimizer, update_fns: Sequence[Callable[[int, Any], float]],
                  **kwargs: Any) -> None:
         assert len(update_fns) == len(optimizer.param_groups)
         self.opt = optimizer
@@ -95,7 +95,7 @@ def save_model(model: Module, save_id: str,
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
         
-    save_to = data_dir + 'TypeLM_' + str(save_id) + '.pth'
+    save_to = data_dir + str(save_id) + '.pth'
     torch.save({
         'epoch'                 :   num_epochs,
         'loss'                  :   loss,
