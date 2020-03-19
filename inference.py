@@ -81,6 +81,7 @@ def main():
         if masked_indices is not '':
             word_preds = infer_words(sentence=word_indices, masked_indices=list(map(eval, masked_indices.split(' '))), 
                                      model=model, mask_token=indexer.index_word(tokenizer.tokenize_word(MASK)))
+            print(word_preds)
             infered_words = list(map(indexer.inverse_word, word_preds))
             print('Infered sentence = {}'.format(' '.join(infered_words)))
 
