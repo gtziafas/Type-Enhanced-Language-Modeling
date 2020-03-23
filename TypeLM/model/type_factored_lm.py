@@ -1,5 +1,5 @@
 from TypeLM.utils.imports import *
-from TypeLM.utils.utils import PositionalEncoder, count_parameters, sigsoftmax
+from TypeLM.utils.utils import PositionalEncoder, count_parameters
 from TypeLM.model.masked_encoder import EncoderLayer, LayerWeighter, Encoder
 
 
@@ -31,7 +31,7 @@ class TypeFactoredLM(Module):
     def forward_lm(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
         layer_outputs = self.get_all_vectors(word_ids, pad_mask)
         word_preds = self.word_classifier(layer_outputs[-1])
-        return sigsoftmax(word_preds)
+        return word_preds
 
     def get_all_vectors(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
         word_embeds = self.word_embedder(word_ids)
