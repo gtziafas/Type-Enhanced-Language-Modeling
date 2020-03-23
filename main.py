@@ -92,13 +92,21 @@ def default_loss() -> MixedLoss:
     return MixedLoss(x_entropy, x_entropy, loss_kwargs, loss_kwargs, 1)
 
 
+def nll_lm_loss() -> MixedLoss:
+    x_entropy = torch.nn.CrossEntropyLoss
+    nll = torch.nn.NLLLoss 
+    loss_kwargs = {'ignore_index': 0, 'reduction': 'mean'}
+    return MixedLoss(nll, x_entropy, loss_kwargs, loss_kwargs, 1)
+
+
 def main(load_id: Optional[str], save_id: Optional[str]):
 
     model = default_model()
 
     batch_size = 128
     
-    loss_fn = default_loss()
+    loss_fn = nll_lm_loss()
+    # x_entropy_loss = default_loss()
     # st_only_loss = torch.nn.CrossEntropyLoss(ignore_index=0, reduction='mean')
 
     train_dl = default_dataloader(batch_size=batch_size)
@@ -114,10 +122,9 @@ def main(load_id: Optional[str], save_id: Optional[str]):
     pre_train_epochs = 0 
     if load_id is not None:
         model, _opt, pre_train_epochs, _ = load_model(model_path=load_id, model=model, opt=_opt)
-
-    opt = CustomLRScheduler(_opt, [linear_scheme], warmup_steps=1e05 - pre_train_epochs*steps_per_epoch, 
-                            goal_lr=1e-04, decrease_rate=1e-11, min_lr=1e-07)
-
+    opt = CustomLRScheduler(_opt, [linear_scheme], warmup_steps=1e05, goal_lr=1e-04, decrease_rate=1e-11, min_lr=1e-07)
+    opt._step = pre_train_epochs * steps_per_epoch
+    
     print('\nStarted training..') 
     sys.stdout.flush()
     for step in range(num_epochs * steps_per_epoch):

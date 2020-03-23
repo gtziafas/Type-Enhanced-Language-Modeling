@@ -27,6 +27,13 @@ def positional_encoding(b: int, n: int, d_model: int, freq: int = 10000, device:
     return pe.repeat(b, 1, 1)
 
 
+def sigsoftmax(x: Tensor, dim: int) -> Tensor:
+    sigx = torch.sigmoid(x) * torch.exp(x)
+    rank = len(sigx.shape)
+    norm = torch.sum(sigx, dim=dim).unsqueeze(dim).repeat([1 if i != dim else sigx.shape[i] for i in range(rank)])
+    return sigx/norm
+
+
 class PositionalEncoder(Module):
     def __init__(self, dropout_rate: float = 0.1):
         super(PositionalEncoder, self).__init__()
@@ -50,7 +57,7 @@ def count_parameters(model: Module) -> int:
 
 
 class CustomLRScheduler(object):
-    def __init__(self, optimizer: torch.optim.Optimizer, update_fns: Sequence[Callable[[int, Any], float]],
+    def __init__(self, optimizer: Optimizer, update_fns: Sequence[Callable[[int, Any], float]],
                  **kwargs: Any) -> None:
         assert len(update_fns) == len(optimizer.param_groups)
         self.opt = optimizer
@@ -95,7 +102,7 @@ def save_model(model: Module, save_id: str,
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
         
-    save_to = data_dir' + str(save_id) + '.pth'
+    save_to = data_dir + str(save_id) + '.pth'
     torch.save({
         'epoch'                 :   num_epochs,
         'loss'                  :   loss,
