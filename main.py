@@ -98,7 +98,7 @@ def default_loss() -> MixedLoss:
             self.NLL = torch.nn.NLLLoss(**kwargs)
 
         def forward(self, predictions: Tensor, truth: LongTensor) -> Tensor:
-            predictions = sigsoftmax(predictions, dim=-1).transpose(-1, -2)
+            predictions = sigsoftmax(predictions, dim=-1)
             return self.NLL(predictions.log(), truth)
 
     loss_kwargs = {'ignore_index': 0, 'reduction': 'mean'}
@@ -134,21 +134,22 @@ def main(load_id: Optional[str], save_id: Optional[str]):
     print('\nStarted training..') 
     sys.stdout.flush()
     for step in range(num_epochs * steps_per_epoch):
-        loss, s_acc, w_acc = train_batches(model, train_dl, loss_fn, opt, num_minibatches_in_batch, 'cuda')
+        step_stats = train_batches(model, train_dl, loss_fn, opt, num_minibatches_in_batch, 'cuda')
+        (mlm_loss, st_loss), s_acc, w_acc = step_stats
         per = (step + 1) * num_minibatches_in_batch / num_batches_in_dataset
-        print('\t' + ' '.join(['{:.2f}', '{:.4f}', '{:.4f}']).format(loss, s_acc, w_acc) + '\t' + '{:.3f}'.format(per))
+        print(f' MLM: {mlm_loss:.4f}\tST: {st_loss:.4f}\tS_acc: {(s_acc*100):.2f}'
+              f'\tW_acc: {(w_acc*100):.2f}\tStep: {(per*100):.2f}')
         sys.stdout.flush()
         if not step % 50:
             print('-' * 64)
-            print('\t {} steps'.format((step+1)*num_minibatches_in_batch))
             # remember: if using mixed loss, replace loss_fn by loss_fn.type_loss
-            loss, s_acc, w_acc = eval_batches(model, eval_dl, loss_fn.type_loss, 'cuda')
-            print('\t' + ' '.join(['{:.2f}', '{:.4f}', '{:.4f}']).format(loss, s_acc, w_acc)
-                  + '\t' + '{:.3f}'.format(per))
+            st_loss, s_acc, w_acc = eval_batches(model, eval_dl, loss_fn.type_loss, 'cuda')
+            print(f'\tST: {st_loss:.4f}\tS_acc: {(s_acc * 100):.2f}\tW_acc: {(w_acc * 100):.2f}')
             print('-' * 64)
             sys.stdout.flush()
     if save_id is not None:
-        save_model(model=model, save_id=save_id, opt=_opt, num_epochs=pre_train_epochs + num_epochs, loss=loss)
+        save_model(model=model, save_id=save_id, opt=_opt, num_epochs=pre_train_epochs + num_epochs,
+                   loss=(mlm_loss, st_loss))
 
 
 if __name__ == "__main__":
