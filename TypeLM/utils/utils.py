@@ -111,6 +111,15 @@ def save_model(model: Module, save_id: str,
     }, save_to)
 
 
+class ElementWiseFusion(Module):
+    def __init__(self, activation: tensor_map = F.tanh):
+        super(ElementWiseFusion, self).__init__()
+        self.activation = activation
+
+    def forward(self, gate: Tensor, features: Tensor) -> Tensor:
+        return self.activation(gate) * features
+
+
 def load_model(model_path: str, model: Module, opt: Optimizer) -> Tuple[Module, Optimizer, int, float]:
     checkpoint = torch.load(model_path)
     model.load_state_dict(checkpoint['model_state_dict'])
