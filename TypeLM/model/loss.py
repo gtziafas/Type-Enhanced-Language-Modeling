@@ -18,10 +18,8 @@ class MixedLoss(Module):
         self.kappa = type_loss_weight
 
     def forward(self, word_predictions: Tensor, word_truth: LongTensor,
-                type_predictions: Tensor, type_truth: LongTensor, mask: LongTensor) -> Tensor:
-        language_loss = masked_loss_wrapper(self.language_loss)(word_predictions, word_truth, mask)
-        type_loss = self.type_loss(type_predictions, type_truth)
-        return language_loss + self.kappa * type_loss
+                type_predictions: Tensor, type_truth: LongTensor, mask: LongTensor) -> Tuple[Tensor, Tensor]:
+        return self.get_both_losses(word_predictions, word_truth, type_predictions, type_truth, mask)
 
     def get_both_losses(self, word_predictions: Tensor, word_truth: LongTensor,
                         type_predictions: Tensor, type_truth: LongTensor, mask: LongTensor) -> Tuple[Tensor, Tensor]:

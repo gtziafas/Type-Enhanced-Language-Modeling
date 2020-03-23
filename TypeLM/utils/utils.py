@@ -94,7 +94,7 @@ def linear_scheme(_step: int, warmup_steps: int, goal_lr: float, decrease_rate: 
 
 
 def save_model(model: Module, save_id: str,
-               opt: Optimizer, num_epochs: int, loss: float,
+               opt: Optimizer, num_epochs: int, loss: Tuple[float, float],
                data_dir="./TypeLM/checkpoints/",
                ) -> None:
     # create dir if not there 
@@ -120,7 +120,7 @@ class ElementWiseFusion(Module):
         return self.activation(gate) * features
 
 
-def load_model(model_path: str, model: Module, opt: Optimizer) -> Tuple[Module, Optimizer, int, float]:
+def load_model(model_path: str, model: Module, opt: Optimizer) -> Tuple[Module, Optimizer, int, Tuple[float, float]]:
     checkpoint = torch.load(model_path)
     model.load_state_dict(checkpoint['model_state_dict'])
     opt.load_state_dict(checkpoint['optimizer_state_dict'])
