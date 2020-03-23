@@ -1,7 +1,7 @@
 from TypeLM.model.train import *
 from TypeLM.model.eval import *
 from TypeLM.model.masked_encoder import EncoderLayer, Encoder
-from TypeLM.utils.utils import CustomLRScheduler, linear_scheme, save_model, load_model, sigsoftmax
+from TypeLM.utils.utils import CustomLRScheduler, linear_scheme, save_model, load_model, sigsoftmax, ElementWiseFusion
 from TypeLM.data.masker import default_masker, non_masker
 from TypeLM.data.tokenizer import default_tokenizer, Indexer
 import sys
@@ -66,11 +66,12 @@ def default_model() -> TypeFactoredLM:
     d_k, d_v = d_model, d_model
     type_vocab_size, word_vocab_size = num_types, num_words
     num_layers = 8
+    num_heads = 8
     device = 'cuda'
 
     encoder_params = {'module_maker': EncoderLayer,
                       'num_layers': num_layers,
-                      'num_heads': 8,
+                      'num_heads': num_heads,
                       'd_model': d_model,
                       'd_ff': d_ff,
                       'd_k': d_k,
@@ -83,6 +84,10 @@ def default_model() -> TypeFactoredLM:
                           num_words=word_vocab_size,
                           masked_encoder_kwargs=encoder_params,
                           type_classifier_kwargs=type_pred_params,
+                          fusion=ElementWiseFusion,
+                          fusion_kwargs={'activation': F.tanh},
+                          type_embedder=Linear,
+                          type_embedder_kwargs={'in_features': num_types, 'out_features': d_model},
                           ).to(device)
 
 
