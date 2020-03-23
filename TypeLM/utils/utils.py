@@ -27,10 +27,10 @@ def positional_encoding(b: int, n: int, d_model: int, freq: int = 10000, device:
     return pe.repeat(b, 1, 1)
 
 
-def sigsoftmax(x: Tensor) -> Tensor:
+def sigsoftmax(x: Tensor, dim: int) -> Tensor:
     sigx = torch.sigmoid(x) * torch.exp(x)
     rank = len(sigx.shape)
-    norm = torch.sum(sigx, dim=-1).unsqueeze(-1).repeat([1 for _ in range(rank-1)] + [sigx.shape[-1]])
+    norm = torch.sum(sigx, dim=dim).unsqueeze(dim).repeat([1 if i != dim else sigx.shape[i] for i in range(rank)])
     return sigx/norm
 
 
