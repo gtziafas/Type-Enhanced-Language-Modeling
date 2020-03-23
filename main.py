@@ -1,7 +1,7 @@
 from TypeLM.model.train import *
 from TypeLM.model.eval import *
 from TypeLM.model.masked_encoder import EncoderLayer, Encoder
-from TypeLM.utils.utils import CustomLRScheduler, linear_scheme, save_model, load_model
+from TypeLM.utils.utils import CustomLRScheduler, linear_scheme, save_model, load_model, sigsoftmax
 from TypeLM.data.masker import default_masker, non_masker
 from TypeLM.data.tokenizer import default_tokenizer, Indexer
 import sys
@@ -87,16 +87,17 @@ def default_model() -> TypeFactoredLM:
 
 
 def default_loss() -> MixedLoss:
-    x_entropy = torch.nn.CrossEntropyLoss
-    loss_kwargs = {'ignore_index': 0, 'reduction': 'mean'}
-    return MixedLoss(x_entropy, x_entropy, loss_kwargs, loss_kwargs, 1)
+    class CrossEntropySS(Module):
+        def __init__(self, **kwargs):
+            super(CrossEntropySS, self).__init__()
+            self.NLL = torch.nn.NLLLoss(**kwargs)
 
+        def forward(self, predictions: Tensor, truth: LongTensor) -> Tensor:
+            predictions = sigsoftmax(predictions, dim=-1).transpose(-1, -2)
+            return self.NLL(predictions.log(), truth)
 
-def nll_lm_loss() -> MixedLoss:
-    x_entropy = torch.nn.CrossEntropyLoss
-    nll = torch.nn.NLLLoss 
     loss_kwargs = {'ignore_index': 0, 'reduction': 'mean'}
-    return MixedLoss(nll, x_entropy, loss_kwargs, loss_kwargs, 1)
+    return MixedLoss(CrossEntropySS, torch.nn.CrossEntropyLoss, loss_kwargs, loss_kwargs, 1)
 
 
 def main(load_id: Optional[str], save_id: Optional[str]):
@@ -105,7 +106,7 @@ def main(load_id: Optional[str], save_id: Optional[str]):
 
     batch_size = 128
     
-    loss_fn = nll_lm_loss()
+    loss_fn = default_loss()
     # x_entropy_loss = default_loss()
     # st_only_loss = torch.nn.CrossEntropyLoss(ignore_index=0, reduction='mean')
 
