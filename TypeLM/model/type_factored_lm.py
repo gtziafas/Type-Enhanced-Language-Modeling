@@ -17,13 +17,14 @@ class TypeFactoredLM(Module):
         self.word_embedder = Embedding(num_embeddings=num_words, embedding_dim=masked_encoder_kwargs['d_model'],
                                        padding_idx=padding_idx)
         self.positional_encoder = PositionalEncoder(dropout_rate)
+        self.dropout = Dropout(dropout_rate)
 
     def forward(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tuple[Tensor, Tensor]:
         layer_outputs = self.get_all_vectors(word_ids, pad_mask)
         weighted = self.layer_weighter(layer_outputs[1:-2])
-        type_preds = self.type_classifier(weighted)
+        type_preds = self.type_classifier(self.dropout(weighted))
         type_preds_activated = type_preds.softmax(dim=-1)
-        type_embeddings = self.type_embedder(type_preds_activated)
+        type_embeddings = self.dropout(self.type_embedder(type_preds_activated))
         word_preds = self.word_classifier(self.fusion(type_embeddings, layer_outputs[-1]))
         return word_preds, type_preds
 
