@@ -127,3 +127,25 @@ def load_model(model_path: str, model: Module, opt: Optimizer) -> Tuple[Module, 
     num_epochs = checkpoint['epoch'] + 1
     loss = checkpoint['loss'] 
     return model, opt, num_epochs, loss
+
+
+def label_smoothing(x: LongTensor, num_classes: int, smoothing: float, ignore_index: Optional[int] = None) -> Tensor:
+    x_float = torch.ones(x.shape, device=x.device, dtype=torch.float).unsqueeze(-1)
+    x_float = x_float.repeat([1 for _ in x.shape] + [num_classes])
+    x_float.fill_(smoothing / (num_classes - 1))
+    x_float.scatter_(dim=-1, index=x.unsqueeze(-1), src=torch.tensor(1-smoothing, dtype=torch.float, device=x.device))
+    if ignore_index is not None:
+        mask = x == ignore_index
+        x_float[mask.unsqueeze(-1).repeat([1 for _ in x.shape] + [num_classes])] = 0
+    return x_float
+
+
+class LabelSmoother(Module):
+    def __init__(self, num_classes: int, smoothing: float, ignore_index: Optional[int] = None):
+        super(LabelSmoother, self).__init__()
+        self.num_classes = num_classes
+        self.smoothing = smoothing
+        self.ignore_index = ignore_index
+
+    def forward(self, x: LongTensor) -> Tensor:
+        return label_smoothing(x, self.num_classes, self.smoothing, self.ignore_index)
