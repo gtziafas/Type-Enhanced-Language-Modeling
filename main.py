@@ -3,7 +3,7 @@ from TypeLM.model.eval import *
 from TypeLM.model.masked_encoder import EncoderLayer, Encoder
 from TypeLM.utils.utils import (CustomLRScheduler, linear_scheme, save_model, load_model, sigsoftmax, ElementWiseFusion,
                                 CrossEntropySS, FuzzyLoss)
-from TypeLM.data.masker import default_masker, non_masker
+from TypeLM.data.masker import default_word_masker, non_masker, default_type_masker
 from TypeLM.data.tokenizer import default_tokenizer, Indexer
 import sys
 import argparse
@@ -11,22 +11,26 @@ import argparse
 
 def default_dataloader(path: str = '/data/s3913171/Lassy-Large/out.txt', chunk_size: int = 10240,
                        batch_size: int = 128, len_threshold: int = 100) -> LazyLoader:
-    masker = default_masker()
+    word_masker = default_word_masker()
+    type_masker = default_type_masker()
 
-    def post_processor(sentences: Samples) -> Tuple[LongTensor, LongTensor, LongTensor, LongTensor, LongTensor]:
+    def post_processor(sentences: Samples) \
+            -> Tuple[LongTensor, LongTensor, LongTensor, LongTensor, LongTensor, LongTensor]:
         sentences = list(filter(lambda sentence: len(sentence[0]) < len_threshold, sentences))
 
-        true_words, types = list(zip(*sentences))
+        true_words, true_types = list(zip(*sentences))
         lens = list(map(len, true_words))
-        masked_words, masked_indices = list(zip(*list(map(masker, true_words))))
+        masked_words, masked_indices = list(zip(*list(map(word_masker, true_words))))
+        masked_types, _ = list(zip(*list(map(type_masker, true_types))))
         masked_words = pad_sequence(list(map(LongTensor, masked_words)))
         true_words = pad_sequence(list(map(LongTensor, true_words)))
-        types = pad_sequence(list(map(LongTensor, types)))
+        true_types = pad_sequence(list(map(LongTensor, true_types)))
+        masked_types = pad_sequence(list(map(LongTensor, masked_types)))
         masked_indices = pad_sequence(list(map(LongTensor, masked_indices)))
         word_pads = torch.ones(true_words.shape[0], true_words.shape[1], true_words.shape[1])
         for i, l in enumerate(lens):
             word_pads[i, :, l::] = 0
-        return masked_words, true_words, types, word_pads, masked_indices
+        return masked_words, true_words, true_types, masked_types, word_pads, masked_indices
 
     return LazyLoader(path, chunk_size, batch_size, post_processor)
 
@@ -39,17 +43,17 @@ def default_evaluator(path: str = '/data/s3913171/Lassy-Large/lassy_small.txt', 
     def post_processor(sentences: Samples) -> Tuple[LongTensor, LongTensor, LongTensor, LongTensor, LongTensor]:
         sentences = list(filter(lambda sentence: len(sentence[0]) < len_threshold, sentences))
 
-        true_words, types = list(zip(*sentences))
+        true_words, true_types = list(zip(*sentences))
         lens = list(map(len, true_words))
         masked_words, masked_indices = list(zip(*list(map(masker, true_words))))
         masked_words = pad_sequence(list(map(LongTensor, masked_words)))
         true_words = pad_sequence(list(map(LongTensor, true_words)))
-        types = pad_sequence(list(map(LongTensor, types)))
+        true_types = pad_sequence(list(map(LongTensor, true_types)))
         masked_indices = pad_sequence(list(map(LongTensor, masked_indices)))
         word_pads = torch.ones(true_words.shape[0], true_words.shape[1], true_words.shape[1])
         for i, l in enumerate(lens):
             word_pads[i, :, l::] = 0
-        return masked_words, true_words, types, word_pads, masked_indices
+        return masked_words, true_words, true_types, word_pads, masked_indices
 
     return EagerLoader(path, batch_size, post_processor)
 
