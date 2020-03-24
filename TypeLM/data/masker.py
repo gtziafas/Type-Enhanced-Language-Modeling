@@ -3,7 +3,7 @@ from random import random, choice
 
 from TypeLM.data.tokenizer import default_tokenizer, Indexer
 from TypeLM.utils.imports import ints
-from TypeLM.utils.token_definitions import MASK PAD
+from TypeLM.utils.token_definitions import MASK, PAD
 
 
 def mask_indices(seq: ints, random_chance: float) -> ints:
@@ -73,5 +73,5 @@ def type_makser() -> Masker:
     tokenizer = default_tokenizer()
     indexer = Indexer(tokenizer)
     return Masker(outer_chance=1., mask_token=_, inner_chance=0., keep_chance=0.85,
-                  replacements=list(set(indexer.type_indices.valyes())) - indexer.index_type(PAD),
-                  unpredictable=indexer.index_type(PAD))
+                  replacements=list(set(indexer.type_indices.values()) - {indexer.index_type(PAD)}),
+                  unpredictable={indexer.index_type(PAD)})
