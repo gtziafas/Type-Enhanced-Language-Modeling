@@ -72,6 +72,6 @@ def non_masker() -> Callable[[ints], Tuple[ints, ints]]:
 def type_masker() -> Masker:
     tokenizer = default_tokenizer()
     indexer = Indexer(tokenizer)
-    return Masker(outer_chance=1., mask_token=_, inner_chance=0., keep_chance=0.85,
+    return Masker(outer_chance=1., mask_token=0, inner_chance=0., keep_chance=0.85,
                   replacements=list(set(indexer.type_indices.values()) - {indexer.index_type(PAD)}),
                   unpredictable={indexer.index_type(PAD)})
