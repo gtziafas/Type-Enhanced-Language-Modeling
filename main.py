@@ -1,8 +1,8 @@
 from TypeLM.model.train import *
 from TypeLM.model.eval import *
 from TypeLM.model.masked_encoder import EncoderLayer, Encoder
-from TypeLM.utils.utils import (CustomLRScheduler, linear_scheme, save_model, load_model, sigsoftmax, ElementWiseFusion,
-                                CrossEntropySS, FuzzyLoss)
+from TypeLM.utils.utils import CustomLRScheduler, linear_scheme, save_model, load_model, ElementWiseFusion
+from TypeLM.model.loss import FuzzyLoss, CrossEntropySS
 from TypeLM.data.masker import default_word_masker, non_masker, default_type_masker
 from TypeLM.data.tokenizer import default_tokenizer, Indexer
 import sys
@@ -109,11 +109,9 @@ def main(load_id: Optional[str], save_id: Optional[str]):
 
     model = default_model()
 
-    batch_size = 128
+    batch_size = 256
     
     loss_fn = default_loss()
-    # x_entropy_loss = default_loss()
-    # st_only_loss = torch.nn.CrossEntropyLoss(ignore_index=0, reduction='mean')
 
     train_dl = default_dataloader(batch_size=batch_size)
     eval_dl = default_evaluator()
