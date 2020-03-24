@@ -78,6 +78,7 @@ def default_model() -> TypeFactoredLM:
                       'd_v': d_v,
                       'activation_fn': F.gelu}
     type_pred_params = {'in_features': d_model, 'out_features': type_vocab_size}
+    label_smoother_params = {'smoothing': 0.1, 'num_classes': num_types}
 
     return TypeFactoredLM(masked_encoder=Encoder,
                           type_classifier=Linear,
@@ -88,6 +89,7 @@ def default_model() -> TypeFactoredLM:
                           fusion_kwargs={'activation': F.tanh},
                           type_embedder=Linear,
                           type_embedder_kwargs={'in_features': num_types, 'out_features': d_model},
+                          label_smoother_kwargs=label_smoother_params
                           ).to(device)
 
 

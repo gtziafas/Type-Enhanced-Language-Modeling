@@ -27,7 +27,7 @@ def train_batch(model: TypeFactoredLM, masked_words: LongTensor, true_words: Lon
     num_samples = masked_words.shape[0] * masked_words.shape[1]
 
     # forward pass and loss
-    word_preds, type_preds = model(masked_words, pad)
+    word_preds, type_preds = model.forward(masked_words, pad, type_guidance=types)
     sent_stats, t_stats = type_accuracy(type_preds.argmax(dim=-1), types, 0)
     batch_losses = loss_fn(word_preds.view(num_samples, -1), true_words.flatten(),
                            type_preds.view(num_samples, -1), types.flatten(), masked_indices.view(-1))
