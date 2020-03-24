@@ -69,7 +69,7 @@ def non_masker() -> Callable[[ints], Tuple[ints, ints]]:
     return lambda seq: (seq, [0 for _ in range(len(seq))])
 
 
-def type_makser() -> Masker:
+def type_masker() -> Masker:
     tokenizer = default_tokenizer()
     indexer = Indexer(tokenizer)
     return Masker(outer_chance=1., mask_token=_, inner_chance=0., keep_chance=0.85,
