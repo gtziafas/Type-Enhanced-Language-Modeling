@@ -1,4 +1,4 @@
-from torch.nn import Module, Sequential, ModuleList, Linear, LayerNorm, Embedding, Dropout, Tanh
+from torch.nn import Module, Sequential, ModuleList, Linear, LayerNorm, Embedding, Dropout, Tanh, KLDivLoss
 from torch.nn import functional as F
 from torch import LongTensor, Tensor
 from torch.optim import Optimizer
