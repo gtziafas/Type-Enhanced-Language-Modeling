@@ -1,7 +1,8 @@
 from TypeLM.model.train import *
 from TypeLM.model.eval import *
 from TypeLM.model.masked_encoder import EncoderLayer, Encoder
-from TypeLM.utils.utils import CustomLRScheduler, linear_scheme, save_model, load_model, sigsoftmax, ElementWiseFusion
+from TypeLM.utils.utils import (CustomLRScheduler, linear_scheme, save_model, load_model, sigsoftmax, ElementWiseFusion,
+                                CrossEntropySS, FuzzyLoss)
 from TypeLM.data.masker import default_masker, non_masker
 from TypeLM.data.tokenizer import default_tokenizer, Indexer
 import sys
@@ -94,17 +95,10 @@ def default_model() -> TypeFactoredLM:
 
 
 def default_loss() -> MixedLoss:
-    class CrossEntropySS(Module):
-        def __init__(self, **kwargs):
-            super(CrossEntropySS, self).__init__()
-            self.NLL = torch.nn.NLLLoss(**kwargs)
-
-        def forward(self, predictions: Tensor, truth: LongTensor) -> Tensor:
-            predictions = sigsoftmax(predictions, dim=-1)
-            return self.NLL(predictions.log(), truth)
-
-    loss_kwargs = {'ignore_index': 0, 'reduction': 'mean'}
-    return MixedLoss(CrossEntropySS, torch.nn.CrossEntropyLoss, loss_kwargs, loss_kwargs, 1)
+    mlm_loss_kwargs = {'ignore_index': 0, 'reduction': 'mean'}
+    st_loss_kwargs = {'num_classes': get_vocab_stats()[1], 'mass_redistribution': 0.1, 'ignore_index': 0,
+                      'reduction': 'batchmean'}
+    return MixedLoss(CrossEntropySS, FuzzyLoss, mlm_loss_kwargs, st_loss_kwargs, 1)
 
 
 def main(load_id: Optional[str], save_id: Optional[str]):
