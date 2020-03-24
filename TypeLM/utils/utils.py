@@ -147,5 +147,8 @@ class LabelSmoother(Module):
         self.smoothing = smoothing
         self.ignore_index = ignore_index
 
-    def forward(self, x: LongTensor) -> Tensor:
-        return label_smoothing(x, self.num_classes, self.smoothing, self.ignore_index)
+    def forward(self, x: LongTensor, ignore_index: Optional[int] = None,
+                smoothing: Optional[float] = None) -> Tensor:
+        return label_smoothing(x, self.num_classes,
+                               smoothing if smoothing is not None else self.smoothing,
+                               ignore_index if ignore_index is not None else self.ignore_index)
