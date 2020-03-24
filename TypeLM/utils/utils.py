@@ -133,7 +133,7 @@ def label_smoothing(x: LongTensor, num_classes: int, smoothing: float, ignore_in
     x_float = torch.ones(x.shape, device=x.device, dtype=torch.float).unsqueeze(-1)
     x_float = x_float.repeat([1 for _ in x.shape] + [num_classes])
     x_float.fill_(smoothing / (num_classes - 1))
-    x_float.scatter_(dim=-1, index=x.unsqueeze(-1), src=torch.tensor(1-smoothing, dtype=torch.float, device=x.device))
+    x_float.scatter_(dim=-1, index=x.unsqueeze(-1), value=1-smoothing)
     if ignore_index is not None:
         mask = x == ignore_index
         x_float[mask.unsqueeze(-1).repeat([1 for _ in x.shape] + [num_classes])] = 0
@@ -152,3 +152,24 @@ class LabelSmoother(Module):
         return label_smoothing(x, self.num_classes,
                                smoothing if smoothing is not None else self.smoothing,
                                ignore_index if ignore_index is not None else self.ignore_index)
+
+
+class FuzzyLoss(Module):
+    def __init__(self, num_classes: int, mass_redistribution: float, ignore_index: int = 0) -> None:
+        super(FuzzyLoss, self).__init__()
+        self.loss_fn = KLDivLoss(reduction='batchmean')
+        self.label_smoother = LabelSmoother(num_classes, mass_redistribution, ignore_index)
+
+    def __call__(self, x: Tensor, y: LongTensor) -> Tensor:
+        smooth_y = self.label_smoother(y)
+        return self.loss_fn(torch.log_softmax(x, dim=-1), smooth_y)
+
+
+class CrossEntropySS(Module):
+    def __init__(self, **kwargs):
+        super(CrossEntropySS, self).__init__()
+        self.NLL = torch.nn.NLLLoss(**kwargs)
+
+    def forward(self, predictions: Tensor, truth: LongTensor) -> Tensor:
+        predictions = sigsoftmax(predictions, dim=-1)
+        return self.NLL(predictions.log(), truth)
