@@ -1,6 +1,7 @@
 from TypeLM.utils.imports import *
-from TypeLM.utils.utils import PositionalEncoder, count_parameters, LabelSmoother
+from TypeLM.utils.utils import PositionalEncoder, count_parameters
 from TypeLM.model.masked_encoder import EncoderLayer, LayerWeighter, Encoder
+from TypeLM.model.loss import LabelSmoother
 
 
 class TypeFactoredLM(Module):
