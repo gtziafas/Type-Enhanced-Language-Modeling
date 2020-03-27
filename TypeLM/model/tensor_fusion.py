@@ -49,8 +49,8 @@ class Conv2dFusion(Module):
         batch_size, seq_len, d_model = type_embedds.shape
 
         fused = self.fusion(gate=type_embedds, features=token_features) # [B S D] x [B S D] -> [B S D D]
-        convolved = [self.conv(fused[:,w,:].unsqueeze(1)) for w in range(seq_len)] # a list of S [B 576] tensors
-        convolved = self.dropout(torch.stack(convolved, dim=1).contiguous()) # [B S 576]
+        convolved = [self.conv(fused[:,w,:].unsqueeze(1)) for w in range(seq_len)] # a list of S [B D] tensors
+        convolved = self.dropout(torch.stack(convolved, dim=1).contiguous()) # [B S D]
 
         return convolved.view(batch_size, seq_len, -1)
 
