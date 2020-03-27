@@ -22,7 +22,8 @@ class Outter2dFusion(Module):
 class Conv2dFeatures(Module):
     def __init__(self, depth: int, num_channels: int, start_kernel: int, start_stride: int, pool_kernel: int=3) -> None:
         super(Conv2dFeatures, self).__init__()
-        blocks = [self.conv_block(in_channels=1, out_channels=16, conv_kernel=start_kernel, conv_stride=start_stride, pool_kernel=pool_kernel)]
+        blocks = [self.conv_block(in_channels=1, out_channels=num_channels, 
+                  conv_kernel=start_kernel, conv_stride=start_stride, pool_kernel=pool_kernel)]
         blocks[1:] = [self.conv_block(in_channels=16*(d+1), out_channels=16*(d+2), pool_kernel=pool_kernel) for d in range(0, depth-2)]
         if depth > 1:
             blocks.append(self.conv_block(in_channels=16*(depth-1), out_channels=16*(depth-1), pool_kernel=pool_kernel))
@@ -49,7 +50,7 @@ class Conv2dFusion(Module):
         batch_size, seq_len, d_model = type_embedds.shape
 
         fused = self.fusion(gate=type_embedds, features=token_features) # [B S D] x [B S D] -> [B S D D]
-        convolved = [self.conv(fused[:,w,:].unsqueeze(1)) for w in range(seq_len)] # a list of S [B D] tensors
+        convolved = [self.conv(fused[:,w,:].unsqueeze(1)) for w in range(seq_len)] # a list of S [B D] tensors7
         convolved = self.dropout(torch.stack(convolved, dim=1).contiguous()) # [B S D]
 
         return convolved.view(batch_size, seq_len, -1)
@@ -69,5 +70,5 @@ def example():
     m1 = Conv2dFusion(fusion=Outter2dFusion, conv=Conv2dFeatures, fusion_kwargs={}, conv_kwargs=deep_params)
     m2 = Conv2dFusion(fusion=Outter2dFusion, conv=Conv2dFeatures, fusion_kwargs={}, conv_kwargs=shallow_params)
 
-    print('with 2 blocks= {}'.format(m1(x,y).shape))
-    print('with 3 blocks= {}'.format(m2(x,y).shape))                                                                                                                                                                                                                                                                                                      
+    print('with 3 blocks= {}'.format(m1(x,y).shape))
+    print('with 1 block= {}'.format(m2(x,y).shape))                                                                                                                                                                                                                                                                                                      
