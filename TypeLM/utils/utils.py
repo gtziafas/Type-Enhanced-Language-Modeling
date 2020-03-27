@@ -120,6 +120,18 @@ class ElementWiseFusion(Module):
         return self.activation(gate) * features
 
 
+class Tensor2dFusion(Module):
+    def __init__(self):
+        super(Tensor2dFusion, self).__init__()
+
+    def forward(self, gate: Tensor, features: Tensor) -> Tensor:
+        batch_size, seq_len, d_model = gate.shape
+        num_samples = batch_size * seq_len
+        gates = [gate.view(-1, d_model)[s, :] for s in range(num_samples)]
+        feats = [features.view(-1, d_model)[s, :] for s in range(num_samples)]
+        gers = [torch.ger(gates[s], feats[s]) for s in range(num_samples)]
+        return torch.stack(gers, dim=0).view(batch_size, seq_len, d_model, d_model).contiguous()
+
 def load_model(model_path: str, model: Module, opt: Optimizer) -> Tuple[Module, Optimizer, int, Tuple[float, float]]:
     checkpoint = torch.load(model_path)
     model.load_state_dict(checkpoint['model_state_dict'])
