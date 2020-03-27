@@ -132,6 +132,7 @@ class Tensor2dFusion(Module):
         gers = [torch.ger(gates[s], feats[s]) for s in range(num_samples)]
         return torch.stack(gers, dim=0).view(batch_size, seq_len, d_model, d_model).contiguous()
 
+
 def load_model(model_path: str, model: Module, opt: Optimizer) -> Tuple[Module, Optimizer, int, Tuple[float, float]]:
     checkpoint = torch.load(model_path)
     model.load_state_dict(checkpoint['model_state_dict'])
