@@ -19,9 +19,9 @@ class Outter2dFusion(Module):
         return self.outter2d_fn(gate, features)
         
 
-class ConvFeatures(Module):
+class Conv2dFeatures(Module):
     def __init__(self, depth: int, start_kernel: int, start_stride: int) -> None:
-        super(ConvFeatures, self).__init__()
+        super(Conv2dFeatures, self).__init__()
         assert depth > 2, 'Must have at least one intermediate conv block'
         blocks = [self.conv_block(in_channels=1, out_channels=16, conv_kernel=start_kernel, conv_stride=start_stride)]
         blocks[1:] = [self.conv_block(in_channels=16*(d+1), out_channels=16*(d+2)) for d in range(0, depth-2)]
@@ -39,7 +39,7 @@ class ConvFeatures(Module):
 
 
 class Conv2dFusion(Module):
-    def __init__(self, fusion: Outter2dFusion, conv: ConvFeatures, fusion_kwargs: Dict, conv_kwargs: Dict, dropout_rate: float=0.1) -> None:
+    def __init__(self, fusion: Outter2dFusion, conv: Conv2dFeatures, fusion_kwargs: Dict, conv_kwargs: Dict, dropout_rate: float=0.1) -> None:
         super(Conv2dFusion, self).__init__()
         self.fusion = fusion(**fusion_kwargs)
         self.conv = conv(**conv_kwargs)
@@ -63,7 +63,7 @@ def example():
     x = torch.rand(batch_size, seq_len, d_model)
     y = torch.rand_like(x) 
 
-    m = Conv2dFusion(fusion=Outter2dFusion, conv=ConvFeatures, fusion_kwargs={}, 
+    m = Conv2dFusion(fusion=Outter2dFusion, conv=Conv2dFeatures, fusion_kwargs={}, 
                      conv_kwargs={'depth':3, 'start_kernel':50, 'start_stride':3})
 
     print(m(x,y).shape)                                                                                                                                                                                                                                                                                                         
