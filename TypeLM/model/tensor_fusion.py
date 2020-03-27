@@ -20,7 +20,7 @@ class Outter2dFusion(Module):
         
 
 class ConvFeatures(Module):
-    def __init__(self, depth: int=3, start_kernel: int=50, start_stride: int=3) -> None:
+    def __init__(self, depth: int, start_kernel: int, start_stride: int) -> None:
         super(ConvFeatures, self).__init__()
         assert depth > 2, 'Must have at least one intermediate conv block'
         blocks = [self.conv_block(in_channels=1, out_channels=16, conv_kernel=start_kernel, conv_stride=start_stride)]
@@ -48,8 +48,22 @@ class Conv2dFusion(Module):
     def forward(self, token_features: Tensor, type_preds: Tensor) -> Tensor:
         batch_size, seq_len, d_model = type_preds.shape
 
-        fusion = self.fusion(gate=type_preds, features=token_features) # [B S D] x [B S D] -> [B S D D]
-        convolved = [self.conv(fusion[:,w,:].unsqueeze(1)) for w in range(seq_len)] # a list of S [B 576] tensors
+        fused = self.fusion(gate=type_preds, features=token_features) # [B S D] x [B S D] -> [B S D D]
+        convolved = [self.conv(fused[:,w,:].unsqueeze(1)) for w in range(seq_len)] # a list of S [B 576] tensors
         convolved = self.dropout(torch.stack(convolved, dim=1).contiguous()) # [B S 576]
 
         return convolved.view(batch_size, seq_len, -1)
+
+
+def example():
+    batch_size = 2 
+    seq_len = 3
+    d_model = 512
+
+    x = torch.rand(batch_size, seq_len, d_model)
+    y = torch.rand_like(x) 
+
+    m = Conv2dFusion(fusion=Outter2dFusion, conv=ConvFeatures, fusion_kwargs={}, 
+                     conv_kwargs={'depth':3, 'start_kernel':50, 'start_stride':3})
+
+    print(m(x,y).shape)                                                                                                                                                                                                                                                                                                         
