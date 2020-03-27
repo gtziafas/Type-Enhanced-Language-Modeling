@@ -24,9 +24,11 @@ class Conv2dFeatures(Module):
         super(Conv2dFeatures, self).__init__()
         blocks = [self.conv_block(in_channels=1, out_channels=num_channels, 
                   conv_kernel=start_kernel, conv_stride=start_stride, pool_kernel=pool_kernel)]
-        blocks[1:] = [self.conv_block(in_channels=16*(d+1), out_channels=16*(d+2), pool_kernel=pool_kernel) for d in range(0, depth-2)]
+        blocks[1:] = [self.conv_block(in_channels=num_channels*(d+1), out_channels=num_channels*(d+2), 
+                      pool_kernel=pool_kernel) for d in range(0, depth-2)]
         if depth > 1:
-            blocks.append(self.conv_block(in_channels=16*(depth-1), out_channels=16*(depth-1), pool_kernel=pool_kernel))
+            blocks.append(self.conv_block(in_channels=num_channels*(depth-1), out_channels=num_channels*(depth-1), 
+                          pool_kernel=pool_kernel))
         
         self.features = Sequential(*blocks)
 
