@@ -102,14 +102,14 @@ def default_loss() -> MixedLoss:
     mlm_loss_kwargs = {'ignore_index': 0, 'reduction': 'mean'}
     st_loss_kwargs = {'num_classes': get_vocab_stats()[1], 'mass_redistribution': 0.1, 'ignore_index': 0,
                       'reduction': 'batchmean'}
-    return MixedLoss(CrossEntropySS, FuzzyLoss, mlm_loss_kwargs, st_loss_kwargs, 1)
+    return MixedLoss(CrossEntropySS, FuzzyLoss, mlm_loss_kwargs, st_loss_kwargs, 2)
 
 
 def main(load_id: Optional[str], save_id: Optional[str]):
 
     model = default_model()
 
-    batch_size = 256
+    batch_size = 128
     
     loss_fn = default_loss()
 
