@@ -23,16 +23,16 @@ class TypeFactoredLM(Module):
 
     def forward(self, word_ids: LongTensor, pad_mask: LongTensor,
                 type_guidance: Optional[LongTensor] = None,
-                smoothing: Optional[float] = None) -> Tuple[Tensor, Tensor]:
+                smoothing: float = 0.,
+                confidence: float = 0.5) -> Tuple[Tensor, Tensor]:
         layer_outputs = self.get_all_vectors(word_ids, pad_mask)
         weighted = self.layer_weighter(layer_outputs[1:-2])
         type_preds = self.type_classifier(self.dropout(weighted))
-        if type_guidance is None:
-            type_preds_activated = type_preds.softmax(dim=-1)
-            type_embeddings = self.type_embedder(type_preds_activated)
-        else:
-            type_probs = self.label_smoother(type_guidance, smoothing)
-            type_embeddings = self.type_embedder(type_probs)
+        type_probs = type_preds.softmax(dim=-1)
+        if type_guidance is not None:
+            smoothed_guidance = self.label_smoother(type_guidance, smoothing) * (1 - confidence)
+            type_probs = smoothed_guidance + confidence * type_probs
+        type_embeddings = self.type_embedder(type_probs)
         word_preds = self.word_classifier(self.fusion(type_embeddings, layer_outputs[-1]))
         return word_preds, type_preds
 
