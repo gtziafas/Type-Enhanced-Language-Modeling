@@ -112,25 +112,12 @@ def save_model(model: Module, save_id: str,
 
 
 class ElementWiseFusion(Module):
-    def __init__(self, activation: tensor_map = F.tanh):
+    def __init__(self, activation: tensor_map = F.tanh) -> None:
         super(ElementWiseFusion, self).__init__()
         self.activation = activation
 
     def forward(self, gate: Tensor, features: Tensor) -> Tensor:
         return self.activation(gate) * features
-
-
-class Tensor2dFusion(Module):
-    def __init__(self):
-        super(Tensor2dFusion, self).__init__()
-
-    def forward(self, gate: Tensor, features: Tensor) -> Tensor:
-        batch_size, seq_len, d_model = gate.shape
-        num_words = batch_size * seq_len
-        gates = [gate.view(-1, d_model)[w, :] for w in range(num_words)]
-        feats = [features.view(-1, d_model)[w, :] for w in range(num_words)]
-        gers = [torch.ger(gates[w], feats[w]) for w in range(num_words)]
-        return torch.stack(gers, dim=0).view(batch_size, seq_len, d_model, d_model).contiguous()
 
 
 def load_model(model_path: str, model: Module, opt: Optimizer) -> Tuple[Module, Optimizer, int, Tuple[float, float]]:
