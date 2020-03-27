@@ -126,10 +126,10 @@ class Tensor2dFusion(Module):
 
     def forward(self, gate: Tensor, features: Tensor) -> Tensor:
         batch_size, seq_len, d_model = gate.shape
-        num_samples = batch_size * seq_len
-        gates = [gate.view(-1, d_model)[s, :] for s in range(num_samples)]
-        feats = [features.view(-1, d_model)[s, :] for s in range(num_samples)]
-        gers = [torch.ger(gates[s], feats[s]) for s in range(num_samples)]
+        num_words = batch_size * seq_len
+        gates = [gate.view(-1, d_model)[w, :] for w in range(num_words)]
+        feats = [features.view(-1, d_model)[w, :] for w in range(num_words)]
+        gers = [torch.ger(gates[w], feats[w]) for w in range(num_words)]
         return torch.stack(gers, dim=0).view(batch_size, seq_len, d_model, d_model).contiguous()
 
 
