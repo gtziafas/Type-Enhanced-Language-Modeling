@@ -45,10 +45,10 @@ class Conv2dFusion(Module):
         self.conv = conv(**conv_kwargs)
         self.dropout = Dropout(p=dropout_rate)
     
-    def forward(self, token_features: Tensor, type_preds: Tensor) -> Tensor:
-        batch_size, seq_len, d_model = type_preds.shape
+    def forward(self, token_features: Tensor, type_embedds: Tensor) -> Tensor:
+        batch_size, seq_len, d_model = type_embedds.shape
 
-        fused = self.fusion(gate=type_preds, features=token_features) # [B S D] x [B S D] -> [B S D D]
+        fused = self.fusion(gate=type_embedds, features=token_features) # [B S D] x [B S D] -> [B S D D]
         convolved = [self.conv(fused[:,w,:].unsqueeze(1)) for w in range(seq_len)] # a list of S [B 576] tensors
         convolved = self.dropout(torch.stack(convolved, dim=1).contiguous()) # [B S 576]
 
