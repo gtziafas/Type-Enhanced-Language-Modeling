@@ -20,16 +20,16 @@ class Outter2dFusion(Module):
         
 
 class Conv2dFeatures(Module):
-    def __init__(self, depth: int, start_kernel: int, start_stride: int) -> None:
+    def __init__(self, depth: int, num_channels: int, start_kernel: int, start_stride: int, pool_kernel: int=3) -> None:
         super(Conv2dFeatures, self).__init__()
-        assert depth > 2, 'Must have at least one intermediate conv block'
-        blocks = [self.conv_block(in_channels=1, out_channels=16, conv_kernel=start_kernel, conv_stride=start_stride)]
-        blocks[1:] = [self.conv_block(in_channels=16*(d+1), out_channels=16*(d+2)) for d in range(0, depth-2)]
-        blocks.append(self.conv_block(in_channels=16*(depth-1), out_channels=16*(depth-1)))
+        blocks = [self.conv_block(in_channels=1, out_channels=16, conv_kernel=start_kernel, conv_stride=start_stride, pool_kernel=pool_kernel)]
+        blocks[1:] = [self.conv_block(in_channels=16*(d+1), out_channels=16*(d+2), pool_kernel=pool_kernel) for d in range(0, depth-2)]
+        if depth > 1:
+            blocks.append(self.conv_block(in_channels=16*(depth-1), out_channels=16*(depth-1), pool_kernel=pool_kernel))
         
         self.features = Sequential(*blocks)
 
-    def conv_block(self, in_channels: int, out_channels: int, conv_kernel: int=3, conv_stride: int=1, pool_kernel: int=3) -> Module:
+    def conv_block(self, in_channels: int, out_channels: int, pool_kernel: int, conv_kernel: int=3, conv_stride: int=1, ) -> Module:
         return Sequential(Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=conv_kernel, stride=conv_stride),
                           GELU(),
                           MaxPool2d(kernel_size=pool_kernel))
@@ -63,7 +63,11 @@ def example():
     x = torch.rand(batch_size, seq_len, d_model)
     y = torch.rand_like(x) 
 
-    m = Conv2dFusion(fusion=Outter2dFusion, conv=Conv2dFeatures, fusion_kwargs={}, 
-                     conv_kwargs={'depth':3, 'start_kernel':50, 'start_stride':3})
+    deep_params = {'depth':3, 'num_channels':16, 'start_kernel':50, 'start_stride':3, 'pool_kernel':3}
+    shallow_params = {'depth':1, 'num_channels':32, 'start_kernel':130, 'start_stride':11, 'pool_kernel':8}
 
-    print(m(x,y).shape)                                                                                                                                                                                                                                                                                                         
+    m1 = Conv2dFusion(fusion=Outter2dFusion, conv=Conv2dFeatures, fusion_kwargs={}, conv_kwargs=deep_params)
+    m2 = Conv2dFusion(fusion=Outter2dFusion, conv=Conv2dFeatures, fusion_kwargs={}, conv_kwargs=shallow_params)
+
+    print('with 2 blocks= {}'.format(m1(x,y).shape))
+    print('with 3 blocks= {}'.format(m2(x,y).shape))                                                                                                                                                                                                                                                                                                      
