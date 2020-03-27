@@ -136,7 +136,8 @@ def main(load_id: Optional[str], save_id: Optional[str]):
         (mlm_loss, st_loss), s_acc, w_acc = step_stats
         per = (step + 1) * num_minibatches_in_batch / num_batches_in_dataset
         print(f' MLM: {mlm_loss:.4f}\tST: {st_loss:.4f}\tS_acc: {(s_acc*100):.2f}'
-              f'\tW_acc: {(w_acc*100):.2f}\tStep: {(per*100):.2f}')
+              f'\tW_acc: {(w_acc*100):.2f}\tStep: {(per*100):.2f}'
+              f'\topt_steps: {opt._step:d}\topt_lr:{opt.lrs[-1]:.10f}')
         sys.stdout.flush()
         if not step % 50:
             print('-' * 64)
