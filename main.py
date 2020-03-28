@@ -65,7 +65,7 @@ def get_vocab_stats() -> two_ints:
     return len(indexer.word_indices) + 1, len(indexer.type_indices)
 
 
-def conv2dfusion_model() -> TypeFactoredLM
+def conv2dfusion_model() -> TypeFactoredLM:
     num_words, num_types = get_vocab_stats()
     d_model = 512
     d_ff = 1024
