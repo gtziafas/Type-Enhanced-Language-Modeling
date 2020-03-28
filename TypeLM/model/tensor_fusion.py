@@ -20,21 +20,21 @@ class Outter2dFusion(Module):
         
 
 class Conv2dFeatures(Module):
-    def __init__(self, depth: int, num_channels: int, start_kernel: int, start_stride: int, pool_kernel: int=3) -> None:
+    def __init__(self, depth: int, num_channels: int, start_kernel: int, start_stride: int=, pool_kernel: int, activation: Module=GELU) -> None:
         super(Conv2dFeatures, self).__init__()
         blocks = [self.conv_block(in_channels=1, out_channels=num_channels, 
                   conv_kernel=start_kernel, conv_stride=start_stride, pool_kernel=pool_kernel)]
         blocks[1:] = [self.conv_block(in_channels=num_channels*(d+1), out_channels=num_channels*(d+2), 
                       pool_kernel=pool_kernel) for d in range(0, depth-2)]
         if depth > 1:
-            blocks.append(self.conv_block(in_channels=num_channels*(depth-1), out_channels=num_channels*(depth-1), 
-                          pool_kernel=pool_kernel))
+            blocks.append(self.conv_block(in_channels=num_channels*(depth-1), out_channels=num_channels*(depth-1), pool_kernel=pool_kernel))
         
+        self.activation = activation
         self.features = Sequential(*blocks)
 
-    def conv_block(self, in_channels: int, out_channels: int, pool_kernel: int, conv_kernel: int=3, conv_stride: int=1, ) -> Module:
+    def conv_block(self, in_channels: int, out_channels: int, pool_kernel: int=3, conv_kernel: int=3, conv_stride: int=1) -> Module:
         return Sequential(Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=conv_kernel, stride=conv_stride),
-                          GELU(),
+                          self.activation(),
                           MaxPool2d(kernel_size=pool_kernel))
 
     def forward(self, x: Tensor) -> Tensor:
@@ -52,10 +52,10 @@ class Conv2dFusion(Module):
         batch_size, seq_len, d_model = type_embedds.shape
 
         fused = self.fusion(gate=type_embedds, features=token_features) # [B S D] x [B S D] -> [B S D D]
-        convolved = [self.conv(fused[:,w,:].unsqueeze(1)) for w in range(seq_len)] # a list of S [B D] tensors7
-        convolved = self.dropout(torch.stack(convolved, dim=1).contiguous()) # [B S D]
+        convolved = [self.conv(fused[:,w,:].unsqueeze(1)) for w in range(seq_len)] # a list of S [B C h w] tensors, C*h*w = D
+        convolved = self.dropout(torch.stack(convolved, dim=1).contiguous()) # [B S C h w]
 
-        return convolved.view(batch_size, seq_len, -1)
+        return convolved.view(batch_size, seq_len, -1) # [B S C h w] -> [B S D]
 
 
 def example():
