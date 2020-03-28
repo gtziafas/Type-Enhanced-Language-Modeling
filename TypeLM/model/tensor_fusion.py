@@ -1,5 +1,7 @@
 from TypeLM.utils.imports import * 
-from torch.nn import Conv2d, MaxPool2d, GELU
+from TypeLM.utils.utils import GELU 
+
+from torch.nn import Conv2d, MaxPool2d
 
 
 class Outter2dFusion(Module):
@@ -81,4 +83,4 @@ def example():
     m2 = Conv2dFusion(fusion=Outter2dFusion, conv=Conv2dFeatures, fusion_kwargs={}, conv_kwargs=shallow_params)
 
     print('with 3 blocks= {}'.format(m1(x,y).shape))
-    print('with 1 block= {}'.format(m2(x,y).shape))                                                                                                                                                                                                                                                                                                      
+    print('with 1 block= {}'.format(m2(x,y).shape))
