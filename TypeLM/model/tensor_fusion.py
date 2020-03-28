@@ -58,6 +58,14 @@ class Conv2dFusion(Module):
         return convolved.view(batch_size, seq_len, -1) # [B S C h w] -> [B S D]
 
 
+def get_deep_params() -> Dict:
+    return {'depth':3, 'num_channels':16, 'start_kernel':50, 'start_stride':3, 'pool_kernel':3}
+
+
+def get_shallow_params() -> Dict:
+    return {'depth':1, 'num_channels':32, 'start_kernel':130, 'start_stride':11, 'pool_kernel':8}
+
+
 def example():
     batch_size = 2 
     seq_len = 3
@@ -66,8 +74,8 @@ def example():
     x = torch.rand(batch_size, seq_len, d_model)
     y = torch.rand_like(x) 
 
-    deep_params = {'depth':3, 'num_channels':16, 'start_kernel':50, 'start_stride':3, 'pool_kernel':3}
-    shallow_params = {'depth':1, 'num_channels':32, 'start_kernel':130, 'start_stride':11, 'pool_kernel':8}
+    deep_params = get_deep_params()
+    shallow_params = get_shallow_params()
 
     m1 = Conv2dFusion(fusion=Outter2dFusion, conv=Conv2dFeatures, fusion_kwargs={}, conv_kwargs=deep_params)
     m2 = Conv2dFusion(fusion=Outter2dFusion, conv=Conv2dFeatures, fusion_kwargs={}, conv_kwargs=shallow_params)

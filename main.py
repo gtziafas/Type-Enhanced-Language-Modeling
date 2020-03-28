@@ -1,5 +1,6 @@
 from TypeLM.model.train import *
 from TypeLM.model.eval import *
+from TypeLM.mmodel.tensor_fusion import *
 from TypeLM.model.masked_encoder import EncoderLayer, Encoder
 from TypeLM.utils.utils import CustomLRScheduler, linear_scheme, save_model, load_model, ElementWiseFusion
 from TypeLM.model.loss import FuzzyLoss, CrossEntropySS
@@ -64,12 +65,11 @@ def get_vocab_stats() -> two_ints:
     return len(indexer.word_indices) + 1, len(indexer.type_indices)
 
 
-def default_model() -> TypeFactoredLM:
+def conv2dfusion_model() -> TypeFactoredLM
     num_words, num_types = get_vocab_stats()
     d_model = 512
     d_ff = 1024
     d_k, d_v = d_model, d_model
-    type_vocab_size, word_vocab_size = num_types, num_words
     num_layers = 8
     num_heads = 8
     device = 'cuda'
@@ -82,12 +82,51 @@ def default_model() -> TypeFactoredLM:
                       'd_k': d_k,
                       'd_v': d_v,
                       'activation_fn': F.gelu}
-    type_pred_params = {'in_features': d_model, 'out_features': type_vocab_size}
+    type_pred_params = {'in_features': d_model, 'out_features': num_types}
+    label_smoother_params = {'smoothing': 0.1, 'num_classes': num_types}
+
+    fusion = Conv2dFusion 
+    deep_params = get_deep_params()
+    shallow_params = get_shallow_params()
+    fusion_params = {'fusion': Outter2dFusion, 'conv': Conv2dFeatures, 'fusion_kwargs':{}, 'conv_kwargs':deep_params}
+    # fusion_params = {'fusion': Outter2dFusion, 'conv': Conv2dFeatures, 'fusion_kwargs':{}, 'conv_kwargs':shallow_params}
+
+    return TypeFactoredLM(masked_encoder=Encoder,
+                          type_classifier=Linear,
+                          num_words=num_words,
+                          masked_encoder_kwargs=encoder_params,
+                          type_classifier_kwargs=type_pred_params,
+                          fusion=fusion,
+                          fusion_kwargs=fusion_params,
+                          type_embedder=Linear,
+                          type_embedder_kwargs={'in_features': num_types, 'out_features': d_model},
+                          label_smoother_kwargs=label_smoother_params
+                          ).to(device)
+
+
+def default_model() -> TypeFactoredLM:
+    num_words, num_types = get_vocab_stats()
+    d_model = 512
+    d_ff = 1024
+    d_k, d_v = d_model, d_model
+    num_layers = 8
+    num_heads = 8
+    device = 'cuda'
+
+    encoder_params = {'module_maker': EncoderLayer,
+                      'num_layers': num_layers,
+                      'num_heads': num_heads,
+                      'd_model': d_model,
+                      'd_ff': d_ff,
+                      'd_k': d_k,
+                      'd_v': d_v,
+                      'activation_fn': F.gelu}
+    type_pred_params = {'in_features': d_model, 'out_features': num_types}
     label_smoother_params = {'smoothing': 0.1, 'num_classes': num_types}
 
     return TypeFactoredLM(masked_encoder=Encoder,
                           type_classifier=Linear,
-                          num_words=word_vocab_size,
+                          num_words=num_words,
                           masked_encoder_kwargs=encoder_params,
                           type_classifier_kwargs=type_pred_params,
                           fusion=ElementWiseFusion,
@@ -108,6 +147,7 @@ def default_loss() -> MixedLoss:
 def main(load_id: Optional[str], save_id: Optional[str]):
 
     model = default_model()
+    # model = conv2dfusion_model()
 
     batch_size = 128
     
