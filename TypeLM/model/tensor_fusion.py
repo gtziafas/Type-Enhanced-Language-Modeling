@@ -20,7 +20,7 @@ class Outter2dFusion(Module):
         
 
 class Conv2dFeatures(Module):
-    def __init__(self, depth: int, num_channels: int, start_kernel: int, start_stride: int=, pool_kernel: int, activation: Module=GELU) -> None:
+    def __init__(self, depth: int, num_channels: int, start_kernel: int, start_stride: int, pool_kernel: int, activation: Module=GELU) -> None:
         super(Conv2dFeatures, self).__init__()
         blocks = [self.conv_block(in_channels=1, out_channels=num_channels, 
                   conv_kernel=start_kernel, conv_stride=start_stride, pool_kernel=pool_kernel)]
