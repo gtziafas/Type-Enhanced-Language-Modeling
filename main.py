@@ -87,7 +87,7 @@ def conv2dfusion_model() -> TypeFactoredLM:
 
     fusion = Conv2dFusion 
     deep_params = get_deep_params()
-    shallow_params = get_shallow_params()
+    # shallow_params = get_shallow_params()
     fusion_params = {'fusion': Outter2dFusion, 'conv': Conv2dFeatures, 'fusion_kwargs':{}, 'conv_kwargs':deep_params}
     # fusion_params = {'fusion': Outter2dFusion, 'conv': Conv2dFeatures, 'fusion_kwargs':{}, 'conv_kwargs':shallow_params}
 
