@@ -1,6 +1,6 @@
 from TypeLM.model.train import *
 from TypeLM.model.eval import *
-from TypeLM.mmodel.tensor_fusion import *
+from TypeLM.model.tensor_fusion import *
 from TypeLM.model.masked_encoder import EncoderLayer, Encoder
 from TypeLM.utils.utils import CustomLRScheduler, linear_scheme, save_model, load_model, ElementWiseFusion
 from TypeLM.model.loss import FuzzyLoss, CrossEntropySS
