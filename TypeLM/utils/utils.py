@@ -112,7 +112,7 @@ def save_model(model: Module, save_id: str,
 
 
 class ElementWiseFusion(Module):
-    def __init__(self, activation: tensor_map = F.tanh) -> None:
+    def __init__(self, activation: tensor_map = torch.tanh) -> None:
         super(ElementWiseFusion, self).__init__()
         self.activation = activation
 
