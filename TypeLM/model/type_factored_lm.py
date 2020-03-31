@@ -11,7 +11,7 @@ class TypeFactoredLM(Module):
                  padding_idx: int = 0, dropout_rate: float = 0.1) -> None:
         super(TypeFactoredLM, self).__init__()
         self.masked_encoder = masked_encoder(**masked_encoder_kwargs)
-        self.layer_weighter = LayerWeighter(masked_encoder_kwargs['num_layers']-2)
+        self.layer_weighter = LayerWeighter(masked_encoder_kwargs['num_layers'])
         self.type_classifier = type_classifier(**type_classifier_kwargs)
         self.type_embedder = type_embedder(**type_embedder_kwargs)
         self.fusion = fusion(**fusion_kwargs)
@@ -26,7 +26,7 @@ class TypeFactoredLM(Module):
                 smoothing: float = 0.,
                 confidence: float = 0.5) -> Tuple[Tensor, Tensor]:
         layer_outputs = self.get_all_vectors(word_ids, pad_mask)
-        weighted = self.layer_weighter(layer_outputs[1:-2])
+        weighted = self.layer_weighter(layer_outputs)
         type_preds = self.type_classifier(self.dropout(weighted))
         type_probs = type_preds.softmax(dim=-1)
         if type_guidance is not None:
@@ -38,7 +38,7 @@ class TypeFactoredLM(Module):
 
     def forward_st(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
         layer_outputs = self.get_all_vectors(word_ids, pad_mask)
-        weighted = self.layer_weighter(layer_outputs[1:-2])
+        weighted = self.layer_weighter(layer_outputs)
         type_preds = self.type_classifier(weighted)
         return type_preds
 
