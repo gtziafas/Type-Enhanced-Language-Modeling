@@ -128,6 +128,7 @@ def load_model(model_path: str, model: Module, opt: Optimizer) -> Tuple[Module, 
     loss = checkpoint['loss'] 
     return model, opt, num_epochs, loss
 
+
 class GELU(Module):
     def __init__(self) -> None:
         super(GELU, self).__init__()

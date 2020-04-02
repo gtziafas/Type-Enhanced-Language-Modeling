@@ -25,10 +25,10 @@ class Conv2dFeatures(Module):
     def __init__(self, depth: int, num_channels: int, start_kernel: int, start_stride: int, pool_kernel: int, activation: Module=GELU) -> None:
         super(Conv2dFeatures, self).__init__()
         self.activation = activation
-        blocks = [self.conv_block(in_channels=1, out_channels=num_channels, 
-                  conv_kernel=start_kernel, conv_stride=start_stride, pool_kernel=pool_kernel)]
-        blocks[1:] = [self.conv_block(in_channels=num_channels*(d+1), out_channels=num_channels*(d+2), 
-                      pool_kernel=pool_kernel) for d in range(0, depth-2)]
+        blocks = ModuleList([self.conv_block(in_channels=1, out_channels=num_channels, 
+                  conv_kernel=start_kernel, conv_stride=start_stride, pool_kernel=pool_kernel)])
+        blocks.extend([self.conv_block(in_channels=num_channels*(d+1), out_channels=num_channels*(d+2), 
+                      pool_kernel=pool_kernel) for d in range(0, depth-2)])
         if depth > 1:
             blocks.append(self.conv_block(in_channels=num_channels*(depth-1), out_channels=num_channels*(depth-1), pool_kernel=pool_kernel))
         
