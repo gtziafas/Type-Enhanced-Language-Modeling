@@ -26,8 +26,9 @@ class TypeFactoredLM(Module):
                 smoothing: float = 0.,
                 confidence: float = 0.5) -> Tuple[Tensor, Tensor]:
         layer_outputs = self.get_all_vectors(word_ids, pad_mask)
-        weighted = self.layer_weighter(layer_outputs[1:])
-        type_preds = self.type_classifier(self.dropout(weighted))
+        #weighted = self.layer_weighter(layer_outputs[1:])
+        #type_preds = self.type_classifier(self.dropout(weighted))
+        type_preds = self.type_classifier(layer_outputs[5])
         type_probs = type_preds.softmax(dim=-1)
         if type_guidance is not None:
             smoothed_guidance = self.label_smoother(type_guidance, smoothing) * (1 - confidence)
