@@ -57,8 +57,9 @@ def infer_words(sentence: List[int], masked_indices: List[int], model: Module, m
     sentence[masked_indices==1] = mask_token
     pad_mask = torch.ones(sentence.shape[0], sentence.shape[0], dtype=torch.long, device=device)
 
-    types = - torch.ones_like(sentence)
+    types = None
     if guidance is not None:
+        types = - torch.ones_like(sentence)
         types[masked_indices==1] = torch.tensor(guidance, dtype=torch.long, device=device)
 
     word_preds = model(sentence.unsqueeze(0), pad_mask, type_guidance=types, confidence=confidence)[0].squeeze(0)
