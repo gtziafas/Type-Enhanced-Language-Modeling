@@ -83,7 +83,7 @@ def main():
     while True:
         sentence_str = input('Give input sentence: ')
         masked_indices = input('Give input mask (leave empty for only type inference): ')
-        #guidance = input('Give type guidance tokens and indices: ')
+        guidance = input('Give type guidance for masked word tokens: ')
 
         word_indices = indexer.index_sentence(tokenizer.tokenize_sentence(sentence_str, add_eos=True))
 
@@ -94,7 +94,8 @@ def main():
 
         if masked_indices is not '':
             word_preds = infer_words(sentence=word_indices, masked_indices=list(map(eval, masked_indices.split(' '))), 
-                                     model=model, mask_token=indexer.index_word(MASK))
+                                     model=model, mask_token=indexer.index_word(MASK), guidance=guidance, 
+                                     confidence = 0.5)
             infered_words = list(map(indexer.inverse_word, [w for p in word_preds for w in p]))
             print('Infered words = {}'.format('\n'.join(infered_words)))
 
