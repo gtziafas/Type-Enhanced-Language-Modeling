@@ -36,7 +36,7 @@ class TypeFactoredLM(Module):
             print(type_guidance[type_guidance>0])
             print('-'*100)
             type_guidance[type_guidance>-1] = self.label_smoother(type_guidance[type_guidance>-1], smoothing) * (1 - confidence)
-            type_probs[type_guidance>-1] = type_guidance[type_guidance>-1] + confidence * type_probs[type_guidance>-1]
+            type_probs[:,type_guidance>-1,:] = type_guidance[type_guidance>-1] + confidence * type_probs[type_guidance>-1]
         type_embeddings = self.type_embedder(type_probs)
         word_preds = self.word_classifier(self.fusion(type_embeddings, layer_outputs[-1]))
         return word_preds, type_preds
