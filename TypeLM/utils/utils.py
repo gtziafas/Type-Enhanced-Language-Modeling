@@ -138,5 +138,5 @@ class GELU(Module):
 
 
 def one_hot_embedding(labels: LongTensor, num_labels: int) -> Tensor:
-    one_hots = torch.eye(num_labels, dtype=torch.float, device=labels.device)
+    one_hots = torch.eye(num_labels, dtype=torch.long, device=labels.device)
     return one_hots[labels]
