@@ -82,7 +82,7 @@ def main():
 
     while True:
         sentence_str = input('Give input sentence: ')
-        masked_indices = input('Give input mask (leave empty for only type inference): ')
+        masked_indices = input('Give input mask: ')
         guidance = input('Give type guidance for masked word tokens: ')
 
         word_indices = indexer.index_sentence(tokenizer.tokenize_sentence(sentence_str, add_eos=True))
