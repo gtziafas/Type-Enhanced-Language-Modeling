@@ -24,7 +24,8 @@ class TypeFactoredLM(Module):
     def forward(self, word_ids: LongTensor, pad_mask: LongTensor,
                 type_guidance: Optional[LongTensor] = None,
                 smoothing: float = 0.,
-                confidence: float = 0.5) -> Tuple[Tensor, Tensor]:
+                confidence: float = 0.5,
+                ignore_idx: int=-1) -> Tuple[Tensor, Tensor]:
         layer_outputs = self.get_all_vectors(word_ids, pad_mask)
         weighted = self.layer_weighter(layer_outputs[1:])
         type_preds = self.type_classifier(self.dropout(weighted))
@@ -32,8 +33,9 @@ class TypeFactoredLM(Module):
         type_probs = type_preds.softmax(dim=-1)
         if type_guidance is not None:
             smoothed_guidance = torch.empty_like(type_probs)
-            smoothed_guidance[type_guidance>-1] = self.label_smoother(smoothed_guidance[type_guidance>-1], smoothing) * (1 - confidence)
-            type_probs[type_guidance>-1] = smoothed_guidance[type_guidance>-1] + confidence * type_probs[type_guidance>-1]
+            ignoring = type_guidance > ignore_idx
+            smoothed_guidance[ignoring] = self.label_smoother(smoothed_guidance[ignoring], smoothing) * (1 - confidence)
+            type_probs[ignoring] = smoothed_guidance[ignoring] + confidence * type_probs[ignoring]
         type_embeddings = self.type_embedder(type_probs)
         word_preds = self.word_classifier(self.fusion(type_embeddings, layer_outputs[-1]))
         return word_preds, type_preds
