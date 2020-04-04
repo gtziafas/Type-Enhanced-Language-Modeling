@@ -1,5 +1,5 @@
 from TypeLM.utils.imports import * 
-from TypeLM.utils.utils import load_model 
+from TypeLM.utils.utils import load_model, ElementWiseFusion
 from TypeLM.data.tokenizer import default_tokenizer, Indexer 
 from TypeLM.model.masked_encoder import EncoderLayer, Encoder
 from TypeLM.model.type_factored_lm import TypeFactoredLM
@@ -16,7 +16,7 @@ model_path = './TypeLM/checkpoints/8layers_1.pth'
 
 
 def get_default_model(vocab_stats: Tuple[int, int], load_id: str = model_path) -> TypeFactoredLM:
-    num_words, num_types = get_vocab_stats()
+    num_words, num_types = vocab_stats
     d_model = 512
     d_ff = 1024
     d_k, d_v = d_model, d_model
@@ -55,7 +55,7 @@ def infer_words(sentence: List[int], masked_indices: List[int], model: Module, m
     masked_indices = torch.tensor(masked_indices, dtype=torch.long, device=device)
     sentence[masked_indices==1] = mask_token
     pad_mask = torch.ones(sentence.shape[0], sentence.shape[0], dtype=torch.long, device=device)
-    word_preds = model.forward_lm(sentence.unsqueeze(0), pad_mask).squeeze(0)
+    word_preds = model(sentence.unsqueeze(0), pad_mask)[0].squeeze(0)
     return word_preds[masked_indices==1].topk(kappa)[1].tolist()
 
 
@@ -76,6 +76,7 @@ def main():
     while True:
         sentence_str = input('Give input sentence: ')
         masked_indices = input('Give input mask (leave empty for only type inference): ')
+        #guidance = input('Give type guidance tokens and indices: ')
 
         word_indices = indexer.index_sentence(tokenizer.tokenize_sentence(sentence_str, add_eos=True))
 
@@ -86,7 +87,7 @@ def main():
 
         if masked_indices is not '':
             word_preds = infer_words(sentence=word_indices, masked_indices=list(map(eval, masked_indices.split(' '))), 
-                                     model=model, mask_token=indexer.index_word(tokenizer.tokenize_word(MASK)))
+                                     model=model, mask_token=indexer.index_word(MASK))
             infered_words = list(map(indexer.inverse_word, [w for p in word_preds for w in p]))
             print('Infered sentence = {}'.format(' '.join(infered_words)))
 
