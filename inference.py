@@ -60,7 +60,7 @@ def infer_words(sentence: List[int], masked_indices: List[int], model: Module, m
     types = None
     if guidance is not None:
         types = - torch.ones_like(sentence).unsqueeze(-1)
-        types[:,masked_indices==1,:] = torch.tensor(guidance, dtype=torch.long, device=device)
+        types[masked_indices==1,:] = torch.tensor(guidance, dtype=torch.long, device=device)
 
     word_preds = model(sentence.unsqueeze(0), pad_mask, type_guidance=types.unsqueeze(0), confidence=confidence)[0].squeeze(0)
     return word_preds[masked_indices==1].topk(kappa)[1].tolist()
