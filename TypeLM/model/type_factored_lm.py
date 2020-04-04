@@ -32,7 +32,7 @@ class TypeFactoredLM(Module):
         #type_preds = self.type_classifier(layer_outputs[5])
         type_probs = type_preds.softmax(dim=-1)
         if type_guidance is not None:
-            smoothed_guidance = torch.empty_like(type_probs, dtype=torch.float)
+            smoothed_guidance = torch.empty_like(type_probs, dtype=torch.long)
             ignoring = type_guidance > ignore_idx
             smoothed_guidance[ignoring] = self.label_smoother(smoothed_guidance, smoothing) * (1 - confidence)
             type_probs[ignoring] = smoothed_guidance[ignoring] + confidence * type_probs[ignoring]
