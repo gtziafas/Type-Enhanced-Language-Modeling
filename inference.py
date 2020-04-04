@@ -50,12 +50,18 @@ def get_default_model(vocab_stats: Tuple[int, int], load_id: str = model_path) -
     return load_model(model_path=load_id, model=model, opt=torch.optim.Adam(model.parameters()))[0]
 
 
-def infer_words(sentence: List[int], masked_indices: List[int], model: Module, mask_token: int, kappa: int=10) -> List[int]:
+def infer_words(sentence: List[int], masked_indices: List[int], model: Module, mask_token: int, 
+                kappa: int=10, guidance: Optional[List[str]]=None, confidence: float=0) -> List[int]:
     sentence = torch.tensor(sentence, dtype=torch.long, device=device)
     masked_indices = torch.tensor(masked_indices, dtype=torch.long, device=device)
     sentence[masked_indices==1] = mask_token
     pad_mask = torch.ones(sentence.shape[0], sentence.shape[0], dtype=torch.long, device=device)
-    word_preds = model(sentence.unsqueeze(0), pad_mask)[0].squeeze(0)
+
+    types = - torch.ones_like(sentence)
+    if guidance is not None:
+        types[masked_indices==1] = torch.tensor(guidance, dtype=torch.long, device=device)
+
+    word_preds = model(sentence.unsqueeze(0), pad_mask, type_guidance=types, confidence=confidence)[0].squeeze(0)
     return word_preds[masked_indices==1].topk(kappa)[1].tolist()
 
 

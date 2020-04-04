@@ -31,8 +31,8 @@ class TypeFactoredLM(Module):
         #type_preds = self.type_classifier(layer_outputs[5])
         type_probs = type_preds.softmax(dim=-1)
         if type_guidance is not None:
-            smoothed_guidance = self.label_smoother(type_guidance, smoothing) * (1 - confidence)
-            type_probs = smoothed_guidance + confidence * type_probs
+            type_guidance[type_guidance>-1] = self.label_smoother(type_guidance[type_guidance>-1], smoothing) * (1 - confidence)
+            type_probs[type_guidance>-1] = type_guidance[type_guidance>-1] + confidence * type_probs[type_guidance>-1]
         type_embeddings = self.type_embedder(type_probs)
         word_preds = self.word_classifier(self.fusion(type_embeddings, layer_outputs[-1]))
         return word_preds, type_preds
