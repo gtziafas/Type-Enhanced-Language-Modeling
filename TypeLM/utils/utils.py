@@ -135,3 +135,8 @@ class GELU(Module):
 
     def forward(self, x: Tensor) -> Tensor:
         return F.gelu(x)
+
+
+def one_hot_embedding(labels: LongTensor, num_labels: int) -> Tensor:
+    one_hots = torch.eye(num_labels)
+    return one_hots[labels]

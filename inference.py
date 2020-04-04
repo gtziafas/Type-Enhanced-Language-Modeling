@@ -1,5 +1,5 @@
 from TypeLM.utils.imports import * 
-from TypeLM.utils.utils import load_model, ElementWiseFusion
+from TypeLM.utils.utils import load_model, ElementWiseFusion, one_hot_embedding
 from TypeLM.data.tokenizer import default_tokenizer, Indexer 
 from TypeLM.model.masked_encoder import EncoderLayer, Encoder
 from TypeLM.model.type_factored_lm import TypeFactoredLM
@@ -51,7 +51,7 @@ def get_default_model(vocab_stats: Tuple[int, int], load_id: str = model_path) -
 
 
 def infer_words(sentence: List[int], masked_indices: List[int], model: Module, mask_token: int, 
-                kappa: int=10, guidance: Optional[List[str]]=None, confidence: float=0) -> List[int]:
+                kappa: int=10, guidance: Optional[List[str]]=None, confidence: float=0, num_types: int=1182) -> List[int]:
     sentence = torch.tensor(sentence, dtype=torch.long, device=device)
     masked_indices = torch.tensor(masked_indices, dtype=torch.long, device=device)
     sentence[masked_indices==1] = mask_token
@@ -59,8 +59,8 @@ def infer_words(sentence: List[int], masked_indices: List[int], model: Module, m
 
     types = None
     if guidance is not None:
-        types = - torch.ones_like(sentence).unsqueeze(-1)
-        types[masked_indices==1,:] = torch.tensor(guidance, dtype=torch.long, device=device)
+        types = - torch.ones(sentence.shape[0], num_types, dtype=torch.float, device=device)
+        types[masked_indices==1, :] = one_hot_embedding(torch.tensor(guidance, dtype=torch.long, device=device))
 
     word_preds = model(sentence.unsqueeze(0), pad_mask, type_guidance=types.unsqueeze(0), confidence=confidence)[0].squeeze(0)
     return word_preds[masked_indices==1].topk(kappa)[1].tolist()
