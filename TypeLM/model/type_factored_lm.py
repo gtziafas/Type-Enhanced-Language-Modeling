@@ -34,7 +34,7 @@ class TypeFactoredLM(Module):
         if type_guidance is not None:
             smoothed_guidance = torch.empty_like(type_probs, dtype=torch.float)
             ignoring = type_guidance > ignore_idx
-            smoothed_guidance[ignoring] = self.label_smoother(smoothed_guidance, smoothing, ignore_index=ignore_idx) * (1 - confidence)
+            smoothed_guidance[ignoring] = self.label_smoother(smoothed_guidance, smoothing) * (1 - confidence)
             type_probs[ignoring] = smoothed_guidance[ignoring] + confidence * type_probs[ignoring]
         type_embeddings = self.type_embedder(type_probs)
         word_preds = self.word_classifier(self.fusion(type_embeddings, layer_outputs[-1]))
