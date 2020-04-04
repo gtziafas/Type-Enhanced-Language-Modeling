@@ -94,7 +94,8 @@ def main():
 
         if masked_indices is not '':
             word_preds = infer_words(sentence=word_indices, masked_indices=list(map(eval, masked_indices.split(' '))), 
-                                     model=model, mask_token=indexer.index_word(MASK), guidance=guidance, 
+                                     model=model, mask_token=indexer.index_word(MASK), 
+                                     guidance=indexer.index_type_sequence(list(map(tokenizer.tokenize_type, guidance.split(' ')))), 
                                      confidence = 0.5)
             infered_words = list(map(indexer.inverse_word, [w for p in word_preds for w in p]))
             print('Infered words = {}'.format('\n'.join(infered_words)))
