@@ -167,9 +167,8 @@ def main(load_id: Optional[str], save_id: Optional[str]):
         model, _opt, pre_train_epochs, _ = load_model(model_path=load_id, model=model, opt=_opt)
     opt = CustomLRScheduler(_opt, [linear_scheme], warmup_steps=1e05, goal_lr=5e-05, decrease_rate=1e-11, min_lr=1e-07)
     opt._step = pre_train_epochs * num_batches_in_dataset
-    
+
     print('\nStarted training..') 
-    torch.autograd.set_detect_anomaly(True)
     sys.stdout.flush()
     for step in range(num_epochs * steps_per_epoch):
         step_stats = train_batches(model, train_dl, loss_fn, opt, num_minibatches_in_batch, 'cuda')

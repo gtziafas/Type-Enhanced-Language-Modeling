@@ -32,7 +32,7 @@ def sigsoftmax(x: Tensor, dim: int) -> Tensor:
     siglogits = x + logsigmoids
     return siglogits.log_softmax(dim)
 
-     
+
 class PositionalEncoder(Module):
     def __init__(self, dropout_rate: float = 0.1):
         super(PositionalEncoder, self).__init__()
@@ -123,7 +123,7 @@ def load_model(model_path: str, model: Module, opt: Optimizer) -> Tuple[Module, 
     checkpoint = torch.load(model_path)
     model.load_state_dict(checkpoint['model_state_dict'])
     opt.load_state_dict(checkpoint['optimizer_state_dict'])
-    num_epochs = checkpoint['epoch'] + 1
+    num_epochs = checkpoint['epoch'] 
     mlm_loss, st_loss = checkpoint['loss'] 
     return model, opt, num_epochs, (mlm_loss, st_loss)
 
