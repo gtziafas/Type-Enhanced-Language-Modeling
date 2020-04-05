@@ -28,12 +28,11 @@ def positional_encoding(b: int, n: int, d_model: int, freq: int = 10000, device:
 
 
 def sigsoftmax(x: Tensor, dim: int) -> Tensor:
-    sigx = torch.sigmoid(x) * torch.exp(x)
-    rank = len(sigx.shape)
-    norm = torch.sum(sigx, dim=dim).unsqueeze(dim).repeat([1 if i != dim else sigx.shape[i] for i in range(rank)])
-    return sigx/norm
+    logsigmoids = F.logsigmoid(x)
+    siglogits = x + logsigmoids
+    return siglogits.log_softmax(dim)
 
-
+     
 class PositionalEncoder(Module):
     def __init__(self, dropout_rate: float = 0.1):
         super(PositionalEncoder, self).__init__()

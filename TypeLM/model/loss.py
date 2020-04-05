@@ -74,7 +74,7 @@ class CrossEntropySS(Module):
 
     def forward(self, predictions: Tensor, truth: LongTensor) -> Tensor:
         predictions = sigsoftmax(predictions, dim=-1)
-        return self.NLL(predictions.log(), truth)
+        return self.NLL(predictions, truth)
 
 
 
