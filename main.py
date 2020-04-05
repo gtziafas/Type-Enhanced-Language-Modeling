@@ -169,6 +169,7 @@ def main(load_id: Optional[str], save_id: Optional[str]):
     opt._step = pre_train_epochs * num_batches_in_dataset
     
     print('\nStarted training..') 
+    torch.autograd.set_detect_anomaly(True)
     sys.stdout.flush()
     for step in range(num_epochs * steps_per_epoch):
         step_stats = train_batches(model, train_dl, loss_fn, opt, num_minibatches_in_batch, 'cuda')
