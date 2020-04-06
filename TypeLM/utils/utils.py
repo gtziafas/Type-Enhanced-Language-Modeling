@@ -123,7 +123,7 @@ def load_model(model_path: str, model: Module, opt: Optimizer) -> Tuple[Module, 
     checkpoint = torch.load(model_path)
     model.load_state_dict(checkpoint['model_state_dict'])
     opt.load_state_dict(checkpoint['optimizer_state_dict'])
-    num_epochs = checkpoint['epoch'] 
+    num_epochs = checkpoint['epoch']
     mlm_loss, st_loss = checkpoint['loss'] 
     return model, opt, num_epochs, (mlm_loss, st_loss)
 

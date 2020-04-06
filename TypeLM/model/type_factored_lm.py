@@ -11,6 +11,7 @@ class TypeFactoredLM(Module):
                  padding_idx: int = 0, dropout_rate: float = 0.1) -> None:
         super(TypeFactoredLM, self).__init__()
         self.masked_encoder = masked_encoder(**masked_encoder_kwargs)
+        self.fused_encoder = EncoderLayer({k:v for k,v in masked_encoder_kwargs.items() if k not in {'num_layers', 'module_maker'}})
         self.layer_weighter = LayerWeighter(masked_encoder_kwargs['num_layers'])
         self.type_classifier = type_classifier(**type_classifier_kwargs)
         self.type_embedder = type_embedder(**type_embedder_kwargs)
@@ -26,7 +27,7 @@ class TypeFactoredLM(Module):
                 smoothing: float = 0.,
                 confidence: float = 0.5,
                 ignore_idx: int=-1) -> Tuple[Tensor, Tensor]:
-        layer_outputs = self.get_all_vectors(word_ids, pad_mask)
+        layer_outputs = self.get_prefuse_vectors(word_ids, pad_mask)
         weighted = self.layer_weighter(layer_outputs[1:])
         type_preds = self.type_classifier(self.dropout(weighted))
         #type_preds = self.type_classifier(layer_outputs[5])
@@ -38,16 +39,18 @@ class TypeFactoredLM(Module):
             smoothed_guidance = self.label_smoother(type_guidance, smoothing) * (1 - confidence)
             type_probs = smoothed_guidance + confidence * type_probs
         type_embeddings = self.type_embedder(type_probs)
-        word_preds = self.word_classifier(self.fusion(type_embeddings, layer_outputs[-1]))
+        token_features = self.fusion(type_embeddings, layer_outputs[-1])
+        token_features, _ = self.fused_encoder((token_features, pad_mask))
+        word_preds = self.word_classifier(token_features)
         return word_preds, type_preds
 
     def forward_st(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
-        layer_outputs = self.get_all_vectors(word_ids, pad_mask)
+        layer_outputs = self.get_prefuse_vectors(word_ids, pad_mask)
         weighted = self.layer_weighter(layer_outputs[1:])
         type_preds = self.type_classifier(weighted)
         return type_preds
 
-    def get_all_vectors(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
+    def get_prefuse_vectors(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
         word_embeds = self.word_embedder(word_ids)
         batch_size, num_words, d_model = word_embeds.shape[0:3]
         positional_encodings = self.positional_encoder(b=batch_size, n=num_words, d_model=d_model,
@@ -55,10 +58,6 @@ class TypeFactoredLM(Module):
 
         word_embeds = word_embeds + positional_encodings
         return self.masked_encoder.forward_all(word_embeds, pad_mask)
-
-    def get_last_vectors(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
-        layer_outputs = self.get_all_vectors(word_ids, pad_mask)
-        return layer_outputs[-1]
 
     def word_classifier(self, final: Tensor) -> Tensor:
         return final@self.word_embedder.weight.transpose(1, 0)
