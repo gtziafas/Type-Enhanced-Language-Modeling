@@ -11,7 +11,7 @@ class TypeFactoredLM(Module):
                  padding_idx: int = 0, dropout_rate: float = 0.1) -> None:
         super(TypeFactoredLM, self).__init__()
         self.masked_encoder = masked_encoder(**masked_encoder_kwargs)
-        self.fused_encoder = EncoderLayer({k:v for k,v in masked_encoder_kwargs.items() if k not in {'num_layers', 'module_maker'}})
+        self.fused_encoder = masked_encoder_kwargs['module_maker'](**{k:v for k,v in masked_encoder_kwargs.items() if k not in {'num_layers', 'module_maker'}})
         self.layer_weighter = LayerWeighter(masked_encoder_kwargs['num_layers'])
         self.type_classifier = type_classifier(**type_classifier_kwargs)
         self.type_embedder = type_embedder(**type_embedder_kwargs)
