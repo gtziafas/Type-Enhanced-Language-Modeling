@@ -57,7 +57,7 @@ class Masker(object):
         return masked, unmask_indices(words, indices, self.unpredictable)
 
 
-def default_masker() -> Masker:
+def default_word_masker() -> Masker:
     tokenizer = default_tokenizer()
     indexer = Indexer(tokenizer)
     return Masker(outer_chance=0.15, mask_token=indexer.index_word(MASK), inner_chance=0.9, keep_chance=0.5,
@@ -69,9 +69,9 @@ def non_masker() -> Callable[[ints], Tuple[ints, ints]]:
     return lambda seq: (seq, [0 for _ in range(len(seq))])
 
 
-def type_masker() -> Masker:
+def default_type_masker() -> Masker:
     tokenizer = default_tokenizer()
     indexer = Indexer(tokenizer)
-    return Masker(outer_chance=1., mask_token=0, inner_chance=0., keep_chance=0.85,
+    return Masker(outer_chance=1., mask_token=0, inner_chance=0., keep_chance=0.99,
                   replacements=list(set(indexer.type_indices.values()) - {indexer.index_type(PAD)}),
                   unpredictable={indexer.index_type(PAD)})

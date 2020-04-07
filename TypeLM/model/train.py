@@ -18,8 +18,8 @@ def pad_sequence(x):
     return _pad_sequence(x, batch_first=True, padding_value=0)
 
 
-def train_batch(model: TypeFactoredLM, masked_words: LongTensor, true_words: LongTensor, types: LongTensor,
-                pad: LongTensor, masked_indices: LongTensor, loss_fn: MixedLoss,
+def train_batch(model: TypeFactoredLM, masked_words: LongTensor, true_words: LongTensor, true_types: LongTensor,
+                masked_types: LongTensor, pad: LongTensor, masked_indices: LongTensor, loss_fn: MixedLoss,
                 optimizer: Optimizer) -> Tuple[two_floats, two_ints, two_ints]:
     model.train()
 
@@ -27,10 +27,10 @@ def train_batch(model: TypeFactoredLM, masked_words: LongTensor, true_words: Lon
     num_samples = masked_words.shape[0] * masked_words.shape[1]
 
     # forward pass and loss
-    word_preds, type_preds = model.forward(masked_words, pad, type_guidance=types)
-    sent_stats, t_stats = type_accuracy(type_preds.argmax(dim=-1), types, 0)
+    word_preds, type_preds = model.forward(masked_words, pad, type_guidance=masked_types)
+    sent_stats, t_stats = type_accuracy(type_preds.argmax(dim=-1), true_types, 0)
     batch_losses = loss_fn(word_preds.view(num_samples, -1), true_words.flatten(),
-                           type_preds.view(num_samples, -1), types.flatten(), masked_indices.view(-1))
+                           type_preds.view(num_samples, -1), true_types.flatten(), masked_indices.view(-1))
 
     # backprop
     sum(batch_losses).backward()
@@ -47,8 +47,9 @@ def train_batches(model: TypeFactoredLM, dl: LazyLoader, loss_fn: MixedLoss, opt
 
     for batch_idx in range(num_batches):
         batch = dl.get_processed_batch()
-        words_input, words_truth, types, pad, words_mask = list(map(lambda x: x.to(device), batch))
-        batch_stats = train_batch(model, words_input, words_truth, types, pad, words_mask, loss_fn, optimizer)
+        words_input, words_truth, true_types, masked_types, pad, words_mask = list(map(lambda x: x.to(device), batch))
+        batch_stats = train_batch(model, words_input, words_truth, true_types, masked_types,
+                                  pad, words_mask, loss_fn, optimizer)
         batch_losses, (num_sent, num_cor_sent), (num_words, num_cor_words) = batch_stats
         epoch_loss_mlm += batch_losses[0]
         epoch_loss_st += batch_losses[1]

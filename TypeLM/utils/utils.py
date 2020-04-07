@@ -28,10 +28,9 @@ def positional_encoding(b: int, n: int, d_model: int, freq: int = 10000, device:
 
 
 def sigsoftmax(x: Tensor, dim: int) -> Tensor:
-    sigx = torch.sigmoid(x) * torch.exp(x)
-    rank = len(sigx.shape)
-    norm = torch.sum(sigx, dim=dim).unsqueeze(dim).repeat([1 if i != dim else sigx.shape[i] for i in range(rank)])
-    return sigx/norm
+    logsigmoids = F.logsigmoid(x)
+    siglogits = x + logsigmoids
+    return siglogits.log_softmax(dim)
 
 
 class PositionalEncoder(Module):
@@ -112,7 +111,7 @@ def save_model(model: Module, save_id: str,
 
 
 class ElementWiseFusion(Module):
-    def __init__(self, activation: tensor_map = F.tanh):
+    def __init__(self, activation: tensor_map = torch.tanh) -> None:
         super(ElementWiseFusion, self).__init__()
         self.activation = activation
 
@@ -124,52 +123,19 @@ def load_model(model_path: str, model: Module, opt: Optimizer) -> Tuple[Module, 
     checkpoint = torch.load(model_path)
     model.load_state_dict(checkpoint['model_state_dict'])
     opt.load_state_dict(checkpoint['optimizer_state_dict'])
-    num_epochs = checkpoint['epoch'] + 1
-    loss = checkpoint['loss'] 
-    return model, opt, num_epochs, loss
+    num_epochs = checkpoint['epoch']
+    mlm_loss, st_loss = checkpoint['loss'] 
+    return model, opt, num_epochs, (mlm_loss, st_loss)
 
 
-def label_smoothing(x: LongTensor, num_classes: int, smoothing: float, ignore_index: Optional[int] = None) -> Tensor:
-    x_float = torch.ones(x.shape, device=x.device, dtype=torch.float).unsqueeze(-1)
-    x_float = x_float.repeat([1 for _ in x.shape] + [num_classes])
-    x_float.fill_(smoothing / (num_classes - 1))
-    x_float.scatter_(dim=-1, index=x.unsqueeze(-1), value=1-smoothing)
-    if ignore_index is not None:
-        mask = x == ignore_index
-        x_float[mask.unsqueeze(-1).repeat([1 for _ in x.shape] + [num_classes])] = 0
-    return x_float
+class GELU(Module):
+    def __init__(self) -> None:
+        super(GELU, self).__init__()
+
+    def forward(self, x: Tensor) -> Tensor:
+        return F.gelu(x)
 
 
-class LabelSmoother(Module):
-    def __init__(self, num_classes: int, smoothing: float, ignore_index: Optional[int] = None):
-        super(LabelSmoother, self).__init__()
-        self.num_classes = num_classes
-        self.smoothing = smoothing
-        self.ignore_index = ignore_index
-
-    def forward(self, x: LongTensor, ignore_index: Optional[int] = None,
-                smoothing: Optional[float] = None) -> Tensor:
-        return label_smoothing(x, self.num_classes,
-                               smoothing if smoothing is not None else self.smoothing,
-                               ignore_index if ignore_index is not None else self.ignore_index)
-
-
-class FuzzyLoss(Module):
-    def __init__(self, num_classes: int, mass_redistribution: float, ignore_index: int = 0) -> None:
-        super(FuzzyLoss, self).__init__()
-        self.loss_fn = KLDivLoss(reduction='batchmean')
-        self.label_smoother = LabelSmoother(num_classes, mass_redistribution, ignore_index)
-
-    def __call__(self, x: Tensor, y: LongTensor) -> Tensor:
-        smooth_y = self.label_smoother(y)
-        return self.loss_fn(torch.log_softmax(x, dim=-1), smooth_y)
-
-
-class CrossEntropySS(Module):
-    def __init__(self, **kwargs):
-        super(CrossEntropySS, self).__init__()
-        self.NLL = torch.nn.NLLLoss(**kwargs)
-
-    def forward(self, predictions: Tensor, truth: LongTensor) -> Tensor:
-        predictions = sigsoftmax(predictions, dim=-1)
-        return self.NLL(predictions.log(), truth)
+def one_hot_embedding(labels: LongTensor, num_labels: int) -> Tensor:
+    one_hots = torch.eye(num_labels, dtype=torch.long, device=labels.device)
+    return one_hots[labels]
