@@ -12,7 +12,7 @@ from typing import Tuple, List, Optional, Dict, Any
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model_path = './TypeLM/checkpoints/8layers_1.pth'
+model_path = './TypeLM/checkpoints/8layers_2.pth'
 
 
 def get_default_model(vocab_stats: Tuple[int, int], load_id: str = model_path) -> TypeFactoredLM:
