@@ -12,7 +12,7 @@ class TypeFactoredLM(Module):
         super(TypeFactoredLM, self).__init__()
         self.d_model = masked_encoder_kwargs['d_model']
         self.masked_encoder = masked_encoder(**masked_encoder_kwargs)
-        #self.fused_encoder = masked_encoder_kwargs['module_maker'](**{k:v for k,v in masked_encoder_kwargs.items() if k not in {'num_layers', 'module_maker'}})
+        self.fused_encoder = masked_encoder_kwargs['module_maker'](**{k:v for k,v in masked_encoder_kwargs.items() if k not in {'num_layers', 'module_maker'}})
         self.layer_weighter = LayerWeighter(masked_encoder_kwargs['num_layers'])
         self.type_classifier = type_classifier(**type_classifier_kwargs)
         self.type_embedder = type_embedder(**type_embedder_kwargs)
@@ -25,9 +25,9 @@ class TypeFactoredLM(Module):
 
     def forward(self, word_ids: LongTensor, pad_mask: LongTensor,
                 type_guidance: Optional[LongTensor] = None,
-                smoothing: float = 0.,
-                confidence: float = 0.5,
-                ignore_idx: int=-1) -> Tuple[Tensor, Tensor]:
+                confidence: float = 0,
+                ignore_idx: int = -1,
+                smoothing: Optional[float] = None) -> Tuple[Tensor, Tensor]:
         layer_outputs = self.get_prefuse_vectors(word_ids, pad_mask)
         weighted = self.layer_weighter(layer_outputs[1:])
         type_preds = self.type_classifier(self.dropout(weighted))
@@ -41,7 +41,7 @@ class TypeFactoredLM(Module):
             #type_probs = smoothed_guidance + confidence * type_probs
         type_embeddings = self.type_embedder(type_probs)
         token_features = self.fusion(type_embeddings, layer_outputs[-1])
-        #token_features, _ = self.fused_encoder((token_features, pad_mask))
+        token_features, _ = self.fused_encoder((token_features, pad_mask))
         word_preds = self.word_classifier(token_features)
         return word_preds, type_preds
 
