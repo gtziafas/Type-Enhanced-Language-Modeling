@@ -27,18 +27,18 @@ class TypeFactoredLM(Module):
                 type_guidance: Optional[LongTensor] = None,
                 confidence: float = 0.9,
                 ignore_idx: int = -1,
-                smoothing: Optional[float] = None) -> Tuple[Tensor, Tensor]:
+                smoothing: Optional[float] = 0) -> Tuple[Tensor, Tensor]:
         layer_outputs = self.get_prefuse_vectors(word_ids, pad_mask)
         weighted = self.layer_weighter(layer_outputs[1:])
         type_preds = self.type_classifier(self.dropout(weighted))
         type_probs = type_preds.softmax(dim=-1)
         if type_guidance is not None:
-            guidance_indices = type_guidance != ignore_idx
-            smoothed_guidance = self.label_smoother(type_guidance[guidance_indices], smoothing=0) * (1 - confidence)
-            smoothed_guidance = smoothed_guidance + confidence * type_probs[guidance_indices]
-            type_probs[guidance_indices] = smoothed_guidance
-            #smoothed_guidance = self.label_smoother(type_guidance, smoothing) * (1 - confidence)
-            #type_probs = smoothed_guidance + confidence * type_probs
+            #guidance_indices = type_guidance != ignore_idx
+            #smoothed_guidance = self.label_smoother(type_guidance[guidance_indices], smoothing) * (1 - confidence)
+            #smoothed_guidance = smoothed_guidance + confidence * type_probs[guidance_indices]
+            #type_probs[guidance_indices] = smoothed_guidance
+            smoothed_guidance = self.label_smoother(type_guidance, smoothing) * (1 - confidence)
+            type_probs = smoothed_guidance + confidence * type_probs
         type_embeddings = self.type_embedder(type_probs)
         token_features = self.fusion(type_embeddings, layer_outputs[-1])
         token_features, _ = self.fused_encoder((token_features, pad_mask))
