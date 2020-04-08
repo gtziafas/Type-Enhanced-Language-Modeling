@@ -35,8 +35,8 @@ class TypeFactoredLM(Module):
         if type_guidance is not None:
             guidance_indices = type_guidance != ignore_idx
             smoothed_guidance = self.label_smoother(type_guidance[guidance_indices], smoothing) * (1 - confidence)
-            smoothed_guidance = smoothed_guidance + confidence * type_probs[guidance_indices]
-            type_probs[guidance_indices] = smoothed_guidance
+            smoothed_guidance = smoothed_guidance + confidence * type_probs[:,guidance_indices]
+            type_probs[:,guidance_indices] = smoothed_guidance
             #smoothed_guidance = self.label_smoother(type_guidance, smoothing) * (1 - confidence)
             #type_probs = smoothed_guidance + confidence * type_probs
         type_embeddings = self.type_embedder(type_probs)
@@ -53,7 +53,7 @@ class TypeFactoredLM(Module):
 
     def get_prefuse_vectors(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
         dividend = torch.sqrt(torch.tensor(self.d_model, dtype=torch.float, device=word_ids.device, requires_grad=False))
-        word_embeds = self.word_embedder(word_ids) * dividend
+        word_embeds = self.word_embedder(word_ids) 
         batch_size, num_words, d_model = word_embeds.shape[0:3]
         positional_encodings = self.positional_encoder(b=batch_size, n=num_words, d_model=d_model,
                                                        device=word_embeds.device.__str__())

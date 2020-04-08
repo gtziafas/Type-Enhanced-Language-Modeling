@@ -63,7 +63,7 @@ def infer_words(sentence: List[int], masked_indices: List[int], model: Module, m
         types = - torch.ones_like(sentence, dtype=torch.long, device=device)
         types[masked_indices==1] = torch.tensor(guidance, dtype=torch.long, device=device)
 
-    word_preds = model.inference(sentence.unsqueeze(0), pad_mask, type_guidance=types, confidence=confidence)[0].squeeze(0)
+    word_preds = model(sentence.unsqueeze(0), pad_mask, type_guidance=types, confidence=confidence)[0].squeeze(0)
     return word_preds[masked_indices==1].topk(kappa)[1].tolist()
 
 
@@ -86,6 +86,7 @@ def main():
         sentence_str = input('Give input sentence: ')
         masked_indices = input('Give input mask: ')
         guidance = input('Give type guidance for masked word tokens: ')
+        guidance = indexer.index_type_sequence(list(map(tokenizer.tokenize_type, guidance.split(' ')))) if guidance != '' else None 
 
         word_indices = indexer.index_sentence(tokenizer.tokenize_sentence(sentence_str, add_eos=True))
 
@@ -97,8 +98,8 @@ def main():
         if masked_indices is not '':
             word_preds = infer_words(sentence=word_indices, masked_indices=list(map(eval, masked_indices.split(' '))), 
                                      model=model, mask_token=indexer.index_word(MASK), 
-                                     guidance=indexer.index_type_sequence(list(map(tokenizer.tokenize_type, guidance.split(' ')))), 
-                                     confidence = 0)
+                                     guidance=guidance, 
+                                     confidence = 0.5)
             infered_words = list(map(indexer.inverse_word, [w for p in word_preds for w in p]))
             print('Infered words = {}'.format('\n'.join(infered_words)))
 
