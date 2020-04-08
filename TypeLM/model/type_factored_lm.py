@@ -62,7 +62,7 @@ class TypeFactoredLM(Module):
     def word_classifier(self, final: Tensor) -> Tensor:
         return final@self.word_embedder.weight.transpose(1, 0)
 
-    def forward(self, word_ids: LongTensor, pad_mask: LongTensor,
+    def inference(self, word_ids: LongTensor, pad_mask: LongTensor,
             type_guidance: Optional[LongTensor] = None,
             smoothing: float = 0.,
             confidence: float = 0.5,
