@@ -25,7 +25,7 @@ class TypeFactoredLM(Module):
 
     def forward(self, word_ids: LongTensor, pad_mask: LongTensor,
                 type_guidance: Optional[LongTensor] = None,
-                confidence: float = 0,
+                confidence: float = 0.9,
                 ignore_idx: int = -1,
                 smoothing: Optional[float] = None) -> Tuple[Tensor, Tensor]:
         layer_outputs = self.get_prefuse_vectors(word_ids, pad_mask)
@@ -34,7 +34,7 @@ class TypeFactoredLM(Module):
         type_probs = type_preds.softmax(dim=-1)
         if type_guidance is not None:
             guidance_indices = type_guidance != ignore_idx
-            smoothed_guidance = self.label_smoother(type_guidance[guidance_indices], smoothing) * (1 - confidence)
+            smoothed_guidance = self.label_smoother(type_guidance[guidance_indices], smoothing=0) * (1 - confidence)
             smoothed_guidance = smoothed_guidance + confidence * type_probs[guidance_indices]
             type_probs[guidance_indices] = smoothed_guidance
             #smoothed_guidance = self.label_smoother(type_guidance, smoothing) * (1 - confidence)
