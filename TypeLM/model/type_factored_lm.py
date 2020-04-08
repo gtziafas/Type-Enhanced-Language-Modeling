@@ -10,13 +10,14 @@ class TypeFactoredLM(Module):
                  type_embedder_kwargs: Dict, fusion_kwargs: Dict, label_smoother_kwargs: Dict,
                  padding_idx: int = 0, dropout_rate: float = 0.1) -> None:
         super(TypeFactoredLM, self).__init__()
+        self.d_model = masked_encoder_kwargs['d_model']
         self.masked_encoder = masked_encoder(**masked_encoder_kwargs)
         #self.fused_encoder = masked_encoder_kwargs['module_maker'](**{k:v for k,v in masked_encoder_kwargs.items() if k not in {'num_layers', 'module_maker'}})
         self.layer_weighter = LayerWeighter(masked_encoder_kwargs['num_layers'])
         self.type_classifier = type_classifier(**type_classifier_kwargs)
         self.type_embedder = type_embedder(**type_embedder_kwargs)
         self.fusion = fusion(**fusion_kwargs)
-        self.word_embedder = Embedding(num_embeddings=num_words, embedding_dim=masked_encoder_kwargs['d_model'],
+        self.word_embedder = Embedding(num_embeddings=num_words, embedding_dim=self.d_model,
                                        padding_idx=padding_idx)
         self.positional_encoder = PositionalEncoder(dropout_rate)
         self.dropout = Dropout(dropout_rate)
@@ -51,7 +52,8 @@ class TypeFactoredLM(Module):
         return type_preds
 
     def get_prefuse_vectors(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
-        word_embeds = self.word_embedder(word_ids)
+        dividend = torch.sqrt(torch.tensor(self.d_model, dtype=torch.float, device=word_ids.device, requires_grad=False))
+        word_embeds = self.word_embedder(word_ids) * dividend
         batch_size, num_words, d_model = word_embeds.shape[0:3]
         positional_encodings = self.positional_encoder(b=batch_size, n=num_words, d_model=d_model,
                                                        device=word_embeds.device.__str__())
