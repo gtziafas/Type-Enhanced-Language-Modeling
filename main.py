@@ -109,7 +109,7 @@ def default_model() -> TypeFactoredLM:
     d_model = 512
     d_ff = 1024
     d_k, d_v = d_model, d_model
-    num_layers = 8
+    num_layers = 7
     num_heads = 8
     device = 'cuda'
 
@@ -132,7 +132,7 @@ def default_model() -> TypeFactoredLM:
                           fusion=ElementWiseFusion,
                           fusion_kwargs={'activation': torch.tanh},
                           type_embedder=Linear,
-                          type_embedder_kwargs={'in_features': num_types, 'out_features': d_model},
+                          type_embedder_kwargs={'in_features': num_types, 'out_features': d_model, 'bias': False},
                           label_smoother_kwargs=label_smoother_params
                           ).to(device)
 
