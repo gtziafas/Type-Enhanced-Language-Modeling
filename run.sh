@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name="epoch4"
+#SBATCH --job-name="8layers_3"
 #SBATCH --time=72:00:00
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:v100:1  
@@ -7,5 +7,5 @@
 module purge
 module load Python PyTorch
  
-python ~/Lassy-Large/Type-Enhanced-Language-Modeling/main.py -s 'TypeLM_wd1e-7_4' -l './checkpoints/TypeLM_wd1e-7_3.pth'
+python ~/Lassy-Large/Type-Enhanced-Language-Modeling/main.py -s '8layers_3' -l './checkpoints/8layers_2.pth'
 

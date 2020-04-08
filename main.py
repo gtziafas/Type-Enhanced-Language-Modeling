@@ -109,7 +109,7 @@ def default_model() -> TypeFactoredLM:
     d_model = 512
     d_ff = 1024
     d_k, d_v = d_model, d_model
-    num_layers = 7
+    num_layers = 8
     num_heads = 8
     device = 'cuda'
 
@@ -183,7 +183,7 @@ def main(load_id: Optional[str], save_id: Optional[str]):
             # remember: if using mixed loss, replace loss_fn by loss_fn.type_loss
             st_loss, s_acc, w_acc = eval_batches(model, eval_dl, loss_fn.type_loss, 'cuda')
             print(f'\tST: {st_loss:.4f}\tS_acc: {(s_acc * 100):.2f}\tW_acc: {(w_acc * 100):.2f}')
-            print(f'Supertagging Layer: {model.layer_weighter.layer_weights.softmax(dim=0).tolist():.4f}')
+            print(f'Supertagging Layer: {model.layer_weighter.layer_weights.softmax(dim=0).tolist()}')
             print('-' * 64)
             sys.stdout.flush()
     if save_id is not None:
