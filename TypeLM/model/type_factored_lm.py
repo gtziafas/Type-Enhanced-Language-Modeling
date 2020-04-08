@@ -76,9 +76,7 @@ class TypeFactoredLM(Module):
             guidance_indices = type_guidance != ignore_idx
             smoothed_guidance = self.label_smoother(type_guidance[guidance_indices], smoothing) * (1 - confidence)
             type_probs[:,guidance_indices,:] = smoothed_guidance + confidence * type_probs[:,guidance_indices,:]
-        token_features = self.fusion(type_embeddings, layer_outputs[-1])
-        #token_features, _ = self.fused_encoder((token_features, pad_mask))
-        word_preds = self.word_classifier(token_features)
+        word_preds = self.word_classifier(self.fusion(type_embeddings, layer_outputs[-1]))
         return word_preds, type_preds
 
 
