@@ -130,7 +130,8 @@ def default_model() -> TypeFactoredLM:
                           masked_encoder_kwargs=encoder_params,
                           type_classifier_kwargs=type_pred_params,
                           fusion=ElementWiseFusion,
-                          fusion_kwargs={'activation': torch.tanh},
+                          fusion_kwargs={'activation_fn': torch.tanh},
+                          # fusion_kwargs = {'activation_fn': F.gelu, 'd_model': d_model}
                           type_embedder=Linear,
                           type_embedder_kwargs={'in_features': num_types, 'out_features': d_model, 'bias': False},
                           label_smoother_kwargs=label_smoother_params

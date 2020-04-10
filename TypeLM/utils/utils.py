@@ -111,12 +111,13 @@ def save_model(model: Module, save_id: str,
 
 
 class ElementWiseFusion(Module):
-    def __init__(self, activation: tensor_map = torch.tanh) -> None:
+    def __init__(self, activation_fn: tensor_map = torch.tanh, d_model = Optional[int] = None) -> None:
         super(ElementWiseFusion, self).__init__()
-        self.activation = activation
+        self.activation_fn = activation_fn
+        self.post_activation = Identity if d_model is None else LayerNorm(d_model)
 
     def forward(self, gate: Tensor, features: Tensor) -> Tensor:
-        return self.activation(gate) * features
+        return self.post_activation(self.activation_fn(gate) * features)
 
 
 def load_model(model_path: str, model: Module, opt: Optimizer) -> Tuple[Module, Optimizer, int, Tuple[float, float]]:
