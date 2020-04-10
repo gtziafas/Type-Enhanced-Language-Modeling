@@ -44,6 +44,10 @@ class TypeFactoredLM(Module):
         type_embeddings = self.type_embedder(type_probs)
         token_features = self.fusion(type_embeddings, layer_outputs[-1])
         token_features = self.fused_encoder(token_features, pad_mask)
+
+        ## alternatively for multi-head instead of self-attention as first step:
+        ## token_features = self.fused_encoder(token_features, layer_outputs[-1], layer_outputs[-1], pad_mask)
+
         word_preds = self.word_classifier(token_features)
         return word_preds, type_preds
 
