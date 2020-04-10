@@ -114,7 +114,7 @@ class ElementWiseFusion(Module):
     def __init__(self, activation_fn: tensor_map = torch.tanh, norm_kwargs: Optional[Dict] = None) -> None:
         super(ElementWiseFusion, self).__init__()
         self.activation_fn = activation_fn
-        self.post_activation = Identity if norm_kwargs is None else LayerNorm(norm_kwargs['d_model'])
+        self.post_activation = Identity() if norm_kwargs is None else LayerNorm(norm_kwargs['d_model'])
 
     def forward(self, gate: Tensor, features: Tensor) -> Tensor:
         return self.post_activation(self.activation_fn(gate) * features)
