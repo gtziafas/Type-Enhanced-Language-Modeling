@@ -56,19 +56,37 @@ class EncoderLayer(Module):
         
         return transformed_norm, mask
 
-        
-
 
 class Encoder(Module):
     def __init__(self, module_maker: Module, num_layers: int, *args, **kwargs) -> None:
         super(Encoder, self).__init__()
         self.layers = ModuleList([module_maker(*args, **kwargs) for _ in range(num_layers)])
-
+        
+    @overload 
     def forward(self, x: Tensor, mask: LongTensor) -> Tensor:
+        pass
+    
+    @overload
+    def forward(self, queries: Tensor, keys: Tensor, values: Tensor, mask: LongTensor) -> Tensor:
+        pass
+
+    def forward(self, *args) -> Tensor:
+        # check arity of args
+        # if 2, covnert to tuple, call forward single
+        # if 4, convert to tuple, call forward many
+
+    def forward_single(self, x: Tensor, mask: LongTensor) -> Tensor:
         for layer in self.layers:
             x = layer((x, mask))[0]
         return x
 
+    def forward_many(self, queries: Tensor, keys: Tensor, values: Tensor, mask: LongTensor) -> Tensor:
+        x = (queries, keys, values, mask)
+        for layer in self.layers:
+            x = layer(x)
+        return x[0]
+           
+    
     def forward_all(self, x: Tensor, mask: LongTensor) -> Tensor:
         xs = [x]
         for layer in self.layers:
