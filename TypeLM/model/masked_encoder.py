@@ -22,27 +22,14 @@ class EncoderLayer(Module):
     
     def forward(self, x):
         if len(x) == 2:
-            return self.forward_single(x)
+            inputs, mask = x
+            return self.transform((inputs, inputs, inputs, mask))
         elif len(x) == 4:
-            return self.forward_many(x)
+            return self.transform(x)
         else:
-            raise TypeError('Expected a tuple of 2 or 4 tensors')
-    
-    def forward_single(self, x: Tuple[Tensor, LongTensor]) -> Tuple[Tensor, LongTensor]:
-        inputs, mask = x
-        attended = self.mha(inputs, inputs, inputs, mask)
-        attended = attended + inputs
-        attended_norm = self.layer_norm_1(attended)
-        attended_norm = self.dropout(attended_norm)
+            raise TypeError('Expected a tuple of either 2 or 4 tensors')
 
-        transformed = self.position_wise(attended_norm)
-        transformed = attended_norm + transformed
-        transformed_norm = self.layer_norm_2(transformed)
-        transformed_norm = self.dropout(transformed_norm)
-
-        return transformed_norm, mask
-    
-    def forward_many(self, x: Tuple[Tensor, Tensor, Tensor, LongTensor]) -> Tuple[Tensor, LongTensor]:
+    def transform(self, x: Tuple[Tensor, Tensor, Tensor, LongTensor]) -> Tuple[Tensor, LongTensor]:
         queries, keys, values, mask = x
         attended = self.mha(queries, keys, values, mask)
         attended = attended + values
@@ -70,10 +57,13 @@ class Encoder(Module):
     def forward(self, queries: Tensor, keys: Tensor, values: Tensor, mask: LongTensor) -> Tensor:
         pass
 
-    def forward(self, *args) -> Tensor:
-        # check arity of args
-        # if 2, covnert to tuple, call forward single
-        # if 4, convert to tuple, call forward many
+    def forward(self, *args):
+        if len(args) == 2:
+            return self.forward_single(*args)
+        elif len(args) == 4:
+            return self.forward_many(*args)
+        else:
+            raise TypeError('Expected either 2 tensors for self or 4 for multi-head attention')
 
     def forward_single(self, x: Tensor, mask: LongTensor) -> Tensor:
         for layer in self.layers:
@@ -85,7 +75,6 @@ class Encoder(Module):
         for layer in self.layers:
             x = layer(x)
         return x[0]
-           
     
     def forward_all(self, x: Tensor, mask: LongTensor) -> Tensor:
         xs = [x]
