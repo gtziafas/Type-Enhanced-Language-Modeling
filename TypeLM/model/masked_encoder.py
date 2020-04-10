@@ -11,9 +11,25 @@ class EncoderLayer(Module):
         self.layer_norm_1 = LayerNorm(d_model)
         self.layer_norm_2 = LayerNorm(d_model)
         self.dropout = Dropout(dropout_rate)
-
+    
+    @overload
+    def forward(self, x: Tuple[Tensor, Tensor, Tensor, LongTensor]) -> Tuple[Tensor, LongTensor]:
+        pass
+    
+    @overload
     def forward(self, x: Tuple[Tensor, LongTensor]) -> Tuple[Tensor, LongTensor]:
-        inputs, mask = x[0], x[1]
+        pass
+    
+    def forward(self, x):
+        if len(x) == 2:
+            return self.forward_single(x)
+        elif len(x) == 4:
+            return self.forward_many(x)
+        else:
+            raise TypeError('Expected a tuple of 2 or 4 tensors')
+    
+    def forward_single(self, x: Tuple[Tensor, LongTensor]) -> Tuple[Tensor, LongTensor]:
+        inputs, mask = x
         attended = self.mha(inputs, inputs, inputs, mask)
         attended = attended + inputs
         attended_norm = self.layer_norm_1(attended)
@@ -25,6 +41,22 @@ class EncoderLayer(Module):
         transformed_norm = self.dropout(transformed_norm)
 
         return transformed_norm, mask
+    
+    def forward_many(self, x: Tuple[Tensor, Tensor, Tensor, LongTensor]) -> Tuple[Tensor, LongTensor]:
+        queries, keys, values, mask = x
+        attended = self.mha(queries, keys, values, mask)
+        attended = attended + values
+        attended_norm = self.layer_norm_1(attended)
+        attended_norm = self.dropout(attended_norm)
+        
+        transformed = self.position_wise(attended_norm)
+        transformed = attended_norm + transformed
+        transformed_norm = self.layer_norm_2(transformed)
+        transformed_norm = self.dropout(transformed_norm)
+        
+        return transformed_norm, mask
+
+        
 
 
 class Encoder(Module):
