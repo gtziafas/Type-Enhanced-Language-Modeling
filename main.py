@@ -109,12 +109,12 @@ def default_model() -> TypeFactoredLM:
     d_model = 512
     d_ff = 1024
     d_k, d_v = d_model, d_model
-    num_layers = 7
+    num_layers_prefuse = 7
+    num_layers_fused = 1
     num_heads = 8
     device = 'cuda'
 
     encoder_params = {'module_maker': EncoderLayer,
-                      'num_layers': num_layers,
                       'num_heads': num_heads,
                       'd_model': d_model,
                       'd_ff': d_ff,
@@ -127,7 +127,8 @@ def default_model() -> TypeFactoredLM:
     return TypeFactoredLM(masked_encoder=Encoder,
                           type_classifier=Linear,
                           num_words=num_words,
-                          masked_encoder_kwargs=encoder_params,
+                          prefuse_encoder_kwargs={**encoder_params, 'num_layers': num_layers_prefuse},
+                          fused_encoder_kwargs ={**encoder_params, 'num_layers': num_layers_fused},
                           type_classifier_kwargs=type_pred_params,
                           fusion=ElementWiseFusion,
                           fusion_kwargs={'activation_fn': torch.tanh},

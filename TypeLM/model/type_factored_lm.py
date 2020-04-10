@@ -6,14 +6,16 @@ from TypeLM.model.loss import LabelSmoother
 
 class TypeFactoredLM(Module):
     def __init__(self, masked_encoder: Module, type_classifier: Module, type_embedder: Module,
-                 fusion: Module, masked_encoder_kwargs: Dict, num_words: int, type_classifier_kwargs: Dict,
-                 type_embedder_kwargs: Dict, fusion_kwargs: Dict, label_smoother_kwargs: Dict,
-                 padding_idx: int = 0, dropout_rate: float = 0.1) -> None:
+                 fusion: Module, prefuse_encoder_kwargs: Dict, fused_encoder_kwargs: Dict,
+                 num_words: int, type_classifier_kwargs: Dict, type_embedder_kwargs: Dict, 
+                 fusion_kwargs: Dict, label_smoother_kwargs: Dict, padding_idx: int = 0, 
+                 dropout_rate: float = 0.1) -> None:
         super(TypeFactoredLM, self).__init__()
-        self.d_model = masked_encoder_kwargs['d_model']
-        self.masked_encoder = masked_encoder(**masked_encoder_kwargs)
-        self.fused_encoder = masked_encoder_kwargs['module_maker'](**{k:v for k,v in masked_encoder_kwargs.items() if k not in {'num_layers', 'module_maker'}})
-        self.layer_weighter = LayerWeighter(masked_encoder_kwargs['num_layers'])
+        self.d_model = prefuse_encoder_kwargs['d_model']
+        self.prefuse_encoder = masked_encoder(**prefuse_encoder_kwargs)
+        #self.fused_encoder = prefuse_encoder_kwargs['module_maker'](**{k:v for k,v in prefuse_encoder_kwargs.items() if k not in {'num_layers', 'module_maker'}})
+        self.fused_encoder = masked_encoder(**fused_encoder_kwargs)
+        self.layer_weighter = LayerWeighter(prefuse_encoder_kwargs['num_layers'])
         self.type_classifier = type_classifier(**type_classifier_kwargs)
         self.type_embedder = type_embedder(**type_embedder_kwargs)
         self.fusion = fusion(**fusion_kwargs)
@@ -59,7 +61,7 @@ class TypeFactoredLM(Module):
                                                        device=word_embeds.device.__str__())
 
         word_embeds = word_embeds + positional_encodings
-        return self.masked_encoder.forward_all(word_embeds, pad_mask)
+        return self.prefuse_encoder.forward_all(word_embeds, pad_mask)
 
     def word_classifier(self, final: Tensor) -> Tensor:
         return final@self.word_embedder.weight.transpose(1, 0)
