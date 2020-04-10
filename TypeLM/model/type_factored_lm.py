@@ -43,7 +43,7 @@ class TypeFactoredLM(Module):
             type_probs = smoothed_guidance + confidence * type_probs
         type_embeddings = self.type_embedder(type_probs)
         token_features = self.fusion(type_embeddings, layer_outputs[-1])
-        token_features, _ = self.fused_encoder((token_features, pad_mask))
+        token_features, _ = self.fused_encoder(token_features, pad_mask)
         word_preds = self.word_classifier(token_features)
         return word_preds, type_preds
 
