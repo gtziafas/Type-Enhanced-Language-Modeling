@@ -65,45 +65,6 @@ def get_vocab_stats() -> two_ints:
     return len(indexer.word_indices) + 1, len(indexer.type_indices)
 
 
-def conv2dfusion_model() -> TypeFactoredLM:
-    num_words, num_types = get_vocab_stats()
-    d_model = 512
-    d_ff = 1024
-    d_k, d_v = d_model, d_model
-    num_layers = 8
-    num_heads = 8
-    device = 'cuda'
-
-    encoder_params = {'module_maker': EncoderLayer,
-                      'num_layers': num_layers,
-                      'num_heads': num_heads,
-                      'd_model': d_model,
-                      'd_ff': d_ff,
-                      'd_k': d_k,
-                      'd_v': d_v,
-                      'activation_fn': F.gelu}
-    type_pred_params = {'in_features': d_model, 'out_features': num_types}
-    label_smoother_params = {'smoothing': 0.1, 'num_classes': num_types}
-
-    fusion = Conv2dFusion 
-    deep_params = get_deep_params()
-    # shallow_params = get_shallow_params()
-    fusion_params = {'fusion': Outter2dFusion, 'conv': Conv2dFeatures, 'fusion_kwargs':{}, 'conv_kwargs':deep_params}
-    # fusion_params = {'fusion': Outter2dFusion, 'conv': Conv2dFeatures, 'fusion_kwargs':{}, 'conv_kwargs':shallow_params}
-
-    return TypeFactoredLM(masked_encoder=Encoder,
-                          type_classifier=Linear,
-                          num_words=num_words,
-                          masked_encoder_kwargs=encoder_params,
-                          type_classifier_kwargs=type_pred_params,
-                          fusion=fusion,
-                          fusion_kwargs=fusion_params,
-                          type_embedder=Linear,
-                          type_embedder_kwargs={'in_features': num_types, 'out_features': d_model},
-                          label_smoother_kwargs=label_smoother_params
-                          ).to(device)
-
-
 def default_model() -> TypeFactoredLM:
     num_words, num_types = get_vocab_stats()
     d_model = 512
