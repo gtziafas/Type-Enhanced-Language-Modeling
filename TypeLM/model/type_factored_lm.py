@@ -13,7 +13,6 @@ class TypeFactoredLM(Module):
         super(TypeFactoredLM, self).__init__()
         self.d_model = prefuse_encoder_kwargs['d_model']
         self.prefuse_encoder = masked_encoder(**prefuse_encoder_kwargs)
-        #self.fused_encoder = prefuse_encoder_kwargs['module_maker'](**{k:v for k,v in prefuse_encoder_kwargs.items() if k not in {'num_layers', 'module_maker'}})
         self.fused_encoder = masked_encoder(**fused_encoder_kwargs)
         self.layer_weighter = LayerWeighter(prefuse_encoder_kwargs['num_layers'])
         self.type_classifier = type_classifier(**type_classifier_kwargs)
