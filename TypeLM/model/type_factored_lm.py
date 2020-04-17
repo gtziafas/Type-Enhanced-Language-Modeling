@@ -28,7 +28,8 @@ class TypeFactoredLM(Module):
                 type_guidance: Optional[LongTensor] = None,
                 confidence: float = 0.9,
                 ignore_idx: int = -1,
-                smoothing: Optional[float] = 0) -> Tuple[Tensor, Tensor]:
+                smoothing: Optional[float] = 0,
+                embed_output: bool = True) -> Tuple[Tensor, Tensor]:
         layer_outputs = self.get_prefuse_vectors(word_ids, pad_mask)
         weighted = self.layer_weighter(layer_outputs[1:])
         type_preds = self.type_classifier(self.dropout(weighted))
@@ -47,8 +48,7 @@ class TypeFactoredLM(Module):
         ## alternatively for multi-head instead of self-attention as first step:
         ## token_features = self.fused_encoder(token_features, layer_outputs[-1], layer_outputs[-1], pad_mask)
 
-        word_preds = self.word_classifier(token_features)
-        return word_preds, type_preds
+        return self.word_classifier(token_features) if embed_output else token_features, type_preds
 
     def forward_st(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
         layer_outputs = self.get_prefuse_vectors(word_ids, pad_mask)
@@ -57,7 +57,7 @@ class TypeFactoredLM(Module):
         return type_preds
 
     def get_prefuse_vectors(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
-        dividend = torch.sqrt(torch.tensor(self.d_model, dtype=torch.float, device=word_ids.device, requires_grad=False))
+        # dividend = torch.sqrt(torch.tensor(self.d_model, dtype=torch.float, device=word_ids.device, requires_grad=False))
         word_embeds = self.word_embedder(word_ids) 
         batch_size, num_words, d_model = word_embeds.shape[0:3]
         positional_encodings = self.positional_encoder(b=batch_size, n=num_words, d_model=d_model,
@@ -69,35 +69,5 @@ class TypeFactoredLM(Module):
     def word_classifier(self, final: Tensor) -> Tensor:
         return final@self.word_embedder.weight.transpose(1, 0)
 
-
-def test():
-    d_model = 512 
-    d_ff = 2048
-    d_k, d_v = d_model, d_model
-    type_vocab_size, word_vocab_size = 5000, 500000
-    num_layers = 6
-
-    encoder_params = {'module_maker': EncoderLayer,
-                      'num_layers': num_layers,
-                      'num_heads': 8,
-                      'd_model': d_model,
-                      'd_ff': d_ff,
-                      'd_k': d_k,
-                      'd_v': d_v,
-                      'activation_fn': F.relu}
-    type_pred_params = {'in_features': d_model, 'out_features': type_vocab_size}
-
-    lm = TypeFactoredLM(masked_encoder=Encoder,
-                        type_classifier=Linear,
-                        num_words=word_vocab_size,
-                        masked_encoder_kwargs=encoder_params,
-                        type_classifier_kwargs=type_pred_params,
-                        ).to('cuda')
-
-    print(count_parameters(lm))
-
-    msk = torch.ones(2, 3, 3).to('cuda')
-    x = torch.randint(size=(2, 3), low=0, high=word_vocab_size).to('cuda')
-
-    out = lm(x, msk)
-    print(out[0].shape, out[1].shape)
+    def get_token_features(self, word_ids: LongTensor, pad_mask: LongTensor) -> Tensor:
+        return self.forward(word_ids, pad_mask, embed_output=False)[0]
