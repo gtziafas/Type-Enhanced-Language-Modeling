@@ -20,7 +20,7 @@ def make_token_train_dl(samples: List[Tuple[List[str], List[int]]],
     sents, ids = list(zip(*samples))
     tokenized = list(map(lambda sent, id_list:
                          ([tokenizer.tokenize_word(word) for word in sent] + [EOS],
-                         [class_label for class_label in id_list]),
+                         [class_label for class_label in id_list] + [0]),
                          sents, ids))
     indexed = [indexer.index_sentence(sample[0]) for sample in tokenized]
     dset = TokenTrain(indexed, [sample[1] for sample in tokenized])

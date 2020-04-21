@@ -39,7 +39,7 @@ class Finetuner(Module):
                     optimizer: Optimizer, loss_fn: Module) -> Tuple[float, Tuple[int, int]]:
         self.train()
 
-        batch_p = self.forward(batch_x, pad_mask)[:, :-1]
+        batch_p = self.forward(batch_x, pad_mask)
         loss = loss_fn(batch_p.view(-1, self.num_classes), batch_y.flatten())
         loss.backward()
         optimizer.step()
@@ -63,7 +63,7 @@ class Finetuner(Module):
                    loss_fn: Module) -> Tuple[float, Tuple[int, int]]:
         self.eval()
 
-        batch_p = self.forward(batch_x, pad_mask)[:, :-1]
+        batch_p = self.forward(batch_x, pad_mask)
         loss = loss_fn(batch_p.view(-1, self.num_classes), batch_y.flatten())
 
         token_stats = token_accuracy(predictions=batch_p.argmax(dim=-1), truth=batch_y, ignore_idx=0)[1]
