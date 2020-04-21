@@ -7,11 +7,12 @@ from TypeLM.utils.utils import save_model
 from tqdm import tqdm
 from main import default_model
 import sys
+import pickle
 
 NUM_EPOCHS = 500
 
 
-def main(data_folder: str, result_folder: str, model_path: str, device: str, save_id: str):
+def prepare_data(data_folder: str, result_folder: str, device: str, save_to: str):
     get_ner(data_folder, result_folder)
     ner = NER(data_folder)
     trainset = list(map(lambda x: list(zip(*x[0])), tqdm(list(zip(ner.task.class_train_data)))))
@@ -27,6 +28,13 @@ def main(data_folder: str, result_folder: str, model_path: str, device: str, sav
     print('Done making test loader.')
     sys.stdout.flush()
     del trainset, valset, testset
+    with open(save_to, 'wb') as f:
+        pickle.dump([ner, train_dl, val_dl, test_dl], f)
+
+
+def main(load_from: str, model_path: str, device: str, save_id: str):
+    with open(load_from, 'rb') as f:
+        ner, train_dl, val_dl, test_dl = pickle.load(f)
 
     model = TokenClassification(default_model, model_path, len(ner.task.classes) + 1).to(device)
     optimizer = AdamW(model.parameters())
