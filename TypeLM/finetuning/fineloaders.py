@@ -11,12 +11,10 @@ indexer = Indexer(tokenizer)
 def make_token_train_dl(samples: List[Tuple[List[str], List[int]]],
                         batch_size: int = 32, shuffle: bool = True, device: str = 'cpu') -> DataLoader:
     def my_collate(inps: List[Tuple[List[int], List[int]]]) -> Tuple[LongTensor, LongTensor, LongTensor]:
-        lens = [len(inp[0]) for inp in inps]
         xs = pad_sequence([torch.tensor(inp[0], dtype=torch.long) for inp in inps])
         ys = pad_sequence([torch.tensor(inp[1], dtype=torch.long) for inp in inps])
-        word_pads = torch.ones(xs.shape[0], xs.shape[1], xs.shape[1], dtype=torch.long)
-        for i, l in enumerate(lens):
-            word_pads[i, :, l::] = 0
+        word_pads = torch.ones_like(xs)
+        word_pads[xs == 0] = 0
         return (xs.to(device), word_pads.to(device), ys.to(device))
 
     sents, ids = list(zip(*samples))
@@ -31,11 +29,9 @@ def make_token_train_dl(samples: List[Tuple[List[str], List[int]]],
 
 def make_token_test_dl(samples: List[str], batch_size: int = 32, device: str = 'cpu') -> DataLoader:
     def my_collate(inps: List[List[int]]) -> Tuple[LongTensor, LongTensor]:
-        lens = [len(inp) for inp in inps]
         xs = pad_sequence([torch.tensor(inp, dtype=torch.long) for inp in inps])
-        word_pads = torch.ones(xs.shape[0], xs.shape[1], xs.shape[1], dtype=torch.long)
-        for i, l in enumerate(lens):
-            word_pads[i, :, l::] = 0
+        word_pads = torch.ones_like(xs)
+        word_pads[xs == 0] = 0
         return (xs.to(device), word_pads.to(device))
 
     tokenized = list(map(lambda sent:
