@@ -10,6 +10,10 @@ import sys
 import pickle
 
 NUM_EPOCHS = 500
+LOAD_FROM = "/data/s3913171/Lassy-Large/datasets/ner.p"
+MODEL_PATH = "/data/s3913171/Lassy-Large/self_1.pth"
+SAVE_TO = "/data/s3913171/Lassy-Large/"
+
 
 
 def prepare_data(data_folder: str, result_folder: str, save_to: str):
@@ -61,3 +65,7 @@ def main(load_from: str, model_path: str, device: str, save_id: str):
     predictions = model.infer_dataloader(test_dl)
     print(ner.task.predict_items(lambda x: predictions))
     sys.stdout.flush()
+
+
+if __name__ == "__main__":
+    main(load_from=LOAD_FROM, model_path=MODEL_PATH, save_id=SAVE_TO, device='cuda')
