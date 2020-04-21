@@ -31,18 +31,6 @@ class Finetuner(Module):
     def forward(self, *args):
         pass
 
-
-class TokenClassification(Finetuner):
-    def __init__(self, core_maker: Callable[[], TypeFactoredLM], path: str, num_classes: int):
-        super(TokenClassification, self).__init__(core_maker, path)
-        self.num_classes = num_classes
-        self.token_out = Linear(in_features=self.core.d_model, out_features=self.num_classes, bias=True)
-
-    def forward(self, x: LongTensor, pad_mask: LongTensor) -> Tensor:
-        token_features = self.core.get_token_features(word_ids=x, pad_mask=expand_mask(pad_mask))
-        token_features = self.dropout(token_features)
-        return self.token_out(token_features)
-
     def train_batch(self, batch_x: LongTensor, pad_mask: LongTensor, batch_y: LongTensor,
                     optimizer: Optimizer, loss_fn: Module) -> Tuple[float, Tuple[int, int]]:
         self.train()
@@ -87,6 +75,18 @@ class TokenClassification(Finetuner):
             total += batch_total
         return loss, correct / total
 
+
+class TokenClassification(Finetuner):
+    def __init__(self, core_maker: Callable[[], TypeFactoredLM], path: str, num_classes: int):
+        super(TokenClassification, self).__init__(core_maker, path)
+        self.num_classes = num_classes
+        self.token_out = Linear(in_features=self.core.d_model, out_features=self.num_classes, bias=True)
+
+    def forward(self, x: LongTensor, pad_mask: LongTensor) -> Tensor:
+        token_features = self.core.get_token_features(word_ids=x, pad_mask=expand_mask(pad_mask))
+        token_features = self.dropout(token_features)
+        return self.token_out(token_features)
+
     @torch.no_grad()
     def infer_batch(self, batch_x: LongTensor, pad_mask: LongTensor) -> List[List[int]]:
         self.eval()
@@ -112,3 +112,11 @@ class SequenceClassification(Finetuner):
         eos = get_eos_features(contextualized, pad_mask)
         eos = self.dropout(eos)
         return self.sequence_out(eos)
+
+    @torch.no_grad()
+    def infer_batch(self, batch_x: LongTensor, pad_mask: LongTensor) -> List[int]:
+        self.eval()
+        return self.forward(batch_x, pad_mask).argmax(dim=-1).tolist()
+
+    def infer_dataloader(self, dataloader: DataLoader) -> List[int]:
+        return list(chain.from_iterable([self.infer_batch(batch_x, pad_mask) for batch_x, pad_mask in dataloader]))
