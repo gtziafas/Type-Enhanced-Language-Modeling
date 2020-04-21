@@ -18,10 +18,13 @@ def main(data_folder: str, result_folder: str, model_path: str, device: str, ):
     testset = list(map(lambda x: list(zip(*x[0]))[0], tqdm(list(zip(ner.task.class_test_data)))))
     train_dl = make_token_train_dl(trainset, device=device)
     print('Done making train loader.')
+    sys.stdout.flush()
     val_dl = make_token_train_dl(valset, device=device)
     print('Done making val loader.')
+    sys.stdout.flush()
     test_dl = make_token_test_dl(testset, device=device)
     print('Done making test loader.')
+    sys.stdout.flush()
     del trainset, valset, testset
 
     model = TokenClassification(default_model, model_path, len(ner.task.classes) + 1).to(device)
