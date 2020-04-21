@@ -3,6 +3,7 @@ from nlp_nl.prepare_data import get_ner
 from TypeLM.finetuning.fineloaders import make_token_train_dl, make_token_test_dl
 from TypeLM.finetuning.finetuners import TokenClassification, AdamW, CrossEntropyLoss
 from TypeLM.utils.imports import *
+from TypeLM.utils.utils import save_model
 from tqdm import tqdm
 from main import default_model
 import sys
@@ -10,7 +11,7 @@ import sys
 NUM_EPOCHS = 500
 
 
-def main(data_folder: str, result_folder: str, model_path: str, device: str, ):
+def main(data_folder: str, result_folder: str, model_path: str, device: str, save_id: str):
     get_ner(data_folder, result_folder)
     ner = NER(data_folder)
     trainset = list(map(lambda x: list(zip(*x[0])), tqdm(list(zip(ner.task.class_train_data)))))
@@ -31,10 +32,24 @@ def main(data_folder: str, result_folder: str, model_path: str, device: str, ):
     optimizer = AdamW(model.parameters())
     loss_fn = CrossEntropyLoss(ignore_index=0, reduction='mean')
 
+    best_acc = -1
+
     for epoch in range(NUM_EPOCHS):
         print(('=' * 30) + f'{epoch}' + ('=' * 30))
         train_loss, train_acc = model.train_epoch(train_dl, optimizer, loss_fn)
         print(f'Train Loss: {train_loss}\t Train Acc: {train_acc}')
         val_loss, val_acc = model.eval_epoch(val_dl, loss_fn)
-        print(f'Train Loss: {val_loss}\t Train Acc: {val_acc}')
+        print(f'Val Loss: {val_loss}\t Val Acc: {val_acc}')
         sys.stdout.flush()
+        print('Dont look below')
+        predictions = model.infer_dataloader(test_dl)
+        print(ner.task.predict_items(lambda x: predictions))
+        sys.stdout.flush()
+        if val_acc > best_acc:
+            best_acc = val_acc
+            torch.save({'model_state_dict': model.state_dict()}, save_id)
+
+    model.load_state_dict(torch.load(save_id)['model_state_dict'])
+    predictions = model.infer_dataloader(test_dl)
+    print(ner.task.predict_items(lambda x: predictions))
+    sys.stdout.flush()
