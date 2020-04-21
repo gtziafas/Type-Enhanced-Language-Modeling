@@ -24,12 +24,13 @@ def get_eos_features(token_features: Tensor, pad_mask: LongTensor) -> Tensor:
 
 
 class Finetuner(Module):
-    def __init__(self, core_maker: Callable[[], TypeFactoredLM], path: str, dropout_rate: float = 0.1):
+    def __init__(self, core_maker: Callable[[], TypeFactoredLM], path: str, num_classes: int, dropout_rate: float = 0.1):
         super(Finetuner, self).__init__()
         self.core = core_maker()
         checkpoint = load(path)
         self.core.load_state_dict(checkpoint['model_state_dict'])
         self.dropout = Dropout(dropout_rate)
+        self.num_classes = num_classes
 
     def forward(self, *args):
         pass
@@ -39,7 +40,7 @@ class Finetuner(Module):
         self.train()
 
         batch_p = self.forward(batch_x, pad_mask)[:, :-1]
-        loss = loss_fn(batch_p, batch_y)
+        loss = loss_fn(batch_p.view(-1, self.num_classes), batch_y.flatten())
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
@@ -62,8 +63,8 @@ class Finetuner(Module):
                    loss_fn: Module) -> Tuple[float, Tuple[int, int]]:
         self.eval()
 
-        batch_p = self.forward(batch_x, pad_mask)
-        loss = loss_fn(batch_p, batch_y)
+        batch_p = self.forward(batch_x, pad_mask)[:, :-1]
+        loss = loss_fn(batch_p.view(-1, self.num_classes), batch_y.flatten())
 
         token_stats = token_accuracy(predictions=batch_p.argmax(dim=-1), truth=batch_y, ignore_idx=0)[1]
 
@@ -81,8 +82,7 @@ class Finetuner(Module):
 
 class TokenClassification(Finetuner):
     def __init__(self, core_maker: Callable[[], TypeFactoredLM], path: str, num_classes: int):
-        super(TokenClassification, self).__init__(core_maker, path)
-        self.num_classes = num_classes
+        super(TokenClassification, self).__init__(core_maker, path, num_classes)
         self.token_out = Linear(in_features=self.core.d_model, out_features=self.num_classes, bias=True)
 
     def forward(self, x: LongTensor, pad_mask: LongTensor) -> Tensor:
@@ -106,8 +106,7 @@ class TokenClassification(Finetuner):
 
 class SequenceClassification(Finetuner):
     def __init__(self, core_maker: Callable[[], TypeFactoredLM], path: str, num_classes: int):
-        super(SequenceClassification, self).__init__(core_maker, path)
-        self.num_classes = num_classes
+        super(SequenceClassification, self).__init__(core_maker, path, num_classes)
         self.sequence_out = Linear(in_features=self.core.d_model, out_features=self.num_classes, bias=True)
 
     def forward(self, batch_x: LongTensor, pad_mask: LongTensor) -> Tensor:
