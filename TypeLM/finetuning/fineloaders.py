@@ -7,8 +7,10 @@ from tqdm import tqdm
 tokenizer = default_tokenizer()
 indexer = Indexer(tokenizer)
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def token_collate_train(inps: List[Tuple[List[int], List[int]]], device: str) -> Tuple[LongTensor, LongTensor, LongTensor]:
+
+def token_collate_train(inps: List[Tuple[List[int], List[int]]]) -> Tuple[LongTensor, LongTensor, LongTensor]:
     xs = pad_sequence([torch.tensor(inp[0], dtype=torch.long) for inp in inps])
     ys = pad_sequence([torch.tensor(inp[1], dtype=torch.long) for inp in inps])
     word_pads = torch.ones_like(xs)
@@ -16,7 +18,7 @@ def token_collate_train(inps: List[Tuple[List[int], List[int]]], device: str) ->
     return (xs.to(device), word_pads.to(device), ys.to(device))
 
 
-def token_collate_test(inps: List[List[int]], device: str) -> Tuple[LongTensor, LongTensor]:
+def token_collate_test(inps: List[List[int]]) -> Tuple[LongTensor, LongTensor]:
     xs = pad_sequence([torch.tensor(inp, dtype=torch.long) for inp in inps])
     word_pads = torch.ones_like(xs)
     word_pads[xs == 0] = 0
@@ -24,7 +26,7 @@ def token_collate_test(inps: List[List[int]], device: str) -> Tuple[LongTensor, 
 
 
 def make_token_train_dl(samples: List[Tuple[List[str], List[int]]],
-                        batch_size: int = 32, shuffle: bool = True, device: str = 'cpu') -> DataLoader:
+                        batch_size: int = 32, shuffle: bool = True) -> DataLoader:
     sents, ids = list(zip(*samples))
     tokenized = list(map(lambda sent, id_list:
                          ([tokenizer.tokenize_word(word) for word in sent] + [EOS],
@@ -32,16 +34,16 @@ def make_token_train_dl(samples: List[Tuple[List[str], List[int]]],
                          sents, ids))
     indexed = [indexer.index_sentence(sample[0]) for sample in tokenized]
     dset = TokenTrain(indexed, [sample[1] for sample in tokenized])
-    return DataLoader(dset, batch_size, shuffle=shuffle, collate_fn=token_collate_train, device=device)
+    return DataLoader(dset, batch_size, shuffle=shuffle, collate_fn=token_collate_train)
 
 
-def make_token_test_dl(samples: List[str], batch_size: int = 32, device: str = 'cpu') -> DataLoader:
+def make_token_test_dl(samples: List[str], batch_size: int = 32) -> DataLoader:
     tokenized = list(map(lambda sent:
                          [tokenizer.tokenize_word(word) for word in sent] + [EOS],
                          samples))
     indexed = [indexer.index_sentence(sample) for sample in tokenized]
     dset = TokenTest(indexed)
-    return DataLoader(dset, batch_size, shuffle=False, collate_fn=token_collate_test, device=device)
+    return DataLoader(dset, batch_size, shuffle=False, collate_fn=token_collate_test)
 
 
 class TokenTrain(Dataset):

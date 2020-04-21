@@ -12,19 +12,19 @@ import pickle
 NUM_EPOCHS = 500
 
 
-def prepare_data(data_folder: str, result_folder: str, device: str, save_to: str):
+def prepare_data(data_folder: str, result_folder: str, save_to: str):
     get_ner(data_folder, result_folder)
     ner = NER(data_folder)
     trainset = list(map(lambda x: list(zip(*x[0])), tqdm(list(zip(ner.task.class_train_data)))))
     valset = list(map(lambda x: list(zip(*x[0])), tqdm(list(zip(ner.task.class_dev_data)))))
     testset = list(map(lambda x: list(zip(*x[0]))[0], tqdm(list(zip(ner.task.class_test_data)))))
-    train_dl = make_token_train_dl(trainset, device=device)
+    train_dl = make_token_train_dl(trainset)
     print('Done making train loader.')
     sys.stdout.flush()
-    val_dl = make_token_train_dl(valset, device=device)
+    val_dl = make_token_train_dl(valset)
     print('Done making val loader.')
     sys.stdout.flush()
-    test_dl = make_token_test_dl(testset, device=device)
+    test_dl = make_token_test_dl(testset)
     print('Done making test loader.')
     sys.stdout.flush()
     del trainset, valset, testset
