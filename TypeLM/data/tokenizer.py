@@ -10,6 +10,8 @@ from functools import lru_cache
 
 from multiprocessing import Pool, cpu_count
 
+from warnings import warn
+
 
 _files = list(map(lambda x: './moved/' + x,
                   list(map(lambda i: 'x0' + str(i) if i < 10 else 'x' + str(i),
@@ -40,7 +42,7 @@ class Tokenizer(object):
 
     def tokenize_sentence(self, sentence: str, add_eos: bool = False) -> List[str]:
         preprocessed = word_preprocess(sentence) + [EOS] if add_eos else word_preprocess(sentence)
-        return list(map(self.tokenize_word, preprocessed))
+        return [self.tokenize_word(p) for p in preprocessed]
 
     def tokenize_pair(self, pair: Tuple[str, str]) -> Tuple[str, str]:
         return self.tokenize_word(pair[0]), self.tokenize_type(pair[1])
@@ -113,6 +115,14 @@ class Indexer(object):
 
     def inverse_type(self, type_idx: int) -> str:
         return self.inverse_types[type_idx]
+
+    def add_word(self, word: str) -> None:
+        if word in self.word_indices.keys():
+            warn(f'Word {word} already in dict.')
+        else:
+            idx = len(self.word_indices) + 1
+            self.word_indices[word] = idx
+            self.inverse_words[idx] = word
 
 
 def stringify(words: List[int], types: List[int]) -> str:
