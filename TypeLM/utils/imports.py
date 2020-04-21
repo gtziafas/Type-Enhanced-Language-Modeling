@@ -5,7 +5,7 @@ from torch.optim import Optimizer
 
 import torch
 
-from typing import Tuple, Optional, Callable, Sequence, TypeVar, Any, Dict, List, overload
+from typing import Tuple, Optional, Callable, Sequence, TypeVar, Any, Dict, List, overload, Union
 
 tensor_map = Callable[[Tensor], Tensor]
 

@@ -7,6 +7,9 @@ from torch.utils.data import DataLoader
 
 from itertools import chain
 
+from torch.optim import AdamW
+from torch.nn import CrossEntropyLoss
+
 
 def expand_mask(pad_mask: LongTensor) -> LongTensor:
     assert len(pad_mask.shape) == 2
@@ -35,7 +38,7 @@ class Finetuner(Module):
                     optimizer: Optimizer, loss_fn: Module) -> Tuple[float, Tuple[int, int]]:
         self.train()
 
-        batch_p = self.forward(batch_x, pad_mask)
+        batch_p = self.forward(batch_x, pad_mask)[:, :-1]
         loss = loss_fn(batch_p, batch_y)
         loss.backward()
         optimizer.step()
