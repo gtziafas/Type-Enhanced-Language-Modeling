@@ -8,15 +8,23 @@ tokenizer = default_tokenizer()
 indexer = Indexer(tokenizer)
 
 
+def token_collate_train(inps: List[Tuple[List[int], List[int]]], device: str) -> Tuple[LongTensor, LongTensor, LongTensor]:
+    xs = pad_sequence([torch.tensor(inp[0], dtype=torch.long) for inp in inps])
+    ys = pad_sequence([torch.tensor(inp[1], dtype=torch.long) for inp in inps])
+    word_pads = torch.ones_like(xs)
+    word_pads[xs == 0] = 0
+    return (xs.to(device), word_pads.to(device), ys.to(device))
+
+
+def token_collate_test(inps: List[List[int]], device: str) -> Tuple[LongTensor, LongTensor]:
+    xs = pad_sequence([torch.tensor(inp, dtype=torch.long) for inp in inps])
+    word_pads = torch.ones_like(xs)
+    word_pads[xs == 0] = 0
+    return (xs.to(device), word_pads.to(device))
+
+
 def make_token_train_dl(samples: List[Tuple[List[str], List[int]]],
                         batch_size: int = 32, shuffle: bool = True, device: str = 'cpu') -> DataLoader:
-    def my_collate(inps: List[Tuple[List[int], List[int]]]) -> Tuple[LongTensor, LongTensor, LongTensor]:
-        xs = pad_sequence([torch.tensor(inp[0], dtype=torch.long) for inp in inps])
-        ys = pad_sequence([torch.tensor(inp[1], dtype=torch.long) for inp in inps])
-        word_pads = torch.ones_like(xs)
-        word_pads[xs == 0] = 0
-        return (xs.to(device), word_pads.to(device), ys.to(device))
-
     sents, ids = list(zip(*samples))
     tokenized = list(map(lambda sent, id_list:
                          ([tokenizer.tokenize_word(word) for word in sent] + [EOS],
@@ -24,22 +32,16 @@ def make_token_train_dl(samples: List[Tuple[List[str], List[int]]],
                          sents, ids))
     indexed = [indexer.index_sentence(sample[0]) for sample in tokenized]
     dset = TokenTrain(indexed, [sample[1] for sample in tokenized])
-    return DataLoader(dset, batch_size, shuffle=shuffle, collate_fn=my_collate)
+    return DataLoader(dset, batch_size, shuffle=shuffle, collate_fn=token_collate_train, device=device)
 
 
 def make_token_test_dl(samples: List[str], batch_size: int = 32, device: str = 'cpu') -> DataLoader:
-    def my_collate(inps: List[List[int]]) -> Tuple[LongTensor, LongTensor]:
-        xs = pad_sequence([torch.tensor(inp, dtype=torch.long) for inp in inps])
-        word_pads = torch.ones_like(xs)
-        word_pads[xs == 0] = 0
-        return (xs.to(device), word_pads.to(device))
-
     tokenized = list(map(lambda sent:
                          [tokenizer.tokenize_word(word) for word in sent] + [EOS],
                          samples))
     indexed = [indexer.index_sentence(sample) for sample in tokenized]
     dset = TokenTest(indexed)
-    return DataLoader(dset, batch_size, shuffle=False, collate_fn=my_collate)
+    return DataLoader(dset, batch_size, shuffle=False, collate_fn=token_collate_test, device=device)
 
 
 class TokenTrain(Dataset):
