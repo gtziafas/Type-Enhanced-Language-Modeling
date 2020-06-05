@@ -1,4 +1,4 @@
-from typing import Sequence, Tuple, Optional, Callable
+from typing import Sequence, Tuple, Optional, Callable, Iterator
 import xml.etree.cElementTree as Tree
 
 from glob import glob
@@ -12,6 +12,8 @@ from tqdm import tqdm
 from LassyExtraction.utils.tools import get_types, get_words
 from LassyExtraction.extraction import extractor
 from LassyExtraction.transformations import transformer
+
+import signal
 
 _directory = '/run/user/1000/gvfs/smb-share:server=solis-storage01,share=uil-ots$/LASSY 4.0/LassyLarge'
 
@@ -64,28 +66,31 @@ class DatasetMaker(object):
         print('Added a total of {} compressed files.'.format(len(self.filelist)))
 
     @staticmethod
-    def file_to_trees(file: str) -> Sequence[Tuple[str, Tree.ElementTree]]:
+    def file_to_trees(file: str) -> Iterator[Tree.ElementTree]:
         blocks = split_xml(unzip(file))
-        blocks, names = list(zip(*blocks))
-        names = list(map(lambda name: file+name, names))
-        return list(zip(names, list(map(lambda block: Tree.ElementTree(Tree.fromstring(block)), blocks))))
+        if not blocks:
+            raise ConnectionAbortedError('Failed to connect.')
+        blocks, _ = list(zip(*blocks))
+        return map(lambda block: Tree.ElementTree(Tree.fromstring(block)), blocks)
 
     @staticmethod
-    def file_to_projections(file: str, projector: Callable[[Tree.ElementTree], Projections]) -> Projections:
-        ret = list(chain.from_iterable([projector(tree) for _, tree in DatasetMaker.file_to_trees(file)]))
-        return [r for r in ret if r is not None]
+    def file_to_projections(file: str, projector: Callable[[Tree.ElementTree], Projections]) -> Iterator[Projection]:
+        return filter(lambda p: p is not None,
+                      chain.from_iterable(map(projector,
+                                              DatasetMaker.file_to_trees(file))))
 
     def iterate_data(self, projector: Callable[[Tree.ElementTree], Projections], save_to: str = './TypeLM/data/dump',
-                     start_from: int = 0) -> None:
-        for i, file in tqdm(enumerate(self.filelist)):
-            if i <= start_from:
-                continue
-            projections = self.file_to_projections(file, projector)
-            strs = '\n'.join(list(map(lambda p: self.project_to_str(*p), projections)))
-            with open(f'{save_to}/{i}.dmp', 'w') as dump:
-                dump.write(strs)
-            with open('./TypeLM/data/last_file.txt', 'w') as g:
-                g.write(str(i))
+                     file_id: int = 0) -> None:
+        with open(save_to, 'a') as dump:
+            for i, file in tqdm(enumerate(self.filelist)):
+                if i < file_id:
+                    continue
+                print(f'Opening {i}')
+                projections = self.file_to_projections(file, projector)
+                strs = map(lambda p: self.project_to_str(*p), projections)
+                dump.write('\n'.join(strs))
+                with open('./TypeLM/data/last_file', 'w') as g:
+                    g.write(str(i+1))
 
     @staticmethod
     def project_to_str(words: Sequence[str], types: Sequence[str]) -> str:
@@ -94,20 +99,42 @@ class DatasetMaker(object):
         return f'{word_str}\n{type_str}\n'
 
 
+def timeout(t: int):
+    def handler(signum, frame):
+        raise TimeoutError('Took too long.')
+
+    def decorator(fn):
+        def wrapper(*args, **kwargs):
+            signal.signal(signal.SIGALRM, handler)
+            signal.alarm(t)
+            try:
+                ret = fn(*args, **kwargs)
+                signal.alarm(0)
+                return ret
+            except TimeoutError:
+                return []
+            except KeyError:
+                return []
+            except AttributeError:
+                return []
+            except IndexError:
+                return []
+        return wrapper
+    return decorator
+
+
+@timeout(t=5)
 def compose(tree: Tree.ElementTree) -> Projections:
-    try:
-        dags = transformer(tree)
-        if dags is None:
-            return []
-        dags = [extractor(dag) for dag in dags]
-        tuples = [(get_words(dag),
-                   [t.polish() for t in get_types(dag)]) for dag in dags if dag is not None]
-        return tuples
-    except KeyError:
+    dags = transformer(tree)
+    if dags is None:
         return []
+    dags = [extractor(dag) for dag in dags]
+    tuples = [(get_words(dag),
+               [t.polish() for t in get_types(dag)]) for dag in dags if dag is not None]
+    return tuples
 
 
 with open('./TypeLM/data/filelist.txt', 'r') as f:
     filelist = f.read().split('\n')
 dsmk = DatasetMaker(None, filelist)
-dsmk.iterate_data(compose)
+dsmk.iterate_data(compose, file_id=5250)
