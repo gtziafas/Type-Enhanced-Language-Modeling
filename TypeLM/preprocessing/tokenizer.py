@@ -114,7 +114,7 @@ class Tokenizer(object):
         return (s_ids, t_ids) if min_wlen < len(s_ids) < max_wlen and min_tlen < len(t_ids) < max_tlen else None
 
 
-def parse_line(line_: str) -> strs:
+def _parse_line(line_: str) -> strs:
     return line_.strip('\n').split('\t')
 
 
@@ -123,7 +123,7 @@ def _make_atom_set(dump: str = './TypeLM/data/dump') -> Set[str]:
     with open(dump, 'r') as f:
         for i in range(20000):
             _ = f.__next__()
-            types = parse_line(f.__next__())
+            types = _parse_line(f.__next__())
             _ = f.__next__()
             atoms = atoms.union(chain.from_iterable([t.split() for t in types]))
     return atoms
@@ -142,7 +142,7 @@ def _parse_dump_atomic(dump: str = './TypeLM/data/extraction/dump',):
                     sent = f.__next__().strip('\n')
                 else:
                     sent = next_line
-                types = parse_line(f.__next__())
+                types = _parse_line(f.__next__())
                 atoms = list(chain.from_iterable([t.split() + [tokenizer.type_tokenizer.SEP_TOKEN] for t in types]))
                 tmp = tokenizer.convert_pair_to_ids(sent, atoms, max_wlen=50, max_tlen=200, min_wlen=1, min_tlen=-1)
                 if tmp is None:
