@@ -130,9 +130,8 @@ def _make_atom_set(dump: str = './TypeLM/data/dump') -> Set[str]:
 
 
 def _parse_dump_atomic(dump: str = './TypeLM/data/extraction/dump',):
-    import pickle
-    with open('./TypeLM/data/indexing/atomset.p', 'rb') as f:
-        atomset = pickle.load(f)
+    with open('./TypeLM/data/indexing/atomset.txt', 'r') as f:
+        atomset = set(f.read().split('\n'))
     tokenizer = Tokenizer(type_vocabulary=atomset, atomic=True)
     with open(dump, 'r') as f:
         with open('./TypeLM/data/indexing/atomic_dump', 'a') as g:
