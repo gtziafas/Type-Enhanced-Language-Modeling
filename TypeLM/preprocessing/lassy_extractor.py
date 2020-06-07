@@ -79,7 +79,7 @@ class DatasetMaker(object):
                       chain.from_iterable(map(projector,
                                               DatasetMaker.file_to_trees(file))))
 
-    def iterate_data(self, projector: Callable[[Tree.ElementTree], Projections], save_to: str = './TypeLM/data/dump',
+    def iterate_data(self, projector: Callable[[Tree.ElementTree], Projections], save_to: str = './TypeLM/preprocessing/dump',
                      file_id: int = 0) -> None:
         with open(save_to, 'a') as dump:
             for i, file in tqdm(enumerate(self.filelist)):
@@ -89,7 +89,7 @@ class DatasetMaker(object):
                 projections = self.file_to_projections(file, projector)
                 strs = map(lambda p: self.project_to_str(*p), projections)
                 dump.write('\n'.join(strs))
-                with open('./TypeLM/data/last_file', 'w') as g:
+                with open('./TypeLM/preprocessing/last_file', 'w') as g:
                     g.write(str(i+1))
 
     @staticmethod
@@ -134,7 +134,7 @@ def compose(tree: Tree.ElementTree) -> Projections:
     return tuples
 
 
-with open('./TypeLM/data/filelist.txt', 'r') as f:
+with open('./TypeLM/preprocessing/filelist.txt', 'r') as f:
     filelist = f.read().split('\n')
 dsmk = DatasetMaker(None, filelist)
-dsmk.iterate_data(compose, file_id=5250)
+dsmk.iterate_data(compose, file_id=7562)
