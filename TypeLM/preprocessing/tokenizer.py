@@ -108,7 +108,7 @@ class Tokenizer(object):
                      for i in range(len(s_ids))]
         elif isinstance(self.type_tokenizer, AtomTokenizer):
             s_ids = self.convert_sent_to_ids(sent)
-            t_ids = self.convert_types_to_ids(types)
+            t_ids = self.convert_types_to_ids([self.type_tokenizer.SOS_TOKEN] + types)
         else:
             raise NotImplementedError
         return (s_ids, t_ids) if min_wlen < len(s_ids) < max_wlen and min_tlen < len(t_ids) < max_tlen else None
