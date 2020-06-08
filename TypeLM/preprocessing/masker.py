@@ -47,9 +47,3 @@ class Masker(Generic[Token]):
     def __call__(self, sent: Sequence[Token]) -> Tuple[Sequence[int], Sequence[Token]]:
         indices = mask_indices(sent, self.outer_chance, self.unmaskable)
         return indices, mask_sequence(sent, indices, self.replacer.__call__)
-
-
-def non_masker() -> Callable[[Sequence[int]], Tuple[Sequence[int], Sequence[int]]]:
-    def wrapped(seq: Sequence[int]):
-        return seq, [0 for _ in range(len(seq))]
-    return wrapped
