@@ -8,7 +8,7 @@ ints = List[int]
 strs = List[str]
 
 
-class WordTokenizer(object):
+class WordTokenizer:
     def __init__(self):
         self.core = BertTokenizer.from_pretrained('bert-base-dutch-cased')
 
@@ -88,7 +88,7 @@ class FullTokenizer(TypeTokenizer):
         return [self.inverse_vocabulary[_id] for _id in ids]
 
 
-class Tokenizer(object):
+class Tokenizer:
     def __init__(self, type_vocabulary: Set[str], atomic: bool):
         self.word_tokenizer = WordTokenizer()
         self.type_tokenizer = AtomTokenizer(type_vocabulary) if atomic else FullTokenizer(type_vocabulary)
@@ -129,11 +129,12 @@ def _make_atom_set(dump: str = './TypeLM/data/dump') -> Set[str]:
     return atoms
 
 
-def _parse_dump_atomic(dump: str = './TypeLM/data/extraction/dump',):
+def _parse_dump_atomic(dump: str = './TypeLM/data/extraction/dump', start_from: int = 0):
     with open('./TypeLM/data/indexing/atomset.txt', 'r') as f:
         atomset = set(f.read().split('\n'))
     tokenizer = Tokenizer(type_vocabulary=atomset, atomic=True)
     with open(dump, 'r') as f:
+        read = 0
         with open('./TypeLM/data/indexing/atomic_dump', 'a') as g:
             while True:
                 next_line = f.__next__().strip('\n')
@@ -142,11 +143,19 @@ def _parse_dump_atomic(dump: str = './TypeLM/data/extraction/dump',):
                 else:
                     sent = next_line
                 types = _parse_line(f.__next__())
+
+                read += 1
+                if read <= start_from:
+                    continue
+
                 atoms = list(chain.from_iterable([t.split() + [tokenizer.type_tokenizer.SEP_TOKEN] for t in types]))
-                tmp = tokenizer.convert_pair_to_ids(sent, atoms, max_wlen=50, max_tlen=200, min_wlen=1, min_tlen=-1)
+                tmp = tokenizer.convert_pair_to_ids(sent, atoms, max_wlen=100, max_tlen=300, min_wlen=3, min_tlen=-1)
                 if tmp is None:
                     continue
                 s_ids = ' '.join(map(str, tmp[0]))
                 t_ids = ' '.join(map(str, tmp[1]))
                 line = f'{s_ids}\t{t_ids}\n'
                 g.write(line)
+
+                with open('./TypeLM/data/indexing/last_file', 'w') as h:
+                    h.write(str(read + 1))
