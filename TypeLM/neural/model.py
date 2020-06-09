@@ -3,7 +3,7 @@ from TypeLM.neural.embedding import InvertibleEmbedder
 from TypeLM.neural.transformer import make_encoder, make_decoder
 
 from torch.nn import Module
-from typing import Tuple
+from typing import Tuple, NoReturn
 
 from torch import Tensor, LongTensor
 import torch
@@ -33,13 +33,18 @@ class TypedLM(Module):
         self.tokenizer = tokenizer
         self.device = device
 
-    def forward(self, word_ids: LongTensor, word_mask: LongTensor, type_ids: LongTensor) -> Tuple[Tensor, Tensor]:
+    def forward(self, *args, **kwargs) -> NoReturn:
+        raise NotImplementedError('Forward not implemented for this model.')
+
+    def forward_train(self, word_ids: LongTensor, word_mask: LongTensor, type_ids: LongTensor) -> Tuple[Tensor, Tensor]:
         shallow = self.encode_shallow(word_ids, word_mask)
         deep = self.encode_deep(shallow, word_mask)
-        return deep, self.decode_train(shallow, word_mask, type_ids)
+        decode = self.decode_train(shallow, word_mask, type_ids)
+        return self.word_embedder.invert(deep), self.type_embedder.invert(decode)
 
     def encode_shallow(self, word_ids: LongTensor, word_mask: LongTensor) -> Tensor:
-        return self.encoder_1((word_ids, word_mask))[0]
+        word_reprs = self.word_embedder.embed(word_ids)
+        return self.encoder_1((word_reprs, word_mask))[0]
 
     def encode_deep(self, shallow: Tensor, word_mask: LongTensor) -> Tensor:
         return self.encoder_2((shallow, word_mask))[0]
@@ -49,5 +54,7 @@ class TypedLM(Module):
         return (torch.ones(b, n, n) - upper_triangular).to(self.device)
 
     def decode_train(self, shallow: Tensor, word_mask: LongTensor, type_ids: LongTensor) -> Tensor:
+        type_reprs = self.type_embedder.embed(type_ids)
         decoder_mask = self.make_decoder_mask(type_ids.shape[0], type_ids.shape[1])
-        return self.decoder((shallow, word_mask, type_ids, decoder_mask))[2]
+        return self.decoder((shallow, word_mask, type_reprs, decoder_mask))[2]
+
