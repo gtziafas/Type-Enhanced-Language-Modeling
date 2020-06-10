@@ -1,4 +1,4 @@
-from torch.nn import Module
+from torch.nn import Module, KLDivLoss
 from typing import Dict, Tuple, List
 from torch import Tensor, LongTensor
 import torch
@@ -16,8 +16,8 @@ class MixedLoss(Module):
     def __init__(self, lang_loss: Module, type_loss: Module, lang_loss_kwargs: Dict,
                  type_loss_kwargs: Dict, type_loss_scale: float = 1.0):
         super(MixedLoss, self).__init__()
-        self.lang_loss = lang_loss(lang_loss_kwargs)
-        self.type_loss = type_loss(type_loss_kwargs)
+        self.lang_loss = lang_loss(**lang_loss_kwargs)
+        self.type_loss = type_loss(**type_loss_kwargs)
         self.type_loss_scale = type_loss_scale
 
     def forward(self, word_predictions: Tensor, word_truth: LongTensor, type_predictions: Tensor,
@@ -33,17 +33,16 @@ class MixedLoss(Module):
 
 
 class FuzzyLoss(Module):
-    def __init__(self, loss_fn: Module, num_classes: int,
+    def __init__(self, reduction: str, num_classes: int,
                  mass_redistribution: float, ignore_index: List[int]) -> None:
         super(FuzzyLoss, self).__init__()
-        self.loss_fn = loss_fn
+        self.loss_fn = KLDivLoss(reduction=reduction)
         self.nc = num_classes
         self.mass_redistribution = mass_redistribution
         self.ignore_index = ignore_index
 
     def __call__(self, x: Tensor, y: LongTensor) -> Tensor:
-        y = y.flatten()
-        y_float = torch.zeros(x.shape[0] * x.shape[1], self.nc, device=x.device, dtype=torch.float)
+        y_float = torch.zeros_like(x, device=x.device, dtype=torch.float)
         y_float.fill_(self.mass_redistribution / (self.nc-(1 + len(self.ignore_index))))
         y_float.scatter_(1, y.unsqueeze(1), 1 - self.mass_redistribution)
         mask = torch.zeros_like(y, dtype=torch.bool)
