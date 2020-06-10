@@ -2,7 +2,6 @@ from torch import LongTensor
 from typing import Tuple
 from TypeLM.neural.model import TypedLM
 from TypeLM.neural.loss import MixedLoss
-from TypeLM.neural.utils import pad_sequence
 from TypeLM.preprocessing.loader import LazyLoader
 from torch.optim import Optimizer
 import torch
