@@ -19,7 +19,7 @@ class InvertibleEmbedder(Module):
         return emb + positional_encoding(idxes.shape[0], idxes.shape[1], self.embedding_dim, device=str(emb.device))
 
     def invert(self, weights: LongTensor):
-        return linear(weights, self.embedding_matrix.t())
+        return linear(weights, self.embedding_matrix)
 
 
 def positional_encoding(b: int, n: int, d_model: int, freq: int = 10000, device: str = 'cpu') -> Tensor:
