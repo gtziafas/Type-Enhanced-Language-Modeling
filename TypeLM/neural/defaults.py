@@ -13,7 +13,7 @@ def default_model() -> TypedLM:
 
 
 def default_loss() -> MixedLoss:
-    mlm_loss_kwargs = {'ignore_idx': [tokenizer.word_tokenizer.core.pad_token_id],
+    mlm_loss_kwargs = {'ignore_index': tokenizer.word_tokenizer.core.pad_token_id,
                        'reduction': 'mean'}
     st_loss_kwargs = {'num_classes': len(tokenizer.type_tokenizer.vocabulary),
                       'mass_redistribution': 0.1,
