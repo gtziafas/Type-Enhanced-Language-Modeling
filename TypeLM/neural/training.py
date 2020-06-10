@@ -1,25 +1,11 @@
-from torch.nn.utils.rnn import pad_sequence as _pad_sequence
-from torch import Tensor, LongTensor
-from typing import overload, Tuple
+from torch import LongTensor
+from typing import Tuple
 from TypeLM.neural.model import TypedLM
 from TypeLM.neural.loss import MixedLoss
+from TypeLM.neural.utils import pad_sequence
 from TypeLM.preprocessing.loader import LazyLoader
 from torch.optim import Optimizer
 import torch
-
-
-@overload
-def pad_sequence(x: LongTensor, padding_value: int = 0) -> LongTensor:
-    pass
-
-
-@overload
-def pad_sequence(x: Tensor, padding_value: int = 0) -> Tensor:
-    pass
-
-
-def pad_sequence(x, padding_value: int = 0):
-    return _pad_sequence(x, batch_first=True, padding_value=padding_value)
 
 
 def type_accuracy(predictions: LongTensor, truth: LongTensor, ignore_idx: int) \
