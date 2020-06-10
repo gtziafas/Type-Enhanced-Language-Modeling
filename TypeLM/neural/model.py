@@ -53,8 +53,12 @@ class TypedLM(Module):
         upper_triangular = torch.triu(torch.ones(b, n, n), diagonal=1)
         return (torch.ones(b, n, n) - upper_triangular).to(self.device)
 
+    def expand_encoder_mask(self, encoder_mask: LongTensor, n: int) -> LongTensor:
+        return encoder_mask[:, 0, :].unsqueeze(1).repeat(1, n, 1)
+
     def decode_train(self, shallow: Tensor, word_mask: LongTensor, type_ids: LongTensor) -> Tensor:
         type_reprs = self.type_embedder.embed(type_ids)
         decoder_mask = self.make_decoder_mask(type_ids.shape[0], type_ids.shape[1])
+        word_mask = self.expand_encoder_mask(word_mask, type_ids.shape[1])
         return self.decoder((shallow, word_mask, type_reprs, decoder_mask))[2]
 
