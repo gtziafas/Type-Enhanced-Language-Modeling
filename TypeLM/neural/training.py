@@ -28,13 +28,15 @@ def train_batch(model: TypedLM, loss_fn: MixedLoss, optim: Optimizer, masked_wor
     model.train()
 
     num_words = masked_words.shape[0] * masked_words.shape[1]
-    num_types = true_types.shape[0] * true_types.shape[1]
+    num_types = true_types.shape[0] * (true_types.shape[1]-1)
 
     type_pad_idx = model.tokenizer.type_tokenizer.PAD_TOKEN_ID
 
     word_preds, type_preds = model.forward_train(masked_words, padding_mask, true_types)
+    # todo: replace python indexing with pytorch indexing
+    type_preds = type_preds[:, :-1].contiguous()
+    true_types = true_types[:, 1:].contiguous()
     sent_stats, type_stats = type_accuracy(type_preds.argmax(dim=-1), true_types, type_pad_idx)
-
     batch_losses = loss_fn(word_preds.view(num_words, -1), true_words.flatten(),
                            type_preds.view(num_types, -1), true_types.flatten(), masked_ids.flatten())
 
