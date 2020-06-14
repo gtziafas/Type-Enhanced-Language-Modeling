@@ -18,7 +18,7 @@ class InvertibleEmbedder(Module):
         emb = embedding(idxes, self.embedding_matrix, self.padding_idx) * self.embedding_scale
         return emb + positional_encoding(idxes.shape[0], idxes.shape[1], self.embedding_dim, device=str(emb.device))
 
-    def invert(self, weights: Tensor):
+    def invert(self, weights: Tensor) -> Tensor:
         return linear(weights, self.embedding_matrix)
 
 
