@@ -10,7 +10,7 @@ strs = List[str]
 
 class WordTokenizer:
     def __init__(self):
-        self.core = BertTokenizer.from_pretrained('bert-base-dutch-cased')
+        self.core = BertTokenizer.from_pretrained('wietsedv/bert-base-dutch-cased')
 
     def __len__(self):
         return self.core.vocab_size
