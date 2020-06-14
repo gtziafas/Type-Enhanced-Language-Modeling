@@ -41,13 +41,12 @@ def default_dataloader(path: str, chunk_size: int, batch_size: int) -> LazyLoade
     type_masker = regularization_type_masker()
 
     def post_proc(sentences: Samples):
-
         true_words, true_types = list(zip(*sentences))
 
         word_lens = list(map(len, true_words))
 
         masked_ids, masked_words = list(zip(*list(map(word_masker, true_words))))
-        masked_types, _ = list(zip(*list(map(type_masker, true_types))))
+        _, masked_types = list(zip(*list(map(type_masker, true_types))))
         masked_words = pad_sequence(list(map(LongTensor, masked_words)),
                                     _tokenizer.word_tokenizer.core.pad_token_id)
         true_words = pad_sequence(list(map(LongTensor, true_words)),
