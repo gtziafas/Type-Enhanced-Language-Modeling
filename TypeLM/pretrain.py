@@ -1,9 +1,10 @@
 from TypeLM.neural.defaults import *
 from TypeLM.neural.training import *
 from TypeLM.preprocessing.defaults import *
+from typing import Optional
 
 _sents_in_dset = 60290072
-_batch_size = 16
+_batch_size = 2
 _num_batches_in_dset = _sents_in_dset // _batch_size
 _num_subepochs_per_epoch = 1000000
 _num_batches_per_subepoch = _num_batches_in_dset // _num_subepochs_per_epoch
@@ -21,10 +22,14 @@ optim = default_optimizer(model, warmup_steps=_warmup_steps)
 
 
 def start(save_path: str):
-    resume(epoch=0, save_path=save_path)
+    resume(epoch=0, save_path=save_path, load_path=None)
 
 
-def resume(epoch: int, save_path: str):
+def resume(epoch: int, save_path: str, load_path: Optional[str]):
+    if epoch != 0:
+        tmp = torch.load(load_path)
+        model.load_state_dict(tmp['model_state_dict'])
+        optim.opt.load_state_dict(tmp['opt'])
 
     optim.step_num = epoch * _num_batches_in_dset
 
@@ -43,5 +48,5 @@ def resume(epoch: int, save_path: str):
         print(f'Atom acc:\t\t{atom_acc}')
         print(f'Current lr:\t\t{optim.lr}')
     print('Finished training epoch.')
-    torch.save({'model_state_dict': model.state_dict(), 'opt': optim}, save_path)
+    torch.save({'model_state_dict': model.state_dict(), 'opt': optim.opt}, save_path)
     print('Saved model')
