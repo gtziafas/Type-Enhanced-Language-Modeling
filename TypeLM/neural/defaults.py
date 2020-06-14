@@ -18,9 +18,7 @@ def default_loss() -> MixedLoss:
                                         tokenizer.word_tokenizer.core.cls_token_id,
                                         tokenizer.word_tokenizer.core.sep_token_id,
                                         tokenizer.word_tokenizer.core.unk_token_id,
-                                        tokenizer.word_tokenizer.core.mask_token_id,
-                                        tokenizer.word_tokenizer.core.eos_token_id,
-                                        tokenizer.word_tokenizer.core.bos_token_id],
+                                        tokenizer.word_tokenizer.core.mask_token_id],
                        'reduction': 'batchmean'}
     st_loss_kwargs = {'num_classes': len(tokenizer.type_tokenizer.vocabulary),
                       'mass_redistribution': 0.1,
