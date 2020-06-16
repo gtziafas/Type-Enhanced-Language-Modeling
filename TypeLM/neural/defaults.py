@@ -8,7 +8,7 @@ tokenizer = default_tokenizer()
 
 
 def default_model() -> TypedLM:
-    return TypedLM(tokenizer, 768, 768, (6, 6), 3, 12, 12, 'cuda')
+    return TypedLM(tokenizer, 768, 256, (6, 6), 12, 3, 8, 'cuda')
 
 
 def default_loss() -> MixedLoss:
