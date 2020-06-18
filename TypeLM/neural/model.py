@@ -40,7 +40,9 @@ class TypedLM(Module):
         shallow = self.encode_shallow(word_ids, word_mask)
         deep = self.encode_deep(shallow, word_mask)
         decode = self.decode_train(shallow, word_mask, type_ids)
-        return self.word_embedder.invert(deep), self.type_embedder.invert(decode)
+        word_out = self.word_embedder.invert(deep)
+        type_out = self.type_embedder.invert(decode)
+        return word_out, type_out
 
     def encode_shallow(self, word_ids: LongTensor, word_mask: LongTensor) -> Tensor:
         word_reprs = self.word_embedder.embed(word_ids)
