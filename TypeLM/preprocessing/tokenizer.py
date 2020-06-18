@@ -99,8 +99,7 @@ class Tokenizer:
     def convert_types_to_ids(self, types: strs) -> ints:
         return self.type_tokenizer.convert_types_to_ids(types)
 
-    def convert_pair_to_ids(self, sent: str, types: strs, max_wlen: int, max_tlen: int, min_wlen: int, min_tlen: int,
-                            ) -> Optional[Tuple[ints, ints]]:
+    def convert_pair_to_ids(self, sent: str, types: strs) -> Optional[Tuple[ints, ints]]:
         if isinstance(self.type_tokenizer, FullTokenizer):
             s_ids, word_starts = self.word_tokenizer.convert_sent_to_ids_and_wordstarts(sent)
             type_iter = iter(self.convert_types_to_ids(types))
@@ -111,7 +110,7 @@ class Tokenizer:
             t_ids = self.convert_types_to_ids([self.type_tokenizer.SOS_TOKEN] + types)
         else:
             raise NotImplementedError
-        return (s_ids, t_ids) if min_wlen < len(s_ids) < max_wlen and min_tlen < len(t_ids) < max_tlen else None
+        return s_ids, t_ids
 
 
 def _parse_line(line_: str) -> strs:
@@ -149,11 +148,9 @@ def _parse_dump_atomic(dump: str = './TypeLM/data/extraction/dump', start_from: 
                     continue
 
                 atoms = list(chain.from_iterable([t.split() + [tokenizer.type_tokenizer.SEP_TOKEN] for t in types]))
-                tmp = tokenizer.convert_pair_to_ids(sent, atoms, max_wlen=100, max_tlen=300, min_wlen=3, min_tlen=-1)
-                if tmp is None:
-                    continue
-                s_ids = ' '.join(map(str, tmp[0]))
-                t_ids = ' '.join(map(str, tmp[1]))
+                s_ids_int, t_ids_int = tokenizer.convert_pair_to_ids(sent, atoms)
+                s_ids = list(map(str, s_ids_int))
+                t_ids = list(map(str, t_ids_int))
                 line = f'{s_ids}\t{t_ids}\n'
                 g.write(line)
 
