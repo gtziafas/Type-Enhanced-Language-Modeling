@@ -47,6 +47,6 @@ class FuzzyLoss(Module):
         y_float.scatter_(1, y.unsqueeze(1), 1 - self.mass_redistribution)
         mask = torch.zeros_like(y, dtype=torch.bool)
         for idx in self.ignore_index:
-            mask = mask.masked_fill_(y.bool(), 1) 
+            mask = mask.masked_fill_(y == idx, 1) 
         y_float[mask.unsqueeze(1).repeat(1, self.nc)] = 0
         return self.loss_fn(torch.log_softmax(x.view(-1, self.nc), dim=-1), y_float)
