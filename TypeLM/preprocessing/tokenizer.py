@@ -1,8 +1,9 @@
 from transformers import BertTokenizer
 from typing import List, Set, Tuple, Optional
 from abc import ABC, abstractmethod
-from collections import defaultdict
+from collections import defaultdict, Counter
 from itertools import chain
+import pickle
 
 ints = List[int]
 strs = List[str]
@@ -126,6 +127,24 @@ def _make_atom_set(dump: str = './TypeLM/data/dump') -> Set[str]:
             _ = f.__next__()
             atoms = atoms.union(chain.from_iterable([t.split() for t in types]))
     return atoms
+
+
+def _make_type_set(dump: str = './TypeLM/data/extraction/dumptest') -> None:
+    with open(dump, 'r') as f:
+        typeset = Counter()
+        while True:
+            try:
+                _ = f.__next__()
+                types = _parse_line(f.__next__())
+                _ = f.__next__()
+                typeset += Counter(types)
+            except StopIteration:
+                break
+        with open('./TypeLM/data/indexing/typeset.p', 'wb') as g:
+            pickle.dump(typeset, g)
+        typeset = sorted(typeset.items(), key=lambda pair: pair[1], reverse=True)
+        with open('./TypeLM/data/indexing/typeset.txt', 'w') as g:
+            g.write('\n'.join([f'{str(fst)}\t{str(snd)}' for fst, snd in typeset]))
 
 
 def _parse_dump_atomic(dump: str = './TypeLM/data/extraction/dump', start_from: int = 0):
