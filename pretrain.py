@@ -9,17 +9,18 @@ _batch_size = 128
 _num_batches_in_dset = _sents_in_dset // _batch_size
 _num_subepochs_per_epoch = 100
 _num_batches_per_subepoch = _num_batches_in_dset // _num_subepochs_per_epoch
-#_warmup_subepochs = 100
+# _warmup_subepochs = 100
 _warmup_steps = 1e04
 _device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 print(f'Training a dataset of {_sents_in_dset} samples with a batch size of {_batch_size}.')
 print(f'Reporting averages every {_num_batches_per_subepoch * _batch_size} samples.')
 
-loader = default_dataloader(path='/data/s3913171/Lassy-Large/atomic_dump_small', chunk_size=1024000, batch_size=_batch_size)
+loader = default_dataloader(path='/data/s3913171/Lassy-Large/atomic_dump_small', chunk_size=1024000,
+                            batch_size=_batch_size)
 model = default_model().to('cuda')
 loss_fn = default_loss()
-optim = default_optimizer(model, warmup_steps=_warmup_steps)
+optim = default_optimizer(model, warmup_steps=int(_warmup_steps))
 
 
 def sprint(in_str: str) -> None:
@@ -56,6 +57,7 @@ def resume(epoch: int, save_path: str, load_path: Optional[str]):
     sprint('Finished training epoch.')
     torch.save({'model_state_dict': model.state_dict(), 'opt': optim.opt.state_dict()}, save_path)
     sprint('Saved model')
+
 
 if __name__ == "__main__":
     import argparse
