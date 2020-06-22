@@ -1,6 +1,6 @@
 from torch import LongTensor
 from typing import Tuple
-from TypeLM.neural.model import TypedLM
+from TypeLM.neural.model import DecodingTypeLM
 from TypeLM.neural.loss import MixedLoss
 from TypeLM.preprocessing.loader import LazyLoader
 from torch.optim import Optimizer
@@ -23,7 +23,7 @@ def type_accuracy(predictions: LongTensor, truth: LongTensor, ignore_idx: int) \
             (predictions.shape[0] * predictions.shape[1] - num_masked_items, num_correct_items - num_masked_items))
 
 
-def train_batch(model: TypedLM, loss_fn: MixedLoss, optim: Optimizer, masked_words: LongTensor,
+def train_batch(model: DecodingTypeLM, loss_fn: MixedLoss, optim: Optimizer, masked_words: LongTensor,
                 padding_mask: LongTensor, true_words: LongTensor, true_types: LongTensor, masked_ids: LongTensor):
     model.train()
 
@@ -47,7 +47,7 @@ def train_batch(model: TypedLM, loss_fn: MixedLoss, optim: Optimizer, masked_wor
     return (batch_losses[0].item(), batch_losses[1].item()), sent_stats, type_stats
 
 
-def train_batches(model: TypedLM, dl: LazyLoader, loss_fn: MixedLoss, optim: Optimizer, num_batches: int,
+def train_batches(model: DecodingTypeLM, dl: LazyLoader, loss_fn: MixedLoss, optim: Optimizer, num_batches: int,
                   device: str) -> Tuple[Tuple[float, float], float, float]:
     batch_idx, epoch_loss_mlm, epoch_loss_st = 0, 0., 0.
 

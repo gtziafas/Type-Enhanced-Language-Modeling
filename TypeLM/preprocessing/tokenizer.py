@@ -129,7 +129,7 @@ def _make_atom_set(dump: str = './TypeLM/data/dump') -> Set[str]:
     return atoms
 
 
-def _make_type_set(dump: str = './TypeLM/data/extraction/dumptest') -> None:
+def _make_type_set(dump: str = './TypeLM/data/extraction/dump') -> None:
     with open(dump, 'r') as f:
         typeset = Counter()
         while True:
