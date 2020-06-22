@@ -1,4 +1,4 @@
-from torch.nn import Module, KLDivLoss
+from torch.nn import Module, KLDivLoss, CrossEntropyLoss
 from typing import Dict, Tuple, List
 from torch import Tensor, LongTensor
 import torch
@@ -50,3 +50,17 @@ class FuzzyLoss(Module):
             mask = mask.masked_fill_(y == idx, 1) 
         y_float[mask.unsqueeze(1).repeat(1, self.nc)] = 0
         return self.loss_fn(torch.log_softmax(x.view(-1, self.nc), dim=-1), y_float)
+
+
+class CrossEntropyLossMultiIgnore(Module):
+    def __init__(self, reduction: str, ignore_index: List[int]) -> None:
+        super(CrossEntropyLossMultiIgnore, self).__init__()
+        self.loss_fn = CrossEntropyLoss(reduction=reduction)
+        self.ignore_index = ignore_index
+
+    def __call__(self, x: Tensor, y: LongTensor) -> Tensor:
+        mask = torch.zeros_like(y, dtype=torch.long)
+        for idx in self.ignore_index:
+            mask = mask.masked_fill_(y == idx, 1)
+        y[mask == 1] = self.loss_fn.ignore_index
+        return self.loss_fn(x, y)

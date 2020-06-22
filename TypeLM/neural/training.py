@@ -1,6 +1,6 @@
 from torch import LongTensor
 from typing import Tuple
-from TypeLM.neural.model import DecodingTypeLM
+from TypeLM.neural.model import TypedLM
 from TypeLM.neural.loss import MixedLoss
 from TypeLM.preprocessing.loader import LazyLoader
 from torch.optim import Optimizer
@@ -23,23 +23,18 @@ def type_accuracy(predictions: LongTensor, truth: LongTensor, ignore_idx: int) \
             (predictions.shape[0] * predictions.shape[1] - num_masked_items, num_correct_items - num_masked_items))
 
 
-def train_batch(model: DecodingTypeLM, loss_fn: MixedLoss, optim: Optimizer, masked_words: LongTensor,
+def train_batch(model: TypedLM, loss_fn: MixedLoss, optim: Optimizer, masked_words: LongTensor,
                 padding_mask: LongTensor, true_words: LongTensor, true_types: LongTensor, masked_ids: LongTensor):
     model.train()
 
     num_words = masked_words.shape[0] * masked_words.shape[1]
-    num_types = true_types.shape[0] * (true_types.shape[1]-1)
-
     type_pad_idx = model.tokenizer.type_tokenizer.PAD_TOKEN_ID
 
-    word_preds, type_preds = model.forward_train(masked_words, padding_mask, true_types)
+    word_preds, type_preds = model.forward_train(masked_words, padding_mask)
     # todo: replace python indexing with pytorch indexing
-    type_preds = type_preds[:, :-1].contiguous()
-    true_types = true_types[:, 1:].contiguous()
     sent_stats, type_stats = type_accuracy(type_preds.argmax(dim=-1), true_types, type_pad_idx)
     batch_losses = loss_fn(word_preds.view(num_words, -1), true_words.flatten(),
-                           type_preds.view(num_types, -1), true_types.flatten(), masked_ids.flatten())
-
+                           type_preds.view(num_words, -1), true_types.flatten(), masked_ids.flatten())
     sum(batch_losses).backward()
     optim.step()
     optim.zero_grad()
@@ -47,7 +42,7 @@ def train_batch(model: DecodingTypeLM, loss_fn: MixedLoss, optim: Optimizer, mas
     return (batch_losses[0].item(), batch_losses[1].item()), sent_stats, type_stats
 
 
-def train_batches(model: DecodingTypeLM, dl: LazyLoader, loss_fn: MixedLoss, optim: Optimizer, num_batches: int,
+def train_batches(model: TypedLM, dl: LazyLoader, loss_fn: MixedLoss, optim: Optimizer, num_batches: int,
                   device: str) -> Tuple[Tuple[float, float], float, float]:
     batch_idx, epoch_loss_mlm, epoch_loss_st = 0, 0., 0.
 
