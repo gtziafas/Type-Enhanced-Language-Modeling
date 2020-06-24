@@ -1,0 +1,2883 @@
+ADJ
+ADV
+AP
+BW
+CP
+DETP
+INF
+LET
+LID
+N
+NP
+PP
+PPART
+PPRES
+REL
+SMAIN
+SPEC
+SSUB
+SV1
+TSW
+TW
+VG
+VNW
+VZ
+WW
+_
+app NP NP
+app SMAIN SMAIN
+app app NP NP app NP NP
+app app app NP NP app NP NP app app NP NP app NP NP
+app app mod NP NP mod NP NP app mod NP NP mod NP NP
+app det N NP det N NP
+app mod ADV ADV mod ADV ADV
+app mod INF INF mod INF INF
+app mod NP NP mod NP NP
+app mod PPART PPART mod PPART PPART
+app mod SMAIN SMAIN mod SMAIN SMAIN
+app mod SSUB SSUB mod SSUB SSUB
+app mod app NP NP app NP NP mod app NP NP app NP NP
+app mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+app mod mod PPART PPART mod PPART PPART mod mod PPART PPART mod PPART PPART
+app mod mod SMAIN SMAIN mod SMAIN SMAIN mod mod SMAIN SMAIN mod SMAIN SMAIN
+app mod mod SSUB SSUB mod SSUB SSUB mod mod SSUB SSUB mod SSUB SSUB
+app mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+app mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+app mod mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+app mod mod mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+cmp_body ADJ CP
+cmp_body ADJ mod INF INF
+cmp_body ADJ mod NP NP
+cmp_body ADJ mod PPART PPART
+cmp_body ADJ mod SMAIN SMAIN
+cmp_body ADJ mod SSUB SSUB
+cmp_body ADJ mod mod NP NP mod NP NP
+cmp_body ADJ predm SMAIN SMAIN
+cmp_body ADJ predm SSUB SSUB
+cmp_body ADV CP
+cmp_body AP CP
+cmp_body AP mod INF INF
+cmp_body AP mod NP NP
+cmp_body AP mod PPART PPART
+cmp_body AP mod SMAIN SMAIN
+cmp_body BW CP
+cmp_body BW SVAN
+cmp_body BW mod INF INF
+cmp_body BW mod NP NP
+cmp_body BW mod PPART PPART
+cmp_body BW mod SMAIN SMAIN
+cmp_body BW mod SSUB SSUB
+cmp_body CP CP
+cmp_body CP mod INF INF
+cmp_body CP mod NP NP
+cmp_body CP mod PPART PPART
+cmp_body CP mod SMAIN SMAIN
+cmp_body CP mod SSUB SSUB
+cmp_body INF ADJ
+cmp_body INF AHI
+cmp_body INF AP
+cmp_body INF CP
+cmp_body INF NP
+cmp_body INF PP
+cmp_body INF SMAIN
+cmp_body INF TI
+cmp_body INF mod NP NP
+cmp_body INF predm SMAIN SMAIN
+cmp_body N CP
+cmp_body N mod AP AP
+cmp_body N mod INF INF
+cmp_body N mod NP NP
+cmp_body N mod PPART PPART
+cmp_body N mod SMAIN SMAIN
+cmp_body N mod SSUB SSUB
+cmp_body N mod app NP NP app NP NP
+cmp_body N mod mod NP NP mod NP NP
+cmp_body N mod mod SMAIN SMAIN mod SMAIN SMAIN
+cmp_body N predm INF INF
+cmp_body N predm SMAIN SMAIN
+cmp_body N predm SSUB SSUB
+cmp_body N predm SV1 SV1
+cmp_body NP CP
+cmp_body NP NP
+cmp_body NP SMAIN
+cmp_body NP mod AP AP
+cmp_body NP mod INF INF
+cmp_body NP mod NP NP
+cmp_body NP mod PPART PPART
+cmp_body NP mod SMAIN SMAIN
+cmp_body NP mod SSUB SSUB
+cmp_body NP mod SV1 SV1
+cmp_body NP mod app NP NP app NP NP
+cmp_body NP mod mod NP NP mod NP NP
+cmp_body NP mod mod SMAIN SMAIN mod SMAIN SMAIN
+cmp_body NP mod predm SMAIN SMAIN predm SMAIN SMAIN
+cmp_body NP predm INF INF
+cmp_body NP predm PPART PPART
+cmp_body NP predm SMAIN SMAIN
+cmp_body NP predm SSUB SSUB
+cmp_body NP predm SV1 SV1
+cmp_body PP CP
+cmp_body PP mod INF INF
+cmp_body PP mod NP NP
+cmp_body PP mod PPART PPART
+cmp_body PP mod SMAIN SMAIN
+cmp_body PP mod SSUB SSUB
+cmp_body PP mod SV1 SV1
+cmp_body PPART CP
+cmp_body PPART mod INF INF
+cmp_body PPART mod NP NP
+cmp_body PPART mod PPART PPART
+cmp_body PPART mod SMAIN SMAIN
+cmp_body SMAIN SVAN
+cmp_body SMAIN mod NP NP
+cmp_body SPEC CP
+cmp_body SPEC mod AP AP
+cmp_body SPEC mod INF INF
+cmp_body SPEC mod NP NP
+cmp_body SPEC mod PPART PPART
+cmp_body SPEC mod SMAIN SMAIN
+cmp_body SPEC mod SSUB SSUB
+cmp_body SPEC mod mod NP NP mod NP NP
+cmp_body SPEC predm SMAIN SMAIN
+cmp_body SPEC predm SSUB SSUB
+cmp_body SSUB BW
+cmp_body SSUB CP
+cmp_body SSUB SMAIN
+cmp_body SSUB mod ADV ADV
+cmp_body SSUB mod AP AP
+cmp_body SSUB mod CP CP
+cmp_body SSUB mod INF INF
+cmp_body SSUB mod NP NP
+cmp_body SSUB mod PP PP
+cmp_body SSUB mod PPART PPART
+cmp_body SSUB mod SMAIN SMAIN
+cmp_body SSUB mod SSUB SSUB
+cmp_body SSUB mod SV1 SV1
+cmp_body SSUB mod TI TI
+cmp_body SSUB mod WW WW
+cmp_body SSUB mod app NP NP app NP NP
+cmp_body SSUB mod mod INF INF mod INF INF
+cmp_body SSUB mod mod NP NP mod NP NP
+cmp_body SSUB mod mod PPART PPART mod PPART PPART
+cmp_body SSUB mod mod SMAIN SMAIN mod SMAIN SMAIN
+cmp_body SSUB mod predm SMAIN SMAIN predm SMAIN SMAIN
+cmp_body SV1 CP
+cmp_body SV1 mod INF INF
+cmp_body SV1 mod NP NP
+cmp_body SV1 mod PPART PPART
+cmp_body SV1 mod SMAIN SMAIN
+cmp_body SV1 mod SSUB SSUB
+cmp_body SV1 mod SV1 SV1
+cmp_body TI CP
+cmp_body TI OTI
+cmp_body TI SMAIN
+cmp_body TI mod INF INF
+cmp_body TI mod NP NP
+cmp_body TI mod PPART PPART
+cmp_body TI mod SMAIN SMAIN
+cmp_body TI mod SSUB SSUB
+cmp_body TI mod SV1 SV1
+cmp_body TI mod WW WW
+cmp_body TI mod app NP NP app NP NP
+cmp_body TI mod mod NP NP mod NP NP
+cmp_body TI mod mod SMAIN SMAIN mod SMAIN SMAIN
+cmp_body TW CP
+cmp_body TW mod NP NP
+cmp_body TW mod SMAIN SMAIN
+cmp_body TW mod mod NP NP mod NP NP
+cmp_body TW predm SMAIN SMAIN
+cmp_body TW predm SSUB SSUB
+cmp_body VNW CP
+cmp_body VNW mod AP AP
+cmp_body VNW mod INF INF
+cmp_body VNW mod NP NP
+cmp_body VNW mod PPART PPART
+cmp_body VNW mod SMAIN SMAIN
+cmp_body VNW mod SSUB SSUB
+cmp_body VNW predm SMAIN SMAIN
+cmp_body VNW predm SSUB SSUB
+cmp_body VNW predm SV1 SV1
+cmp_body WHREL CP
+cmp_body WHSUB CP
+cmp_body WW AHI
+cmp_body WW AP
+cmp_body WW CP
+cmp_body WW NP
+cmp_body WW TI
+cmp_body WW mod INF INF
+cmp_body WW mod NP NP
+cmp_body WW mod PPART PPART
+cmp_body WW mod SMAIN SMAIN
+cmp_body WW mod SSUB SSUB
+cmp_body WW predm SMAIN SMAIN
+cnj ADJ cnj ADJ ADJ
+cnj ADJ cnj ADJ cnj ADJ ADJ
+cnj ADJ cnj ADJ cnj ADJ cnj ADJ ADJ
+cnj ADV cnj ADV ADV
+cnj AP cnj AP AP
+cnj AP cnj AP cnj AP AP
+cnj AP cnj AP cnj AP cnj AP AP
+cnj BW cnj BW BW
+cnj CP cnj CP CP
+cnj CP cnj CP cnj CP CP
+cnj INF cnj INF INF
+cnj INF cnj INF cnj INF INF
+cnj INF cnj INF cnj INF cnj INF INF
+cnj NP cnj NP NP
+cnj NP cnj NP cnj NP NP
+cnj NP cnj NP cnj NP cnj NP NP
+cnj NP cnj NP cnj NP cnj NP cnj NP NP
+cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP NP
+cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP NP
+cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP NP
+cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP NP
+cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP NP
+cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP cnj NP NP
+cnj OTI cnj OTI OTI
+cnj PP cnj PP PP
+cnj PP cnj PP cnj PP PP
+cnj PP cnj PP cnj PP cnj PP PP
+cnj PPART cnj PPART PPART
+cnj PPART cnj PPART cnj PPART PPART
+cnj SMAIN cnj SMAIN SMAIN
+cnj SMAIN cnj SMAIN cnj SMAIN SMAIN
+cnj SMAIN cnj SMAIN cnj SMAIN cnj SMAIN SMAIN
+cnj SMAIN cnj SMAIN cnj SMAIN cnj SMAIN cnj SMAIN SMAIN
+cnj SPEC cnj SPEC SPEC
+cnj SPEC cnj SPEC cnj SPEC SPEC
+cnj SPEC cnj SPEC cnj SPEC cnj SPEC SPEC
+cnj SPEC cnj SPEC cnj SPEC cnj SPEC cnj SPEC SPEC
+cnj SPEC cnj SPEC cnj SPEC cnj SPEC cnj SPEC cnj SPEC SPEC
+cnj SPEC cnj SPEC cnj SPEC cnj SPEC cnj SPEC cnj SPEC cnj SPEC SPEC
+cnj SSUB cnj SSUB SSUB
+cnj SSUB cnj SSUB cnj SSUB SSUB
+cnj SV1 cnj SV1 SV1
+cnj SV1 cnj SV1 cnj SV1 SV1
+cnj TI cnj TI TI
+cnj TI cnj TI cnj TI TI
+cnj TI cnj TI cnj TI cnj TI TI
+cnj TSW cnj TSW TSW
+cnj TW cnj TW TW
+cnj TW cnj TW cnj TW TW
+cnj TW cnj TW cnj TW cnj TW TW
+cnj VG cnj VG VG
+cnj VNW cnj VNW VNW
+cnj VZ cnj VZ VZ
+cnj WHQ cnj WHQ WHQ
+cnj WHREL cnj WHREL WHREL
+cnj WHSUB cnj WHSUB WHSUB
+cnj WW cnj WW WW
+cnj WW cnj WW cnj WW WW
+cnj app NP NP cnj app NP NP app NP NP
+cnj app NP NP cnj app NP NP cnj app NP NP app NP NP
+cnj app NP NP cnj app NP NP cnj app NP NP cnj app NP NP app NP NP
+cnj app NP NP cnj app NP NP cnj app NP NP cnj app NP NP cnj app NP NP app NP NP
+cnj app NP NP cnj app NP NP cnj app NP NP cnj app NP NP cnj app NP NP cnj app NP NP app NP NP
+cnj app NP NP cnj app NP NP cnj app NP NP cnj app NP NP cnj app NP NP cnj app NP NP cnj app NP NP app NP NP
+cnj app app NP NP app NP NP cnj app app NP NP app NP NP app app NP NP app NP NP
+cnj app mod NP NP mod NP NP cnj app mod NP NP mod NP NP app mod NP NP mod NP NP
+cnj det N NP cnj det N NP cnj det N NP det N NP
+cnj det N NP cnj det N NP det N NP
+cnj det N app NP NP cnj det N app NP NP det N app NP NP
+cnj det N mod INF INF cnj det N mod INF INF det N mod INF INF
+cnj det N mod NP NP cnj det N mod NP NP det N mod NP NP
+cnj det N mod PPART PPART cnj det N mod PPART PPART det N mod PPART PPART
+cnj det N mod SMAIN SMAIN cnj det N mod SMAIN SMAIN det N mod SMAIN SMAIN
+cnj det SPEC NP cnj det SPEC NP det SPEC NP
+cnj mod AP AP cnj mod AP AP mod AP AP
+cnj mod INF INF cnj mod INF INF cnj mod INF INF mod INF INF
+cnj mod INF INF cnj mod INF INF mod INF INF
+cnj mod NP NP cnj mod NP NP cnj mod NP NP cnj mod NP NP cnj mod NP NP cnj mod NP NP mod NP NP
+cnj mod NP NP cnj mod NP NP cnj mod NP NP cnj mod NP NP cnj mod NP NP mod NP NP
+cnj mod NP NP cnj mod NP NP cnj mod NP NP cnj mod NP NP mod NP NP
+cnj mod NP NP cnj mod NP NP cnj mod NP NP mod NP NP
+cnj mod NP NP cnj mod NP NP mod NP NP
+cnj mod PP PP cnj mod PP PP mod PP PP
+cnj mod PPART PPART cnj mod PPART PPART cnj mod PPART PPART mod PPART PPART
+cnj mod PPART PPART cnj mod PPART PPART mod PPART PPART
+cnj mod SMAIN SMAIN cnj mod SMAIN SMAIN cnj mod SMAIN SMAIN mod SMAIN SMAIN
+cnj mod SMAIN SMAIN cnj mod SMAIN SMAIN mod SMAIN SMAIN
+cnj mod SSUB SSUB cnj mod SSUB SSUB cnj mod SSUB SSUB mod SSUB SSUB
+cnj mod SSUB SSUB cnj mod SSUB SSUB mod SSUB SSUB
+cnj mod SV1 SV1 cnj mod SV1 SV1 mod SV1 SV1
+cnj mod app NP NP app NP NP cnj mod app NP NP app NP NP cnj mod app NP NP app NP NP mod app NP NP app NP NP
+cnj mod app NP NP app NP NP cnj mod app NP NP app NP NP mod app NP NP app NP NP
+cnj mod mod INF INF mod INF INF cnj mod mod INF INF mod INF INF mod mod INF INF mod INF INF
+cnj mod mod NP NP mod NP NP cnj mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+cnj mod mod PPART PPART mod PPART PPART cnj mod mod PPART PPART mod PPART PPART mod mod PPART PPART mod PPART PPART
+cnj mod mod SMAIN SMAIN mod SMAIN SMAIN cnj mod mod SMAIN SMAIN mod SMAIN SMAIN mod mod SMAIN SMAIN mod SMAIN SMAIN
+cnj obcomp CP AP cnj obcomp CP AP obcomp CP AP
+cnj obj1 N NP cnj obj1 N NP obj1 N NP
+cnj obj1 N PP cnj obj1 N PP obj1 N PP
+cnj obj1 N PPART cnj obj1 N PPART obj1 N PPART
+cnj obj1 N mod NP NP cnj obj1 N mod NP NP obj1 N mod NP NP
+cnj obj1 N mod SMAIN SMAIN cnj obj1 N mod SMAIN SMAIN obj1 N mod SMAIN SMAIN
+cnj obj1 N su VNW SSUB cnj obj1 N su VNW SSUB obj1 N su VNW SSUB
+cnj obj1 NP NP cnj obj1 NP NP obj1 NP NP
+cnj obj1 NP PP cnj obj1 NP PP obj1 NP PP
+cnj obj1 NP PPART cnj obj1 NP PPART obj1 NP PPART
+cnj obj1 NP mod INF INF cnj obj1 NP mod INF INF obj1 NP mod INF INF
+cnj obj1 NP mod NP NP cnj obj1 NP mod NP NP obj1 NP mod NP NP
+cnj obj1 NP mod PPART PPART cnj obj1 NP mod PPART PPART obj1 NP mod PPART PPART
+cnj obj1 NP mod SMAIN SMAIN cnj obj1 NP mod SMAIN SMAIN obj1 NP mod SMAIN SMAIN
+cnj obj1 NP mod SSUB SSUB cnj obj1 NP mod SSUB SSUB obj1 NP mod SSUB SSUB
+cnj obj1 NP su N SMAIN cnj obj1 NP su N SMAIN obj1 NP su N SMAIN
+cnj obj1 NP su NP SMAIN cnj obj1 NP su NP SMAIN obj1 NP su NP SMAIN
+cnj obj1 NP su NP SSUB cnj obj1 NP su NP SSUB obj1 NP su NP SSUB
+cnj obj1 NP su VNW SMAIN cnj obj1 NP su VNW SMAIN obj1 NP su VNW SMAIN
+cnj obj1 NP su VNW SSUB cnj obj1 NP su VNW SSUB obj1 NP su VNW SSUB
+cnj obj1 VNW PP cnj obj1 VNW PP obj1 VNW PP
+cnj obj1 VNW PPART cnj obj1 VNW PPART obj1 VNW PPART
+cnj obj1 VNW SSUB cnj obj1 VNW SSUB obj1 VNW SSUB
+cnj obj1 VNW su NP SSUB cnj obj1 VNW su NP SSUB obj1 VNW su NP SSUB
+cnj obj1 VNW su VNW SSUB cnj obj1 VNW su VNW SSUB obj1 VNW su VNW SSUB
+cnj predc NP su NP SMAIN cnj predc NP su NP SMAIN predc NP su NP SMAIN
+cnj predc NP su VNW SMAIN cnj predc NP su VNW SMAIN predc NP su VNW SMAIN
+cnj predm SMAIN SMAIN cnj predm SMAIN SMAIN predm SMAIN SMAIN
+cnj predm SSUB SSUB cnj predm SSUB SSUB predm SSUB SSUB
+cnj su ADJ SMAIN cnj su ADJ SMAIN su ADJ SMAIN
+cnj su N SMAIN cnj su N SMAIN cnj su N SMAIN su N SMAIN
+cnj su N SMAIN cnj su N SMAIN su N SMAIN
+cnj su N SSUB cnj su N SSUB su N SSUB
+cnj su NP SMAIN cnj su NP SMAIN cnj su NP SMAIN cnj su NP SMAIN su NP SMAIN
+cnj su NP SMAIN cnj su NP SMAIN cnj su NP SMAIN su NP SMAIN
+cnj su NP SMAIN cnj su NP SMAIN su NP SMAIN
+cnj su NP SSUB cnj su NP SSUB cnj su NP SSUB su NP SSUB
+cnj su NP SSUB cnj su NP SSUB su NP SSUB
+cnj su SPEC SMAIN cnj su SPEC SMAIN cnj su SPEC SMAIN su SPEC SMAIN
+cnj su SPEC SMAIN cnj su SPEC SMAIN su SPEC SMAIN
+cnj su SPEC SSUB cnj su SPEC SSUB su SPEC SSUB
+cnj su VNW SMAIN cnj su VNW SMAIN cnj su VNW SMAIN cnj su VNW SMAIN su VNW SMAIN
+cnj su VNW SMAIN cnj su VNW SMAIN cnj su VNW SMAIN su VNW SMAIN
+cnj su VNW SMAIN cnj su VNW SMAIN su VNW SMAIN
+cnj su VNW SSUB cnj su VNW SSUB cnj su VNW SSUB cnj su VNW SSUB su VNW SSUB
+cnj su VNW SSUB cnj su VNW SSUB cnj su VNW SSUB su VNW SSUB
+cnj su VNW SSUB cnj su VNW SSUB su VNW SSUB
+cnj su WHREL SMAIN cnj su WHREL SMAIN su WHREL SMAIN
+cnj vc INF su NP SMAIN cnj vc INF su NP SMAIN vc INF su NP SMAIN
+cnj vc INF su VNW SMAIN cnj vc INF su VNW SMAIN vc INF su VNW SMAIN
+cnj vc INF su VNW SSUB cnj vc INF su VNW SSUB vc INF su VNW SSUB
+cnj → det ADJ NP NP cnj → det ADJ NP NP → det ADJ NP NP
+cnj → det N NP NP cnj → det N NP NP cnj → det N NP NP cnj → det N NP NP cnj → det N NP NP → det N NP NP
+cnj → det N NP NP cnj → det N NP NP cnj → det N NP NP cnj → det N NP NP → det N NP NP
+cnj → det N NP NP cnj → det N NP NP cnj → det N NP NP → det N NP NP
+cnj → det N NP NP cnj → det N NP NP → det N NP NP
+cnj → det N app NP NP app NP NP cnj → det N app NP NP app NP NP → det N app NP NP app NP NP
+cnj → det N mod NP NP mod NP NP cnj → det N mod NP NP mod NP NP → det N mod NP NP mod NP NP
+cnj → det SPEC NP NP cnj → det SPEC NP NP → det SPEC NP NP
+cnj → det TW NP NP cnj → det TW NP NP → det TW NP NP
+cnj → det WW NP NP cnj → det WW NP NP → det WW NP NP
+cnj → vc INF su NP SMAIN su NP SMAIN cnj → vc INF su NP SMAIN su NP SMAIN → vc INF su NP SMAIN su NP SMAIN
+cnj → vc INF su VNW SMAIN su VNW SMAIN cnj → vc INF su VNW SMAIN su VNW SMAIN → vc INF su VNW SMAIN su VNW SMAIN
+det ADJ NP
+det ADJ app NP NP
+det ADJ mod NP NP
+det ADJ obcomp CP NP
+det BW NP
+det N NP
+det N SMAIN
+det N app NP NP
+det N app app NP NP app NP NP
+det N app mod NP NP mod NP NP
+det N det ADJ NP
+det N det N NP
+det N det N app NP NP
+det N det N mod INF INF
+det N det N mod PPART PPART
+det N det N mod SMAIN SMAIN
+det N det N mod SSUB SSUB
+det N det TW det N NP
+det N mod ADV ADV
+det N mod AP AP
+det N mod CP CP
+det N mod INF INF
+det N mod NP NP
+det N mod PP PP
+det N mod PPART PPART
+det N mod SMAIN SMAIN
+det N mod SSUB SSUB
+det N mod SV1 SV1
+det N mod app NP NP app NP NP
+det N mod det N NP det N NP
+det N mod mod INF INF mod INF INF
+det N mod mod NP NP mod NP NP
+det N mod mod PPART PPART mod PPART PPART
+det N mod mod SMAIN SMAIN mod SMAIN SMAIN
+det N mod mod SSUB SSUB mod SSUB SSUB
+det N mod mod SV1 SV1 mod SV1 SV1
+det N mod mod app NP NP app NP NP mod app NP NP app NP NP
+det N mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+det N mod mod mod SMAIN SMAIN mod SMAIN SMAIN mod mod SMAIN SMAIN mod SMAIN SMAIN
+det N mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+det N mod mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+det N vc BW NP
+det N vc CP NP
+det N vc CP app NP NP
+det N vc CP mod SMAIN SMAIN
+det N vc OTI NP
+det N vc OTI app NP NP
+det N vc SVAN NP
+det N vc TI NP
+det N vc WHSUB NP
+det NP NP
+det NP app NP NP
+det NP mod NP NP
+det SPEC NP
+det SPEC app NP NP
+det SPEC mod INF INF
+det SPEC mod NP NP
+det SPEC mod PPART PPART
+det SPEC mod SMAIN SMAIN
+det SPEC mod SSUB SSUB
+det SPEC mod app NP NP app NP NP
+det SPEC mod mod NP NP mod NP NP
+det TSW NP
+det TW NP
+det TW app NP NP
+det TW app app NP NP app NP NP
+det TW app mod NP NP mod NP NP
+det TW mod NP NP
+det TW mod det N NP det N NP
+det TW predm SMAIN SMAIN
+det VNW NP
+det VNW app NP NP
+det WW NP
+det WW app NP NP
+det WW ld PP NP
+det WW mod NP NP
+det WW obj1 N NP
+det WW obj1 NP NP
+det WW pc PP NP
+det WW predc ADJ NP
+det WW svp NP NP
+det WW vc WW NP
+hdf VZ obj1 BW PP
+hdf VZ obj1 BW mod INF INF
+hdf VZ obj1 BW mod NP NP
+hdf VZ obj1 BW mod PPART PPART
+hdf VZ obj1 BW mod SMAIN SMAIN
+hdf VZ obj1 BW mod SSUB SSUB
+hdf VZ obj1 BW mod mod NP NP mod NP NP
+hdf VZ obj1 N PP
+hdf VZ obj1 N mod INF INF
+hdf VZ obj1 N mod NP NP
+hdf VZ obj1 N mod PPART PPART
+hdf VZ obj1 N mod SMAIN SMAIN
+hdf VZ obj1 NP PP
+hdf VZ obj1 NP mod INF INF
+hdf VZ obj1 NP mod NP NP
+hdf VZ obj1 NP mod PPART PPART
+hdf VZ obj1 NP mod SMAIN SMAIN
+hdf VZ obj1 NP mod SSUB SSUB
+hdf VZ obj1 TW mod mod NP NP mod NP NP
+hdf VZ obj1 VNW PP
+hdf VZ obj1 VNW mod INF INF
+hdf VZ obj1 VNW mod NP NP
+hdf VZ obj1 VNW mod SMAIN SMAIN
+hdf VZ obj1 VNW mod SSUB SSUB
+ld ADJ INF
+ld ADJ su NP SMAIN
+ld ADJ su VNW SMAIN
+ld ADJ su VNW SSUB
+ld ADV su NP SMAIN
+ld ADV su VNW SMAIN
+ld AP INF
+ld AP su NP SMAIN
+ld AP su VNW SMAIN
+ld AP su VNW SSUB
+ld BW INF
+ld BW PPART
+ld BW SV1
+ld BW obj1 N INF
+ld BW obj1 NP INF
+ld BW obj1 NP PPART
+ld BW obj1 NP SV1
+ld BW obj1 NP su N SMAIN
+ld BW obj1 NP su NP SMAIN
+ld BW obj1 NP su NP SSUB
+ld BW obj1 NP su VNW SMAIN
+ld BW obj1 NP su VNW SSUB
+ld BW obj1 VNW INF
+ld BW obj1 VNW PPART
+ld BW obj1 VNW su VNW SMAIN
+ld BW obj1 VNW su VNW SSUB
+ld BW se VNW su NP SSUB
+ld BW se VNW su VNW SSUB
+ld BW su CP SMAIN
+ld BW su CP SSUB
+ld BW su N SMAIN
+ld BW su N SSUB
+ld BW su NP SMAIN
+ld BW su NP SSUB
+ld BW su NP SV1
+ld BW su SPEC SMAIN
+ld BW su VNW SMAIN
+ld BW su VNW SSUB
+ld BW su VNW SV1
+ld N INF
+ld N PPART
+ld NP INF
+ld NP PPART
+ld NP obj1 NP INF
+ld NP obj1 NP PPART
+ld NP su NP SMAIN
+ld NP su NP SSUB
+ld NP su VNW SSUB
+ld PP INF
+ld PP NP
+ld PP PPART
+ld PP SMAIN
+ld PP SSUB
+ld PP SV1
+ld PP mod NP NP
+ld PP obj1 N INF
+ld PP obj1 N NP
+ld PP obj1 N PPART
+ld PP obj1 N SV1
+ld PP obj1 N su N SMAIN
+ld PP obj1 N su NP SMAIN
+ld PP obj1 N su NP SSUB
+ld PP obj1 N su SPEC SMAIN
+ld PP obj1 N su VNW SMAIN
+ld PP obj1 N su VNW SSUB
+ld PP obj1 N su VNW SV1
+ld PP obj1 NP INF
+ld PP obj1 NP NP
+ld PP obj1 NP PPART
+ld PP obj1 NP SMAIN
+ld PP obj1 NP SV1
+ld PP obj1 NP su N SMAIN
+ld PP obj1 NP su N SSUB
+ld PP obj1 NP su NP SMAIN
+ld PP obj1 NP su NP SSUB
+ld PP obj1 NP su NP SV1
+ld PP obj1 NP su SPEC SMAIN
+ld PP obj1 NP su SPEC SSUB
+ld PP obj1 NP su VNW SMAIN
+ld PP obj1 NP su VNW SSUB
+ld PP obj1 NP su VNW SV1
+ld PP obj1 SPEC INF
+ld PP obj1 SPEC PPART
+ld PP obj1 SPEC su NP SMAIN
+ld PP obj1 SPEC su VNW SMAIN
+ld PP obj1 VNW INF
+ld PP obj1 VNW PPART
+ld PP obj1 VNW SV1
+ld PP obj1 VNW su N SMAIN
+ld PP obj1 VNW su N SSUB
+ld PP obj1 VNW su NP SMAIN
+ld PP obj1 VNW su NP SSUB
+ld PP obj1 VNW su SPEC SMAIN
+ld PP obj1 VNW su VNW SMAIN
+ld PP obj1 VNW su VNW SSUB
+ld PP obj1 VNW su VNW SV1
+ld PP obj2 N INF
+ld PP obj2 N su NP SMAIN
+ld PP obj2 N su VNW SMAIN
+ld PP obj2 NP INF
+ld PP obj2 NP PPART
+ld PP obj2 NP obj1 NP INF
+ld PP obj2 NP su N SMAIN
+ld PP obj2 NP su NP SMAIN
+ld PP obj2 NP su VNW SMAIN
+ld PP obj2 VNW INF
+ld PP obj2 VNW PPART
+ld PP obj2 VNW su NP SMAIN
+ld PP se VNW INF
+ld PP se VNW PPART
+ld PP se VNW su N SMAIN
+ld PP se VNW su N SSUB
+ld PP se VNW su NP SMAIN
+ld PP se VNW su NP SSUB
+ld PP se VNW su SPEC SMAIN
+ld PP se VNW su VNW SMAIN
+ld PP se VNW su VNW SSUB
+ld PP su ADJ SMAIN
+ld PP su CP SMAIN
+ld PP su N SMAIN
+ld PP su N SSUB
+ld PP su N SV1
+ld PP su NP SMAIN
+ld PP su NP SSUB
+ld PP su NP SV1
+ld PP su NP mod NP NP
+ld PP su SPEC SMAIN
+ld PP su SPEC SSUB
+ld PP su TW SMAIN
+ld PP su TW SSUB
+ld PP su VNW SMAIN
+ld PP su VNW SSUB
+ld PP su VNW SV1
+ld PP su VNW mod NP NP
+ld PP su WHREL SMAIN
+ld PP su WW SMAIN
+ld VNW INF
+ld VNW PPART
+ld VNW SV1
+ld VNW obj1 NP INF
+ld VNW obj1 NP PPART
+ld VNW obj1 NP su VNW SSUB
+ld VNW se VNW su NP SSUB
+ld VNW su N SMAIN
+ld VNW su N SSUB
+ld VNW su N SV1
+ld VNW su NP SMAIN
+ld VNW su NP SSUB
+ld VNW su NP SV1
+ld VNW su VNW SMAIN
+ld VNW su VNW SSUB
+ld VNW su VNW SV1
+ld VZ INF
+ld VZ PPART
+ld VZ obj1 NP INF
+ld VZ su N SV1
+ld VZ su NP SMAIN
+ld VZ su NP SV1
+ld VZ su VNW SMAIN
+ld VZ su VNW SSUB
+ld VZ su VNW SV1
+ld WHREL INF
+ld WHREL su N SMAIN
+ld WHREL su NP SMAIN
+ld WHREL su VNW SMAIN
+me ADJ INF
+me ADJ su NP SMAIN
+me ADJ su VNW SMAIN
+me AP INF
+me AP PPART
+me AP su NP SMAIN
+me AP su VNW SMAIN
+me AP su VNW SSUB
+me BW INF
+me N AP
+me N INF
+me N NP
+me N det N NP
+me N mod AP AP
+me N mod INF INF
+me N mod NP NP
+me N mod PPART PPART
+me N mod SMAIN SMAIN
+me N mod SSUB SSUB
+me N su NP SMAIN
+me N su VNW SMAIN
+me NP AP
+me NP INF
+me NP NP
+me NP PPART
+me NP SMAIN
+me NP SV1
+me NP det N NP
+me NP mod AP AP
+me NP mod INF INF
+me NP mod NP NP
+me NP mod PPART PPART
+me NP mod SMAIN SMAIN
+me NP mod SSUB SSUB
+me NP mod SV1 SV1
+me NP mod app NP NP app NP NP
+me NP mod mod NP NP mod NP NP
+me NP mod mod SMAIN SMAIN mod SMAIN SMAIN
+me NP obj2 NP su NP SMAIN
+me NP obj2 VNW PPART
+me NP obj2 VNW su NP SMAIN
+me NP obj2 VNW su VNW SMAIN
+me NP su N SMAIN
+me NP su NP SMAIN
+me NP su NP SSUB
+me NP su VNW SMAIN
+me NP su VNW SSUB
+me NP su WW SMAIN
+me TW AP
+me TW su NP SMAIN
+me VNW AP
+me VNW INF
+me VNW NP
+me VNW det N NP
+me VNW mod AP AP
+me VNW mod INF INF
+me VNW mod NP NP
+me VNW mod PPART PPART
+me VNW mod SMAIN SMAIN
+me VNW mod det N NP det N NP
+me VNW mod mod NP NP mod NP NP
+me VNW mod mod PPART PPART mod PPART PPART
+me VNW mod mod SMAIN SMAIN mod SMAIN SMAIN
+mod ADJ ADJ
+mod ADV ADV
+mod AP AP
+mod BW BW
+mod CP CP
+mod DETP DETP
+mod INF INF
+mod NP NP
+mod OTI OTI
+mod PP PP
+mod PPART PPART
+mod PPRES PPRES
+mod SMAIN SMAIN
+mod SPEC SPEC
+mod SSUB SSUB
+mod SV1 SV1
+mod TI TI
+mod TW TW
+mod WHREL WHREL
+mod WW WW
+mod app NP NP app NP NP
+mod app app NP NP app NP NP app app NP NP app NP NP
+mod app mod NP NP mod NP NP app mod NP NP mod NP NP
+mod det ADJ NP det ADJ NP
+mod det N NP det N NP
+mod det N app NP NP det N app NP NP
+mod det N mod INF INF det N mod INF INF
+mod det N mod NP NP det N mod NP NP
+mod det N mod PPART PPART det N mod PPART PPART
+mod det N mod SMAIN SMAIN det N mod SMAIN SMAIN
+mod det N mod SSUB SSUB det N mod SSUB SSUB
+mod det N vc CP NP det N vc CP NP
+mod det N vc OTI NP det N vc OTI NP
+mod det NP NP det NP NP
+mod det SPEC NP det SPEC NP
+mod det TW NP det TW NP
+mod det WW NP det WW NP
+mod mod ADJ ADJ mod ADJ ADJ
+mod mod ADV ADV mod ADV ADV
+mod mod AP AP mod AP AP
+mod mod CP CP mod CP CP
+mod mod INF INF mod INF INF
+mod mod NP NP mod NP NP
+mod mod PP PP mod PP PP
+mod mod PPART PPART mod PPART PPART
+mod mod PPRES PPRES mod PPRES PPRES
+mod mod SMAIN SMAIN mod SMAIN SMAIN
+mod mod SSUB SSUB mod SSUB SSUB
+mod mod SV1 SV1 mod SV1 SV1
+mod mod WW WW mod WW WW
+mod mod app NP NP app NP NP mod app NP NP app NP NP
+mod mod det N NP det N NP mod det N NP det N NP
+mod mod mod AP AP mod AP AP mod mod AP AP mod AP AP
+mod mod mod INF INF mod INF INF mod mod INF INF mod INF INF
+mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+mod mod mod PPART PPART mod PPART PPART mod mod PPART PPART mod PPART PPART
+mod mod mod SMAIN SMAIN mod SMAIN SMAIN mod mod SMAIN SMAIN mod SMAIN SMAIN
+mod mod mod SSUB SSUB mod SSUB SSUB mod mod SSUB SSUB mod SSUB SSUB
+mod mod mod SV1 SV1 mod SV1 SV1 mod mod SV1 SV1 mod SV1 SV1
+mod mod mod app NP NP app NP NP mod app NP NP app NP NP mod mod app NP NP app NP NP mod app NP NP app NP NP
+mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+mod mod mod mod SMAIN SMAIN mod SMAIN SMAIN mod mod SMAIN SMAIN mod SMAIN SMAIN mod mod mod SMAIN SMAIN mod SMAIN SMAIN mod mod SMAIN SMAIN mod SMAIN SMAIN
+mod mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+mod mod mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+mod mod mod mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+mod mod predm SMAIN SMAIN predm SMAIN SMAIN mod predm SMAIN SMAIN predm SMAIN SMAIN
+mod mod whd_body su NP SSUB WHSUB whd_body su NP SSUB WHSUB mod whd_body su NP SSUB WHSUB whd_body su NP SSUB WHSUB
+mod predm INF INF predm INF INF
+mod predm SMAIN SMAIN predm SMAIN SMAIN
+mod predm SSUB SSUB predm SSUB SSUB
+mod predm SV1 SV1 predm SV1 SV1
+mod rhd_body mod mod SSUB SSUB SSUB WHREL rhd_body mod mod SSUB SSUB SSUB WHREL
+mod rhd_body mod mod SSUB SSUB SSUB mod NP NP rhd_body mod mod SSUB SSUB SSUB mod NP NP
+mod rhd_body predc AP SSUB WHREL rhd_body predc AP SSUB WHREL
+mod rhd_body predc AP SSUB mod INF INF rhd_body predc AP SSUB mod INF INF
+mod rhd_body predc AP SSUB mod NP NP rhd_body predc AP SSUB mod NP NP
+mod rhd_body predc AP SSUB mod SMAIN SMAIN rhd_body predc AP SSUB mod SMAIN SMAIN
+mod rhd_body predc AP SSUB mod SSUB SSUB rhd_body predc AP SSUB mod SSUB SSUB
+mod whd_body NP WHQ whd_body NP WHQ
+mod whd_body mod mod INF INF SSUB WHSUB whd_body mod mod INF INF SSUB WHSUB
+mod whd_body mod mod INF INF SV1 WHQ whd_body mod mod INF INF SV1 WHQ
+mod whd_body mod mod PPART PPART SSUB WHSUB whd_body mod mod PPART PPART SSUB WHSUB
+mod whd_body mod mod SSUB SSUB SSUB WHSUB whd_body mod mod SSUB SSUB SSUB WHSUB
+mod whd_body mod mod SV1 SV1 SV1 WHQ whd_body mod mod SV1 SV1 SV1 WHQ
+mod whd_body predc AP SSUB WHSUB whd_body predc AP SSUB WHSUB
+mod whd_body predc AP SV1 WHQ whd_body predc AP SV1 WHQ
+mod whd_body su NP SSUB WHSUB whd_body su NP SSUB WHSUB
+obcomp ADJ DETP
+obcomp ADJ det N NP
+obcomp ADJ mod AP AP
+obcomp ADJ mod INF INF
+obcomp ADJ mod PPART PPART
+obcomp ADJ mod SMAIN SMAIN
+obcomp ADJ mod det N NP det N NP
+obcomp ADJ mod mod INF INF mod INF INF
+obcomp ADJ mod mod NP NP mod NP NP
+obcomp ADJ mod mod PPART PPART mod PPART PPART
+obcomp ADJ mod mod SMAIN SMAIN mod SMAIN SMAIN
+obcomp ADJ mod mod SSUB SSUB mod SSUB SSUB
+obcomp CP AP
+obcomp CP NP
+obcomp CP SMAIN
+obcomp CP app NP NP
+obcomp CP det N NP
+obcomp CP me N AP
+obcomp CP me NP AP
+obcomp CP me NP NP
+obcomp CP me NP det N NP
+obcomp CP me NP mod NP NP
+obcomp CP me NP mod PPART PPART
+obcomp CP me NP mod SMAIN SMAIN
+obcomp CP me TW NP
+obcomp CP me VNW AP
+obcomp CP me VNW NP
+obcomp CP me VNW mod SMAIN SMAIN
+obcomp CP mod ADJ ADJ
+obcomp CP mod AP AP
+obcomp CP mod INF INF
+obcomp CP mod NP NP
+obcomp CP mod PPART PPART
+obcomp CP mod PPRES PPRES
+obcomp CP mod SMAIN SMAIN
+obcomp CP mod SSUB SSUB
+obcomp CP mod SV1 SV1
+obcomp CP mod app NP NP app NP NP
+obcomp CP mod det N NP det N NP
+obcomp CP mod mod AP AP mod AP AP
+obcomp CP mod mod INF INF mod INF INF
+obcomp CP mod mod NP NP mod NP NP
+obcomp CP mod mod PPART PPART mod PPART PPART
+obcomp CP mod mod SMAIN SMAIN mod SMAIN SMAIN
+obcomp CP mod mod SSUB SSUB mod SSUB SSUB
+obcomp CP pc PP AP
+obcomp OTI NP
+obcomp OTI det N NP
+obcomp OTI mod AP AP
+obcomp OTI mod mod SMAIN SMAIN mod SMAIN SMAIN
+obj1 ADJ INF
+obj1 ADJ PP
+obj1 ADJ PPART
+obj1 ADJ mod AP AP
+obj1 ADJ mod INF INF
+obj1 ADJ mod NP NP
+obj1 ADJ mod PPART PPART
+obj1 ADJ mod SMAIN SMAIN
+obj1 ADJ mod SSUB SSUB
+obj1 ADJ mod SV1 SV1
+obj1 ADJ mod app NP NP app NP NP
+obj1 ADJ mod mod NP NP mod NP NP
+obj1 ADJ mod mod SMAIN SMAIN mod SMAIN SMAIN
+obj1 ADJ su NP SMAIN
+obj1 ADJ su VNW SMAIN
+obj1 ADJ su VNW SSUB
+obj1 ADV PP
+obj1 ADV mod INF INF
+obj1 ADV mod NP NP
+obj1 ADV mod PPART PPART
+obj1 ADV mod SMAIN SMAIN
+obj1 ADV mod SSUB SSUB
+obj1 AP PP
+obj1 AP mod NP NP
+obj1 AP mod SMAIN SMAIN
+obj1 BW PP
+obj1 BW PPART
+obj1 BW mod AP AP
+obj1 BW mod INF INF
+obj1 BW mod NP NP
+obj1 BW mod PPART PPART
+obj1 BW mod SMAIN SMAIN
+obj1 BW mod SSUB SSUB
+obj1 BW mod SV1 SV1
+obj1 BW mod app NP NP app NP NP
+obj1 BW mod mod NP NP mod NP NP
+obj1 BW su VNW SMAIN
+obj1 DETP INF
+obj1 N AP
+obj1 N INF
+obj1 N NP
+obj1 N PP
+obj1 N PPART
+obj1 N PPRES
+obj1 N SMAIN
+obj1 N SSUB
+obj1 N SV1
+obj1 N app NP NP
+obj1 N mod ADJ ADJ
+obj1 N mod ADV ADV
+obj1 N mod AP AP
+obj1 N mod BW BW
+obj1 N mod INF INF
+obj1 N mod NP NP
+obj1 N mod PP PP
+obj1 N mod PPART PPART
+obj1 N mod PPRES PPRES
+obj1 N mod SMAIN SMAIN
+obj1 N mod SPEC SPEC
+obj1 N mod SSUB SSUB
+obj1 N mod SV1 SV1
+obj1 N mod WW WW
+obj1 N mod app NP NP app NP NP
+obj1 N mod app app NP NP app NP NP app app NP NP app NP NP
+obj1 N mod app mod NP NP mod NP NP app mod NP NP mod NP NP
+obj1 N mod mod INF INF mod INF INF
+obj1 N mod mod NP NP mod NP NP
+obj1 N mod mod PPART PPART mod PPART PPART
+obj1 N mod mod SMAIN SMAIN mod SMAIN SMAIN
+obj1 N mod mod SSUB SSUB mod SSUB SSUB
+obj1 N mod mod SV1 SV1 mod SV1 SV1
+obj1 N mod mod app NP NP app NP NP mod app NP NP app NP NP
+obj1 N mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+obj1 N mod mod mod SMAIN SMAIN mod SMAIN SMAIN mod mod SMAIN SMAIN mod SMAIN SMAIN
+obj1 N mod predm SMAIN SMAIN predm SMAIN SMAIN
+obj1 N predm SMAIN SMAIN
+obj1 N su ADJ SMAIN
+obj1 N su N SMAIN
+obj1 N su N SSUB
+obj1 N su N SV1
+obj1 N su NP SMAIN
+obj1 N su NP SSUB
+obj1 N su NP SV1
+obj1 N su SPEC SMAIN
+obj1 N su SPEC SSUB
+obj1 N su TW SMAIN
+obj1 N su TW SV1
+obj1 N su VNW SMAIN
+obj1 N su VNW SSUB
+obj1 N su VNW SV1
+obj1 N su WHREL SMAIN
+obj1 NP ADJ
+obj1 NP AP
+obj1 NP BW
+obj1 NP INF
+obj1 NP NP
+obj1 NP PP
+obj1 NP PPART
+obj1 NP PPRES
+obj1 NP SMAIN
+obj1 NP SSUB
+obj1 NP SV1
+obj1 NP app NP NP
+obj1 NP det N NP
+obj1 NP det N mod SMAIN SMAIN
+obj1 NP mod ADJ ADJ
+obj1 NP mod ADV ADV
+obj1 NP mod AP AP
+obj1 NP mod BW BW
+obj1 NP mod CP CP
+obj1 NP mod DETP DETP
+obj1 NP mod INF INF
+obj1 NP mod NP NP
+obj1 NP mod PP PP
+obj1 NP mod PPART PPART
+obj1 NP mod PPRES PPRES
+obj1 NP mod SMAIN SMAIN
+obj1 NP mod SPEC SPEC
+obj1 NP mod SSUB SSUB
+obj1 NP mod SV1 SV1
+obj1 NP mod TI TI
+obj1 NP mod TW TW
+obj1 NP mod WW WW
+obj1 NP mod app NP NP app NP NP
+obj1 NP mod app app NP NP app NP NP app app NP NP app NP NP
+obj1 NP mod app mod NP NP mod NP NP app mod NP NP mod NP NP
+obj1 NP mod mod AP AP mod AP AP
+obj1 NP mod mod INF INF mod INF INF
+obj1 NP mod mod NP NP mod NP NP
+obj1 NP mod mod PP PP mod PP PP
+obj1 NP mod mod PPART PPART mod PPART PPART
+obj1 NP mod mod SMAIN SMAIN mod SMAIN SMAIN
+obj1 NP mod mod SSUB SSUB mod SSUB SSUB
+obj1 NP mod mod SV1 SV1 mod SV1 SV1
+obj1 NP mod mod app NP NP app NP NP mod app NP NP app NP NP
+obj1 NP mod mod det N NP det N NP mod det N NP det N NP
+obj1 NP mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+obj1 NP mod mod mod PPART PPART mod PPART PPART mod mod PPART PPART mod PPART PPART
+obj1 NP mod mod mod SMAIN SMAIN mod SMAIN SMAIN mod mod SMAIN SMAIN mod SMAIN SMAIN
+obj1 NP mod predm SMAIN SMAIN predm SMAIN SMAIN
+obj1 NP mod predm SSUB SSUB predm SSUB SSUB
+obj1 NP mod predm SV1 SV1 predm SV1 SV1
+obj1 NP predm SMAIN SMAIN
+obj1 NP predm SSUB SSUB
+obj1 NP predm SV1 SV1
+obj1 NP su ADJ SMAIN
+obj1 NP su ADJ SSUB
+obj1 NP su CP SMAIN
+obj1 NP su CP sup VNW SMAIN
+obj1 NP su N SMAIN
+obj1 NP su N SSUB
+obj1 NP su N SV1
+obj1 NP su N mod NP NP
+obj1 NP su NP SMAIN
+obj1 NP su NP SSUB
+obj1 NP su NP SV1
+obj1 NP su NP mod NP NP
+obj1 NP su SPEC SMAIN
+obj1 NP su SPEC SSUB
+obj1 NP su SPEC SV1
+obj1 NP su TW SMAIN
+obj1 NP su TW SSUB
+obj1 NP su VNW SMAIN
+obj1 NP su VNW SSUB
+obj1 NP su VNW SV1
+obj1 NP su VNW mod NP NP
+obj1 NP su WHREL SMAIN
+obj1 NP su WW SMAIN
+obj1 PP PP
+obj1 PP mod INF INF
+obj1 PP mod NP NP
+obj1 PP mod PPART PPART
+obj1 PP mod SMAIN SMAIN
+obj1 PP mod SSUB SSUB
+obj1 PP mod SV1 SV1
+obj1 PP mod mod NP NP mod NP NP
+obj1 SPEC INF
+obj1 SPEC NP
+obj1 SPEC PP
+obj1 SPEC PPART
+obj1 SPEC SMAIN
+obj1 SPEC SV1
+obj1 SPEC mod ADV ADV
+obj1 SPEC mod AP AP
+obj1 SPEC mod INF INF
+obj1 SPEC mod NP NP
+obj1 SPEC mod PP PP
+obj1 SPEC mod PPART PPART
+obj1 SPEC mod SMAIN SMAIN
+obj1 SPEC mod SSUB SSUB
+obj1 SPEC mod SV1 SV1
+obj1 SPEC mod app NP NP app NP NP
+obj1 SPEC mod mod NP NP mod NP NP
+obj1 SPEC mod mod PPART PPART mod PPART PPART
+obj1 SPEC mod mod SMAIN SMAIN mod SMAIN SMAIN
+obj1 SPEC mod mod app NP NP app NP NP mod app NP NP app NP NP
+obj1 SPEC mod predm SMAIN SMAIN predm SMAIN SMAIN
+obj1 SPEC su N SMAIN
+obj1 SPEC su NP SMAIN
+obj1 SPEC su NP SSUB
+obj1 SPEC su SPEC SMAIN
+obj1 SPEC su VNW SMAIN
+obj1 SPEC su VNW SSUB
+obj1 SPEC su VNW SV1
+obj1 TSW INF
+obj1 TSW su VNW SMAIN
+obj1 TW INF
+obj1 TW PP
+obj1 TW PPART
+obj1 TW SV1
+obj1 TW app NP NP
+obj1 TW det N NP
+obj1 TW det N mod SMAIN SMAIN
+obj1 TW mod ADV ADV
+obj1 TW mod AP AP
+obj1 TW mod INF INF
+obj1 TW mod NP NP
+obj1 TW mod PP PP
+obj1 TW mod PPART PPART
+obj1 TW mod SMAIN SMAIN
+obj1 TW mod SSUB SSUB
+obj1 TW mod SV1 SV1
+obj1 TW mod app NP NP app NP NP
+obj1 TW mod mod INF INF mod INF INF
+obj1 TW mod mod NP NP mod NP NP
+obj1 TW mod mod PPART PPART mod PPART PPART
+obj1 TW mod mod SMAIN SMAIN mod SMAIN SMAIN
+obj1 TW mod mod SSUB SSUB mod SSUB SSUB
+obj1 TW mod mod SV1 SV1 mod SV1 SV1
+obj1 TW mod mod app NP NP app NP NP mod app NP NP app NP NP
+obj1 TW mod mod mod NP NP mod NP NP mod mod NP NP mod NP NP
+obj1 TW mod mod mod SMAIN SMAIN mod SMAIN SMAIN mod mod SMAIN SMAIN mod SMAIN SMAIN
+obj1 TW su N SMAIN
+obj1 TW su NP SMAIN
+obj1 TW su SPEC SMAIN
+obj1 TW su VNW SMAIN
+obj1 TW su VNW SSUB
+obj1 TW su VNW SV1
+obj1 VNW AP
+obj1 VNW INF
+obj1 VNW NP
+obj1 VNW PP
+obj1 VNW PPART
+obj1 VNW SMAIN
+obj1 VNW SSUB
+obj1 VNW SV1
+obj1 VNW mod AP AP
+obj1 VNW mod INF INF
+obj1 VNW mod NP NP
+obj1 VNW mod PPART PPART
+obj1 VNW mod SMAIN SMAIN
+obj1 VNW mod SSUB SSUB
+obj1 VNW mod SV1 SV1
+obj1 VNW mod app NP NP app NP NP
+obj1 VNW mod mod INF INF mod INF INF
+obj1 VNW mod mod NP NP mod NP NP
+obj1 VNW mod mod PPART PPART mod PPART PPART
+obj1 VNW mod mod SMAIN SMAIN mod SMAIN SMAIN
+obj1 VNW predm SMAIN SMAIN
+obj1 VNW predm SV1 SV1
+obj1 VNW su ADJ SSUB
+obj1 VNW su N SMAIN
+obj1 VNW su N SSUB
+obj1 VNW su N SV1
+obj1 VNW su NP SMAIN
+obj1 VNW su NP SSUB
+obj1 VNW su NP SV1
+obj1 VNW su SPEC SMAIN
+obj1 VNW su SPEC SSUB
+obj1 VNW su VNW BW
+obj1 VNW su VNW SMAIN
+obj1 VNW su VNW SSUB
+obj1 VNW su VNW SV1
+obj1 VNW su VNW mod NP NP
+obj1 VNW su WHREL SMAIN
+obj1 VZ PP
+obj1 VZ mod INF INF
+obj1 VZ mod NP NP
+obj1 VZ mod PPART PPART
+obj1 VZ mod SMAIN SMAIN
+obj1 WHREL INF
+obj1 WHREL PP
+obj1 WHREL PPART
+obj1 WHREL SV1
+obj1 WHREL mod INF INF
+obj1 WHREL mod NP NP
+obj1 WHREL mod PPART PPART
+obj1 WHREL mod SMAIN SMAIN
+obj1 WHREL mod SSUB SSUB
+obj1 WHREL su N SMAIN
+obj1 WHREL su NP SMAIN
+obj1 WHREL su VNW SMAIN
+obj1 WHREL su VNW SSUB
+obj1 WW INF
+obj1 WW PP
+obj1 WW PPART
+obj1 WW SV1
+obj1 WW mod AP AP
+obj1 WW mod INF INF
+obj1 WW mod NP NP
+obj1 WW mod PPART PPART
+obj1 WW mod SMAIN SMAIN
+obj1 WW mod SSUB SSUB
+obj1 WW mod SV1 SV1
+obj1 WW mod app NP NP app NP NP
+obj1 WW mod mod NP NP mod NP NP
+obj1 WW mod mod SMAIN SMAIN mod SMAIN SMAIN
+obj1 WW su N SMAIN
+obj1 WW su NP SMAIN
+obj1 WW su VNW SMAIN
+obj1 WW su VNW SSUB
+obj2 N INF
+obj2 N PPART
+obj2 N mod NP NP
+obj2 N obj1 N INF
+obj2 N obj1 NP INF
+obj2 N obj1 NP PPART
+obj2 N obj1 NP SV1
+obj2 N obj1 NP su N SMAIN
+obj2 N obj1 NP su NP SMAIN
+obj2 N obj1 NP su VNW SMAIN
+obj2 N obj1 NP su VNW SSUB
+obj2 N obj1 VNW INF
+obj2 N obj1 VNW PPART
+obj2 N obj1 VNW su VNW SMAIN
+obj2 N predc ADJ INF
+obj2 N predc ADJ su NP SMAIN
+obj2 N predc ADJ su VNW SMAIN
+obj2 N predc AP su NP SMAIN
+obj2 N predc AP su VNW SMAIN
+obj2 N predc N su VNW SMAIN
+obj2 N predc NP su NP SMAIN
+obj2 N predc NP su VNW SMAIN
+obj2 N predc PPART su NP SMAIN
+obj2 N predc WW su NP SMAIN
+obj2 N su NP SMAIN
+obj2 N su VNW SMAIN
+obj2 N su VNW SSUB
+obj2 NP AP
+obj2 NP INF
+obj2 NP PPART
+obj2 NP SV1
+obj2 NP mod NP NP
+obj2 NP obj1 N INF
+obj2 NP obj1 N PPART
+obj2 NP obj1 N su N SMAIN
+obj2 NP obj1 N su NP SMAIN
+obj2 NP obj1 N su VNW SMAIN
+obj2 NP obj1 N su VNW SSUB
+obj2 NP obj1 NP INF
+obj2 NP obj1 NP PPART
+obj2 NP obj1 NP SV1
+obj2 NP obj1 NP su N SMAIN
+obj2 NP obj1 NP su NP SMAIN
+obj2 NP obj1 NP su NP SSUB
+obj2 NP obj1 NP su SPEC SMAIN
+obj2 NP obj1 NP su VNW SMAIN
+obj2 NP obj1 NP su VNW SSUB
+obj2 NP obj1 VNW INF
+obj2 NP obj1 VNW PPART
+obj2 NP obj1 VNW SV1
+obj2 NP obj1 VNW su NP SMAIN
+obj2 NP obj1 VNW su VNW SMAIN
+obj2 NP obj1 VNW su VNW SSUB
+obj2 NP predc ADJ INF
+obj2 NP predc ADJ su N SMAIN
+obj2 NP predc ADJ su NP SMAIN
+obj2 NP predc ADJ su VNW SMAIN
+obj2 NP predc ADJ su VNW SSUB
+obj2 NP predc AP INF
+obj2 NP predc AP su N SMAIN
+obj2 NP predc AP su NP SMAIN
+obj2 NP predc AP su VNW SMAIN
+obj2 NP predc AP su VNW SSUB
+obj2 NP predc N su N SMAIN
+obj2 NP predc N su NP SMAIN
+obj2 NP predc N su VNW SMAIN
+obj2 NP predc NP INF
+obj2 NP predc NP su N SMAIN
+obj2 NP predc NP su NP SMAIN
+obj2 NP predc NP su NP SSUB
+obj2 NP predc NP su SPEC SMAIN
+obj2 NP predc NP su VNW SMAIN
+obj2 NP predc NP su VNW SSUB
+obj2 NP predc PP su NP SMAIN
+obj2 NP predc PPART su N SMAIN
+obj2 NP predc PPART su NP SMAIN
+obj2 NP predc PPART su VNW SMAIN
+obj2 NP predc VNW su VNW SMAIN
+obj2 NP predc VNW su VNW SV1
+obj2 NP predc WW su N SMAIN
+obj2 NP predc WW su NP SMAIN
+obj2 NP predc WW su VNW SMAIN
+obj2 NP su CP SMAIN
+obj2 NP su N SMAIN
+obj2 NP su NP SMAIN
+obj2 NP su NP SSUB
+obj2 NP su NP SV1
+obj2 NP su SPEC SMAIN
+obj2 NP su VNW SMAIN
+obj2 NP su VNW SSUB
+obj2 NP su VNW SV1
+obj2 PP AP
+obj2 PP INF
+obj2 PP PPART
+obj2 PP mod NP NP
+obj2 PP obj1 N INF
+obj2 PP obj1 N PPART
+obj2 PP obj1 N su N SMAIN
+obj2 PP obj1 N su NP SMAIN
+obj2 PP obj1 N su VNW SMAIN
+obj2 PP obj1 N su VNW SSUB
+obj2 PP obj1 NP INF
+obj2 PP obj1 NP PPART
+obj2 PP obj1 NP SV1
+obj2 PP obj1 NP su N SMAIN
+obj2 PP obj1 NP su N SSUB
+obj2 PP obj1 NP su NP SMAIN
+obj2 PP obj1 NP su NP SSUB
+obj2 PP obj1 NP su SPEC SMAIN
+obj2 PP obj1 NP su VNW SMAIN
+obj2 PP obj1 NP su VNW SSUB
+obj2 PP obj1 VNW INF
+obj2 PP obj1 VNW PPART
+obj2 PP obj1 VNW SV1
+obj2 PP obj1 VNW su NP SMAIN
+obj2 PP obj1 VNW su NP SSUB
+obj2 PP obj1 VNW su VNW SMAIN
+obj2 PP obj1 VNW su VNW SSUB
+obj2 PP su NP SV1
+obj2 PP su VNW SSUB
+obj2 SPEC PPART
+obj2 SPEC obj1 NP INF
+obj2 VNW INF
+obj2 VNW PPART
+obj2 VNW SV1
+obj2 VNW mod NP NP
+obj2 VNW obj1 N INF
+obj2 VNW obj1 N PPART
+obj2 VNW obj1 N SV1
+obj2 VNW obj1 N su NP SMAIN
+obj2 VNW obj1 N su VNW SMAIN
+obj2 VNW obj1 N su VNW SSUB
+obj2 VNW obj1 NP INF
+obj2 VNW obj1 NP PPART
+obj2 VNW obj1 NP SV1
+obj2 VNW obj1 NP su N SMAIN
+obj2 VNW obj1 NP su N SSUB
+obj2 VNW obj1 NP su NP SMAIN
+obj2 VNW obj1 NP su NP SSUB
+obj2 VNW obj1 NP su SPEC SMAIN
+obj2 VNW obj1 NP su VNW SMAIN
+obj2 VNW obj1 NP su VNW SSUB
+obj2 VNW obj1 NP su VNW SV1
+obj2 VNW obj1 VNW INF
+obj2 VNW obj1 VNW PPART
+obj2 VNW obj1 VNW SV1
+obj2 VNW obj1 VNW su N SSUB
+obj2 VNW obj1 VNW su NP SMAIN
+obj2 VNW obj1 VNW su NP SSUB
+obj2 VNW obj1 VNW su VNW SMAIN
+obj2 VNW obj1 VNW su VNW SSUB
+obj2 VNW predc ADJ INF
+obj2 VNW predc ADJ SV1
+obj2 VNW predc ADJ su CP sup VNW SMAIN
+obj2 VNW predc ADJ su NP SMAIN
+obj2 VNW predc ADJ su NP SSUB
+obj2 VNW predc ADJ su OTI sup VNW SMAIN
+obj2 VNW predc ADJ su VNW SMAIN
+obj2 VNW predc ADJ su VNW SSUB
+obj2 VNW predc AP INF
+obj2 VNW predc AP su NP SMAIN
+obj2 VNW predc AP su VNW SMAIN
+obj2 VNW predc AP su VNW SSUB
+obj2 VNW predc NP SV1
+obj2 VNW predc NP su N SMAIN
+obj2 VNW predc NP su NP SMAIN
+obj2 VNW predc NP su VNW SMAIN
+obj2 VNW predc NP su VNW SSUB
+obj2 VNW su CP INF
+obj2 VNW su CP PPART
+obj2 VNW su CP SMAIN
+obj2 VNW su CP sup VNW SMAIN
+obj2 VNW su N SMAIN
+obj2 VNW su NP SMAIN
+obj2 VNW su NP SSUB
+obj2 VNW su NP SV1
+obj2 VNW su TI sup VNW SMAIN
+obj2 VNW su VNW SMAIN
+obj2 VNW su VNW SSUB
+obj2 VNW su VNW SV1
+pc BW AP
+pc BW INF
+pc BW PPART
+pc BW SV1
+pc BW mod NP NP
+pc BW mod SMAIN SMAIN
+pc BW obj1 N INF
+pc BW obj1 N su VNW SSUB
+pc BW obj1 NP INF
+pc BW obj1 NP PPART
+pc BW obj1 NP su NP SMAIN
+pc BW obj1 NP su NP SSUB
+pc BW obj1 NP su VNW SMAIN
+pc BW obj1 NP su VNW SSUB
+pc BW obj1 VNW AP
+pc BW obj1 VNW INF
+pc BW obj1 VNW PPART
+pc BW obj1 VNW su NP SSUB
+pc BW obj1 VNW su VNW SMAIN
+pc BW obj1 VNW su VNW SSUB
+pc BW obj1 VNW su VNW SV1
+pc BW se VNW INF
+pc BW se VNW PPART
+pc BW se VNW su NP SSUB
+pc BW se VNW su VNW SSUB
+pc BW su CP SMAIN
+pc BW su CP SSUB
+pc BW su N SMAIN
+pc BW su N SSUB
+pc BW su NP SMAIN
+pc BW su NP SSUB
+pc BW su NP SV1
+pc BW su VNW SMAIN
+pc BW su VNW SSUB
+pc BW su VNW SV1
+pc PP ADJ
+pc PP AP
+pc PP INF
+pc PP NP
+pc PP PP
+pc PP PPART
+pc PP PPRES
+pc PP SMAIN
+pc PP SSUB
+pc PP SV1
+pc PP mod AP AP
+pc PP mod INF INF
+pc PP mod NP NP
+pc PP mod PPART PPART
+pc PP mod SMAIN SMAIN
+pc PP mod SSUB SSUB
+pc PP mod SV1 SV1
+pc PP mod app NP NP app NP NP
+pc PP mod mod NP NP mod NP NP
+pc PP obj1 N INF
+pc PP obj1 N PPART
+pc PP obj1 N SV1
+pc PP obj1 N su N SMAIN
+pc PP obj1 N su N SSUB
+pc PP obj1 N su NP SMAIN
+pc PP obj1 N su NP SSUB
+pc PP obj1 N su SPEC SMAIN
+pc PP obj1 N su VNW SMAIN
+pc PP obj1 N su VNW SSUB
+pc PP obj1 N su VNW SV1
+pc PP obj1 NP INF
+pc PP obj1 NP NP
+pc PP obj1 NP PPART
+pc PP obj1 NP SV1
+pc PP obj1 NP su N SMAIN
+pc PP obj1 NP su N SSUB
+pc PP obj1 NP su NP SMAIN
+pc PP obj1 NP su NP SSUB
+pc PP obj1 NP su NP SV1
+pc PP obj1 NP su SPEC SMAIN
+pc PP obj1 NP su SPEC SSUB
+pc PP obj1 NP su VNW SMAIN
+pc PP obj1 NP su VNW SSUB
+pc PP obj1 NP su VNW SV1
+pc PP obj1 SPEC INF
+pc PP obj1 SPEC PPART
+pc PP obj1 SPEC su NP SMAIN
+pc PP obj1 SPEC su VNW SMAIN
+pc PP obj1 VNW AP
+pc PP obj1 VNW INF
+pc PP obj1 VNW PPART
+pc PP obj1 VNW SV1
+pc PP obj1 VNW su N SMAIN
+pc PP obj1 VNW su N SSUB
+pc PP obj1 VNW su NP SMAIN
+pc PP obj1 VNW su NP SSUB
+pc PP obj1 VNW su NP SV1
+pc PP obj1 VNW su SPEC SMAIN
+pc PP obj1 VNW su VNW SMAIN
+pc PP obj1 VNW su VNW SSUB
+pc PP obj1 VNW su VNW SV1
+pc PP obj2 NP PPART
+pc PP obj2 NP su VNW SMAIN
+pc PP obj2 VNW su VNW SMAIN
+pc PP predc ADJ INF
+pc PP predc ADJ PPART
+pc PP predc ADJ su NP SMAIN
+pc PP predc ADJ su NP SSUB
+pc PP predc ADJ su VNW SMAIN
+pc PP predc ADJ su VNW SSUB
+pc PP predc ADJ su VNW SV1
+pc PP predc AP INF
+pc PP predc AP su NP SMAIN
+pc PP predc AP su VNW SMAIN
+pc PP predc N su NP SMAIN
+pc PP predc NP su NP SMAIN
+pc PP predc NP su VNW SMAIN
+pc PP predc PP INF
+pc PP predc PP su VNW SMAIN
+pc PP predc PP su VNW SSUB
+pc PP predc PPART su NP SMAIN
+pc PP predc WW su NP SMAIN
+pc PP predm INF INF
+pc PP predm SMAIN SMAIN
+pc PP predm SSUB SSUB
+pc PP predm SV1 SV1
+pc PP se VNW AP
+pc PP se VNW INF
+pc PP se VNW PPART
+pc PP se VNW SV1
+pc PP se VNW obj1 N su NP SMAIN
+pc PP se VNW obj1 N su VNW SMAIN
+pc PP se VNW obj1 NP INF
+pc PP se VNW su N SMAIN
+pc PP se VNW su N SSUB
+pc PP se VNW su NP SMAIN
+pc PP se VNW su NP SSUB
+pc PP se VNW su SPEC SMAIN
+pc PP se VNW su VNW SMAIN
+pc PP se VNW su VNW SSUB
+pc PP su ADJ SMAIN
+pc PP su BW SMAIN
+pc PP su CP INF
+pc PP su CP PPART
+pc PP su CP SMAIN
+pc PP su CP SSUB
+pc PP su CP sup VNW SMAIN
+pc PP su N SMAIN
+pc PP su N SSUB
+pc PP su N SV1
+pc PP su NP SMAIN
+pc PP su NP SSUB
+pc PP su NP SV1
+pc PP su NP mod NP NP
+pc PP su OTI sup VNW SMAIN
+pc PP su SPEC SMAIN
+pc PP su SPEC SSUB
+pc PP su TW SMAIN
+pc PP su VNW SMAIN
+pc PP su VNW SSUB
+pc PP su VNW SV1
+pc PP su VNW mod NP NP
+pc PP su WHREL SMAIN
+pc PP su WW SMAIN
+pc VZ AP
+pc VZ INF
+pc VZ PPART
+pc VZ obj1 N INF
+pc VZ obj1 NP INF
+pc VZ obj1 VNW INF
+pc VZ su NP SV1
+pc VZ su VNW SV1
+pobj1 VNW vc CP INF
+pobj1 VNW vc CP PP
+pobj1 VNW vc CP pc PP AP
+pobj1 VNW vc CP predc ADJ su NP SMAIN
+pobj1 VNW vc CP predc ADJ su VNW SMAIN
+pobj1 VNW vc CP predc ADJ su VNW SSUB
+pobj1 VNW vc CP predc AP su VNW SMAIN
+pobj1 VNW vc CP su VNW SMAIN
+pobj1 VNW vc OTI PP
+pobj1 VNW vc OTI predc ADJ su NP SMAIN
+pobj1 VNW vc OTI predc ADJ su VNW SMAIN
+pobj1 VNW vc OTI predc AP su VNW SMAIN
+pobj1 VNW vc TI PP
+pobj1 VNW vc TI predc ADJ su NP SMAIN
+pobj1 VNW vc TI predc ADJ su VNW SMAIN
+pobj1 VNW vc WHSUB PP
+predc ADJ INF
+predc ADJ NP
+predc ADJ PPART
+predc ADJ SMAIN
+predc ADJ SSUB
+predc ADJ SV1
+predc ADJ mod NP NP
+predc ADJ obj1 N INF
+predc ADJ obj1 N su N SMAIN
+predc ADJ obj1 N su NP SMAIN
+predc ADJ obj1 N su VNW SMAIN
+predc ADJ obj1 N su VNW SSUB
+predc ADJ obj1 N su VNW SV1
+predc ADJ obj1 NP INF
+predc ADJ obj1 NP PPART
+predc ADJ obj1 NP SV1
+predc ADJ obj1 NP su N SMAIN
+predc ADJ obj1 NP su N SSUB
+predc ADJ obj1 NP su NP SMAIN
+predc ADJ obj1 NP su NP SSUB
+predc ADJ obj1 NP su SPEC SMAIN
+predc ADJ obj1 NP su VNW SMAIN
+predc ADJ obj1 NP su VNW SSUB
+predc ADJ obj1 NP su VNW SV1
+predc ADJ obj1 VNW INF
+predc ADJ obj1 VNW PPART
+predc ADJ obj1 VNW SMAIN
+predc ADJ obj1 VNW SV1
+predc ADJ obj1 VNW su N SMAIN
+predc ADJ obj1 VNW su N SSUB
+predc ADJ obj1 VNW su NP SMAIN
+predc ADJ obj1 VNW su NP SSUB
+predc ADJ obj1 VNW su SPEC SMAIN
+predc ADJ obj1 VNW su VNW SMAIN
+predc ADJ obj1 VNW su VNW SSUB
+predc ADJ obj1 VNW su VNW SV1
+predc ADJ su ADJ SMAIN
+predc ADJ su CP INF
+predc ADJ su CP PPART
+predc ADJ su CP SMAIN
+predc ADJ su CP SSUB
+predc ADJ su CP sup VNW SMAIN
+predc ADJ su CP sup VNW SSUB
+predc ADJ su CP sup VNW SV1
+predc ADJ su N SMAIN
+predc ADJ su N SSUB
+predc ADJ su N SV1
+predc ADJ su NP SMAIN
+predc ADJ su NP SSUB
+predc ADJ su NP SV1
+predc ADJ su NP mod NP NP
+predc ADJ su OTI INF
+predc ADJ su OTI sup VNW SMAIN
+predc ADJ su OTI sup VNW SSUB
+predc ADJ su OTI sup VNW SV1
+predc ADJ su SPEC SMAIN
+predc ADJ su SPEC SSUB
+predc ADJ su TI INF
+predc ADJ su TI SMAIN
+predc ADJ su TI sup VNW SMAIN
+predc ADJ su TI sup VNW SSUB
+predc ADJ su TW SMAIN
+predc ADJ su VNW SMAIN
+predc ADJ su VNW SSUB
+predc ADJ su VNW SV1
+predc ADJ su WHREL SMAIN
+predc ADJ su WHSUB SMAIN
+predc ADJ su WHSUB sup VNW SMAIN
+predc ADJ su WW SMAIN
+predc ADJ su WW SSUB
+predc AP INF
+predc AP NP
+predc AP PPART
+predc AP SMAIN
+predc AP SSUB
+predc AP SV1
+predc AP mod NP NP
+predc AP obj1 N INF
+predc AP obj1 N su NP SMAIN
+predc AP obj1 N su VNW SMAIN
+predc AP obj1 N su VNW SSUB
+predc AP obj1 NP INF
+predc AP obj1 NP PPART
+predc AP obj1 NP SV1
+predc AP obj1 NP su N SMAIN
+predc AP obj1 NP su NP SMAIN
+predc AP obj1 NP su NP SSUB
+predc AP obj1 NP su SPEC SMAIN
+predc AP obj1 NP su VNW SMAIN
+predc AP obj1 NP su VNW SSUB
+predc AP obj1 NP su VNW SV1
+predc AP obj1 VNW INF
+predc AP obj1 VNW PPART
+predc AP obj1 VNW SV1
+predc AP obj1 VNW su N SMAIN
+predc AP obj1 VNW su NP SMAIN
+predc AP obj1 VNW su NP SSUB
+predc AP obj1 VNW su VNW SMAIN
+predc AP obj1 VNW su VNW SSUB
+predc AP obj1 VNW su VNW SV1
+predc AP su CP SMAIN
+predc AP su CP sup VNW SMAIN
+predc AP su CP sup VNW SSUB
+predc AP su N SMAIN
+predc AP su N SSUB
+predc AP su N SV1
+predc AP su NP SMAIN
+predc AP su NP SSUB
+predc AP su NP SV1
+predc AP su OTI INF
+predc AP su OTI sup VNW SMAIN
+predc AP su OTI sup VNW SSUB
+predc AP su SPEC SMAIN
+predc AP su SPEC SSUB
+predc AP su TI sup VNW SMAIN
+predc AP su TI sup VNW SSUB
+predc AP su TW SMAIN
+predc AP su VNW SMAIN
+predc AP su VNW SSUB
+predc AP su VNW SV1
+predc AP su VNW mod NP NP
+predc AP su WHREL SMAIN
+predc AP su WHSUB SMAIN
+predc AP su WHSUB sup VNW SMAIN
+predc AP su WW SMAIN
+predc BW INF
+predc BW PPART
+predc BW SV1
+predc BW obj1 NP INF
+predc BW obj1 NP su VNW SV1
+predc BW obj1 VNW INF
+predc BW obj1 VNW su VNW SV1
+predc BW su CP sup VNW SMAIN
+predc BW su N SMAIN
+predc BW su NP SMAIN
+predc BW su NP SSUB
+predc BW su NP SV1
+predc BW su VNW SMAIN
+predc BW su VNW SSUB
+predc BW su VNW SV1
+predc CP AP
+predc CP INF
+predc CP PPART
+predc CP SV1
+predc CP obj1 N INF
+predc CP obj1 N PPART
+predc CP obj1 N mod NP NP
+predc CP obj1 N mod SMAIN SMAIN
+predc CP obj1 N su N SMAIN
+predc CP obj1 N su NP SMAIN
+predc CP obj1 N su VNW SMAIN
+predc CP obj1 N su VNW SSUB
+predc CP obj1 NP INF
+predc CP obj1 NP PP
+predc CP obj1 NP PPART
+predc CP obj1 NP mod INF INF
+predc CP obj1 NP mod NP NP
+predc CP obj1 NP mod PPART PPART
+predc CP obj1 NP mod SMAIN SMAIN
+predc CP obj1 NP su N SMAIN
+predc CP obj1 NP su NP SMAIN
+predc CP obj1 NP su NP SSUB
+predc CP obj1 NP su SPEC SMAIN
+predc CP obj1 NP su VNW SMAIN
+predc CP obj1 NP su VNW SSUB
+predc CP obj1 SPEC mod NP NP
+predc CP obj1 VNW INF
+predc CP obj1 VNW PPART
+predc CP obj1 VNW su N SMAIN
+predc CP obj1 VNW su NP SMAIN
+predc CP obj1 VNW su NP SSUB
+predc CP obj1 VNW su VNW SMAIN
+predc CP obj1 VNW su VNW SSUB
+predc CP su N SMAIN
+predc CP su NP SMAIN
+predc CP su NP SSUB
+predc CP su SPEC SMAIN
+predc CP su VNW SMAIN
+predc CP su VNW SSUB
+predc LID su CP sup VNW SMAIN
+predc N INF
+predc N NP
+predc N PPART
+predc N SMAIN
+predc N SV1
+predc N mod NP NP
+predc N obj1 N mod NP NP
+predc N obj1 NP INF
+predc N obj1 NP su NP SMAIN
+predc N obj1 NP su VNW SMAIN
+predc N obj1 VNW INF
+predc N obj1 VNW su VNW SMAIN
+predc N obj1 VNW su VNW SSUB
+predc N su CP SMAIN
+predc N su CP sup VNW SMAIN
+predc N su N SMAIN
+predc N su N SSUB
+predc N su N SV1
+predc N su NP SMAIN
+predc N su NP SSUB
+predc N su NP SV1
+predc N su OTI SMAIN
+predc N su OTI sup VNW SMAIN
+predc N su SPEC SMAIN
+predc N su SPEC SSUB
+predc N su TI SMAIN
+predc N su TI sup VNW SMAIN
+predc N su TW SMAIN
+predc N su VNW SMAIN
+predc N su VNW SSUB
+predc N su VNW SV1
+predc N su WHREL SMAIN
+predc NP INF
+predc NP NP
+predc NP PPART
+predc NP SMAIN
+predc NP SSUB
+predc NP SV1
+predc NP mod NP NP
+predc NP obj1 N INF
+predc NP obj1 N mod NP NP
+predc NP obj1 N su NP SMAIN
+predc NP obj1 N su VNW SMAIN
+predc NP obj1 NP INF
+predc NP obj1 NP PPART
+predc NP obj1 NP mod NP NP
+predc NP obj1 NP mod SMAIN SMAIN
+predc NP obj1 NP su N SMAIN
+predc NP obj1 NP su NP SMAIN
+predc NP obj1 NP su SPEC SMAIN
+predc NP obj1 NP su VNW SMAIN
+predc NP obj1 NP su VNW SSUB
+predc NP obj1 VNW INF
+predc NP obj1 VNW PPART
+predc NP obj1 VNW SV1
+predc NP obj1 VNW su N SMAIN
+predc NP obj1 VNW su NP SMAIN
+predc NP obj1 VNW su VNW SMAIN
+predc NP obj1 VNW su VNW SSUB
+predc NP obj1 VNW su VNW SV1
+predc NP su ADJ SMAIN
+predc NP su CP INF
+predc NP su CP SMAIN
+predc NP su CP sup VNW SMAIN
+predc NP su CP sup VNW SSUB
+predc NP su N SMAIN
+predc NP su N SSUB
+predc NP su N SV1
+predc NP su N mod NP NP
+predc NP su NP SMAIN
+predc NP su NP SSUB
+predc NP su NP SV1
+predc NP su NP mod NP NP
+predc NP su OTI SMAIN
+predc NP su OTI sup VNW SMAIN
+predc NP su OTI sup VNW SSUB
+predc NP su SPEC SMAIN
+predc NP su SPEC SSUB
+predc NP su SPEC SV1
+predc NP su TI SMAIN
+predc NP su TI sup VNW SMAIN
+predc NP su TI sup VNW SSUB
+predc NP su TW SMAIN
+predc NP su TW SSUB
+predc NP su VNW SMAIN
+predc NP su VNW SSUB
+predc NP su VNW SV1
+predc NP su VNW mod NP NP
+predc NP su WHREL SMAIN
+predc NP su WHSUB SMAIN
+predc NP su WW SMAIN
+predc NP su WW SSUB
+predc OTI su NP SMAIN
+predc OTI su VNW SMAIN
+predc PP INF
+predc PP PPART
+predc PP SV1
+predc PP obj1 N INF
+predc PP obj1 NP INF
+predc PP obj1 NP PPART
+predc PP obj1 NP su N SMAIN
+predc PP obj1 NP su NP SMAIN
+predc PP obj1 NP su NP SSUB
+predc PP obj1 NP su VNW SMAIN
+predc PP obj1 NP su VNW SSUB
+predc PP obj1 VNW INF
+predc PP obj1 VNW su NP SMAIN
+predc PP obj1 VNW su VNW SMAIN
+predc PP obj1 VNW su VNW SSUB
+predc PP su CP sup VNW SMAIN
+predc PP su N SMAIN
+predc PP su N SSUB
+predc PP su NP SMAIN
+predc PP su NP SSUB
+predc PP su NP SV1
+predc PP su SPEC SMAIN
+predc PP su TI sup VNW SMAIN
+predc PP su VNW SMAIN
+predc PP su VNW SSUB
+predc PP su VNW SV1
+predc PPART INF
+predc PPART PPART
+predc PPART SV1
+predc PPART obj1 NP su NP SMAIN
+predc PPART obj1 NP su VNW SMAIN
+predc PPART su N SMAIN
+predc PPART su N SSUB
+predc PPART su NP SMAIN
+predc PPART su NP SSUB
+predc PPART su NP SV1
+predc PPART su SPEC SMAIN
+predc PPART su VNW SMAIN
+predc PPART su VNW SSUB
+predc PPART su VNW SV1
+predc PPRES INF
+predc PPRES su N SMAIN
+predc PPRES su NP SMAIN
+predc PPRES su NP SSUB
+predc PPRES su VNW SMAIN
+predc PPRES su VNW SSUB
+predc SPEC INF
+predc SPEC PPART
+predc SPEC SV1
+predc SPEC su N SMAIN
+predc SPEC su NP SMAIN
+predc SPEC su NP SSUB
+predc SPEC su SPEC SMAIN
+predc SPEC su VNW SMAIN
+predc SPEC su VNW SSUB
+predc SPEC su VNW SV1
+predc TI obj1 NP mod SMAIN SMAIN
+predc TW INF
+predc TW PPART
+predc TW SV1
+predc TW su N SMAIN
+predc TW su NP SMAIN
+predc TW su NP SSUB
+predc TW su SPEC SMAIN
+predc TW su VNW SMAIN
+predc TW su VNW SSUB
+predc TW su VNW SV1
+predc VG su NP SMAIN
+predc VNW INF
+predc VNW PPART
+predc VNW SMAIN
+predc VNW SSUB
+predc VNW SV1
+predc VNW obj1 NP INF
+predc VNW obj1 NP su VNW SSUB
+predc VNW obj1 NP su VNW SV1
+predc VNW su N SMAIN
+predc VNW su N SSUB
+predc VNW su N SV1
+predc VNW su NP SMAIN
+predc VNW su NP SSUB
+predc VNW su NP SV1
+predc VNW su SPEC SV1
+predc VNW su VNW SMAIN
+predc VNW su VNW SSUB
+predc VNW su VNW SV1
+predc VZ INF
+predc VZ su NP SMAIN
+predc VZ su NP SSUB
+predc VZ su VNW SMAIN
+predc VZ su VNW SSUB
+predc WHREL su CP SMAIN
+predc WHREL su N SMAIN
+predc WHREL su NP SMAIN
+predc WHREL su VNW SMAIN
+predc WW INF
+predc WW PPART
+predc WW SMAIN
+predc WW SV1
+predc WW obj1 NP INF
+predc WW obj1 NP su NP SMAIN
+predc WW obj1 NP su VNW SMAIN
+predc WW obj1 NP su VNW SSUB
+predc WW obj1 VNW INF
+predc WW obj1 VNW su VNW SMAIN
+predc WW su CP SMAIN
+predc WW su CP sup VNW SMAIN
+predc WW su N SMAIN
+predc WW su N SSUB
+predc WW su NP SMAIN
+predc WW su NP SSUB
+predc WW su NP SV1
+predc WW su OTI sup VNW SMAIN
+predc WW su SPEC SMAIN
+predc WW su TI sup VNW SMAIN
+predc WW su VNW SMAIN
+predc WW su VNW SSUB
+predc WW su VNW SV1
+predm AP AP
+predm INF INF
+predm NP NP
+predm PPART PPART
+predm SMAIN SMAIN
+predm SSUB SSUB
+predm SV1 SV1
+predm mod NP NP mod NP NP
+predm mod SMAIN SMAIN mod SMAIN SMAIN
+rhd_body SSUB REL
+rhd_body SSUB WHREL
+rhd_body SSUB mod NP NP
+rhd_body SSUB mod SMAIN SMAIN
+rhd_body SSUB mod app NP NP app NP NP
+rhd_body SSUB mod mod NP NP mod NP NP
+rhd_body ld BW SSUB mod NP NP
+rhd_body ld VNW SSUB REL
+rhd_body ld VNW SSUB WHREL
+rhd_body ld VNW SSUB mod NP NP
+rhd_body ld VNW SSUB mod SMAIN SMAIN
+rhd_body mod mod INF INF SSUB REL
+rhd_body mod mod INF INF SSUB WHREL
+rhd_body mod mod INF INF SSUB mod INF INF
+rhd_body mod mod INF INF SSUB mod NP NP
+rhd_body mod mod INF INF SSUB mod PPART PPART
+rhd_body mod mod INF INF SSUB mod SMAIN SMAIN
+rhd_body mod mod INF INF SSUB mod SSUB SSUB
+rhd_body mod mod INF INF SSUB mod app NP NP app NP NP
+rhd_body mod mod NP NP NP mod NP NP
+rhd_body mod mod NP NP NP mod mod NP NP mod NP NP
+rhd_body mod mod PPART PPART SSUB REL
+rhd_body mod mod PPART PPART SSUB WHREL
+rhd_body mod mod PPART PPART SSUB mod INF INF
+rhd_body mod mod PPART PPART SSUB mod NP NP
+rhd_body mod mod PPART PPART SSUB mod PPART PPART
+rhd_body mod mod PPART PPART SSUB mod SMAIN SMAIN
+rhd_body mod mod PPART PPART SSUB mod app NP NP app NP NP
+rhd_body mod mod PPART PPART SSUB mod mod NP NP mod NP NP
+rhd_body mod mod SPEC SPEC SPEC mod NP NP
+rhd_body mod mod SSUB SSUB SSUB REL
+rhd_body mod mod SSUB SSUB SSUB SMAIN
+rhd_body mod mod SSUB SSUB SSUB WHREL
+rhd_body mod mod SSUB SSUB SSUB mod INF INF
+rhd_body mod mod SSUB SSUB SSUB mod NP NP
+rhd_body mod mod SSUB SSUB SSUB mod PPART PPART
+rhd_body mod mod SSUB SSUB SSUB mod SMAIN SMAIN
+rhd_body mod mod SSUB SSUB SSUB mod SSUB SSUB
+rhd_body mod mod SSUB SSUB SSUB mod SV1 SV1
+rhd_body mod mod SSUB SSUB SSUB mod app NP NP app NP NP
+rhd_body mod mod SSUB SSUB SSUB mod mod NP NP mod NP NP
+rhd_body mod mod SSUB SSUB SSUB mod mod SMAIN SMAIN mod SMAIN SMAIN
+rhd_body mod mod WW WW SSUB mod NP NP
+rhd_body obj1 VNW SSUB NP
+rhd_body obj1 VNW SSUB REL
+rhd_body obj1 VNW SSUB WHREL
+rhd_body obj1 VNW SSUB mod INF INF
+rhd_body obj1 VNW SSUB mod NP NP
+rhd_body obj1 VNW SSUB mod PPART PPART
+rhd_body obj1 VNW SSUB mod SMAIN SMAIN
+rhd_body obj1 VNW SSUB mod SSUB SSUB
+rhd_body obj1 VNW SSUB mod SV1 SV1
+rhd_body obj1 VNW SSUB mod app NP NP app NP NP
+rhd_body obj1 VNW SSUB mod mod NP NP mod NP NP
+rhd_body obj2 VNW SSUB mod NP NP
+rhd_body pc BW SSUB REL
+rhd_body pc BW SSUB mod NP NP
+rhd_body pc BW SSUB mod SMAIN SMAIN
+rhd_body pc BW SSUB mod app NP NP app NP NP
+rhd_body pc BW SSUB mod mod NP NP mod NP NP
+rhd_body predc AP SSUB WHREL
+rhd_body predc AP SSUB mod INF INF
+rhd_body predc AP SSUB mod NP NP
+rhd_body predc AP SSUB mod SMAIN SMAIN
+rhd_body predc AP SSUB mod SSUB SSUB
+rhd_body predc BW SSUB WHREL
+rhd_body predc BW SSUB mod SMAIN SMAIN
+rhd_body predc VNW SSUB WHREL
+rhd_body predc VNW SSUB mod INF INF
+rhd_body predc VNW SSUB mod NP NP
+rhd_body predc VNW SSUB mod SMAIN SMAIN
+rhd_body su NP SSUB mod NP NP
+rhd_body su VNW SSUB NP
+rhd_body su VNW SSUB REL
+rhd_body su VNW SSUB WHREL
+rhd_body su VNW SSUB mod ADV ADV
+rhd_body su VNW SSUB mod INF INF
+rhd_body su VNW SSUB mod NP NP
+rhd_body su VNW SSUB mod PPART PPART
+rhd_body su VNW SSUB mod SMAIN SMAIN
+rhd_body su VNW SSUB mod SPEC SPEC
+rhd_body su VNW SSUB mod SSUB SSUB
+rhd_body su VNW SSUB mod SV1 SV1
+rhd_body su VNW SSUB mod app NP NP app NP NP
+rhd_body su VNW SSUB mod mod INF INF mod INF INF
+rhd_body su VNW SSUB mod mod NP NP mod NP NP
+rhd_body su VNW SSUB mod mod SMAIN SMAIN mod SMAIN SMAIN
+rhd_body vc VNW SSUB WHREL
+se VNW INF
+se VNW PP
+se VNW PPART
+se VNW SV1
+se VNW mod NP NP
+se VNW obj1 N INF
+se VNW obj1 NP INF
+se VNW obj1 NP PPART
+se VNW obj1 NP su NP SMAIN
+se VNW obj1 NP su VNW SMAIN
+se VNW obj1 NP su VNW SSUB
+se VNW obj1 VNW INF
+se VNW obj1 VNW PPART
+se VNW obj1 VNW su VNW SMAIN
+se VNW obj1 VNW su VNW SSUB
+se VNW predc ADJ INF
+se VNW predc ADJ PPART
+se VNW predc ADJ su N SMAIN
+se VNW predc ADJ su NP SMAIN
+se VNW predc ADJ su NP SSUB
+se VNW predc ADJ su VNW SMAIN
+se VNW predc ADJ su VNW SSUB
+se VNW predc AP INF
+se VNW predc AP PPART
+se VNW predc AP su N SMAIN
+se VNW predc AP su NP SMAIN
+se VNW predc AP su VNW SMAIN
+se VNW predc AP su VNW SSUB
+se VNW predc BW INF
+se VNW predc BW su VNW SSUB
+se VNW predc CP INF
+se VNW predc CP su VNW SMAIN
+se VNW predc CP su VNW SSUB
+se VNW predc NP su N SMAIN
+se VNW predc NP su NP SMAIN
+se VNW predc NP su VNW SMAIN
+se VNW predc PPART su NP SMAIN
+se VNW predc PPART su VNW SMAIN
+se VNW predc PPART su VNW SSUB
+se VNW predc WW su VNW SMAIN
+se VNW predc WW su VNW SSUB
+se VNW su N SMAIN
+se VNW su N SSUB
+se VNW su NP SMAIN
+se VNW su NP SSUB
+se VNW su NP SV1
+se VNW su SPEC SMAIN
+se VNW su VNW SMAIN
+se VNW su VNW SSUB
+se VNW su VNW SV1
+su ADJ SMAIN
+su ADJ SSUB
+su ADV SMAIN
+su BW SMAIN
+su CP INF
+su CP PPART
+su CP SMAIN
+su CP SSUB
+su CP SV1
+su CP sup VNW SMAIN
+su CP sup VNW SSUB
+su CP sup VNW SV1
+su N SMAIN
+su N SSUB
+su N SV1
+su NP SMAIN
+su NP SSUB
+su NP SV1
+su NP mod NP NP
+su OTI sup VNW SMAIN
+su SPEC SMAIN
+su SPEC SSUB
+su SPEC SV1
+su TI sup VNW SMAIN
+su TW SMAIN
+su TW SSUB
+su TW SV1
+su VNW SMAIN
+su VNW SSUB
+su VNW SV1
+su VNW mod NP NP
+su WHREL SMAIN
+su WHSUB SMAIN
+su WW SMAIN
+su WW SV1
+svp ADJ INF
+svp ADJ PPART
+svp ADJ SV1
+svp ADJ ld PP INF
+svp ADJ ld PP PPART
+svp ADJ ld PP su N SMAIN
+svp ADJ ld PP su NP SMAIN
+svp ADJ ld PP su NP SSUB
+svp ADJ ld PP su VNW SMAIN
+svp ADJ ld PP su VNW SSUB
+svp ADJ ld PP su WHREL SMAIN
+svp ADJ obj1 N INF
+svp ADJ obj1 N su N SMAIN
+svp ADJ obj1 N su NP SMAIN
+svp ADJ obj1 NP INF
+svp ADJ obj1 NP PPART
+svp ADJ obj1 NP SV1
+svp ADJ obj1 NP su N SMAIN
+svp ADJ obj1 NP su NP SMAIN
+svp ADJ obj1 NP su SPEC SMAIN
+svp ADJ obj1 NP su VNW SMAIN
+svp ADJ obj1 NP su VNW SSUB
+svp ADJ obj1 VNW INF
+svp ADJ obj1 VNW PPART
+svp ADJ obj1 VNW SV1
+svp ADJ obj1 VNW su N SMAIN
+svp ADJ obj1 VNW su NP SMAIN
+svp ADJ obj1 VNW su VNW SMAIN
+svp ADJ obj1 VNW su VNW SSUB
+svp ADJ obj2 NP INF
+svp ADJ obj2 NP su VNW SSUB
+svp ADJ pc PP INF
+svp ADJ pc PP PPART
+svp ADJ pc PP obj1 NP INF
+svp ADJ pc PP obj1 NP su NP SMAIN
+svp ADJ pc PP obj1 NP su VNW SMAIN
+svp ADJ pc PP obj1 VNW INF
+svp ADJ pc PP obj1 VNW su N SMAIN
+svp ADJ pc PP obj1 VNW su NP SMAIN
+svp ADJ pc PP obj1 VNW su VNW SMAIN
+svp ADJ pc PP su N SMAIN
+svp ADJ pc PP su NP SMAIN
+svp ADJ pc PP su VNW SMAIN
+svp ADJ pc PP su VNW SSUB
+svp ADJ predc CP su N SMAIN
+svp ADJ predc CP su NP SMAIN
+svp ADJ predc CP su VNW SMAIN
+svp ADJ predc CP su VNW SSUB
+svp ADJ su CP SMAIN
+svp ADJ su CP sup VNW SMAIN
+svp ADJ su N SMAIN
+svp ADJ su N SV1
+svp ADJ su NP SMAIN
+svp ADJ su NP SSUB
+svp ADJ su NP SV1
+svp ADJ su SPEC SMAIN
+svp ADJ su VNW SMAIN
+svp ADJ su VNW SSUB
+svp ADJ su VNW SV1
+svp ADJ vc CP INF
+svp ADJ vc CP PPART
+svp ADJ vc CP su N SMAIN
+svp ADJ vc CP su NP SMAIN
+svp ADJ vc CP su SPEC SMAIN
+svp ADJ vc CP su VNW SMAIN
+svp ADJ vc OTI su NP SMAIN
+svp BW INF
+svp BW PPART
+svp BW SV1
+svp BW ld PP INF
+svp BW ld PP SV1
+svp BW ld PP obj1 NP INF
+svp BW ld PP obj1 NP su NP SMAIN
+svp BW ld PP obj1 NP su VNW SMAIN
+svp BW ld PP se VNW INF
+svp BW ld PP se VNW su N SMAIN
+svp BW ld PP se VNW su NP SMAIN
+svp BW ld PP se VNW su VNW SMAIN
+svp BW ld PP su N SMAIN
+svp BW ld PP su NP SMAIN
+svp BW ld PP su SPEC SMAIN
+svp BW ld PP su VNW SMAIN
+svp BW ld PP su VNW SSUB
+svp BW obj1 N INF
+svp BW obj1 N su N SMAIN
+svp BW obj1 N su NP SMAIN
+svp BW obj1 N su VNW SMAIN
+svp BW obj1 NP INF
+svp BW obj1 NP PPART
+svp BW obj1 NP SV1
+svp BW obj1 NP su N SMAIN
+svp BW obj1 NP su NP SMAIN
+svp BW obj1 NP su SPEC SMAIN
+svp BW obj1 NP su VNW SMAIN
+svp BW obj1 NP su VNW SSUB
+svp BW obj1 VNW INF
+svp BW obj1 VNW SV1
+svp BW obj1 VNW su N SMAIN
+svp BW obj1 VNW su NP SMAIN
+svp BW obj1 VNW su VNW SMAIN
+svp BW obj2 PP INF
+svp BW pc PP INF
+svp BW pc PP PPART
+svp BW pc PP su N SMAIN
+svp BW pc PP su NP SMAIN
+svp BW pc PP su NP SSUB
+svp BW pc PP su SPEC SMAIN
+svp BW pc PP su VNW SMAIN
+svp BW pc PP su VNW SSUB
+svp BW se VNW su NP SMAIN
+svp BW se VNW su VNW SMAIN
+svp BW su CP sup VNW SMAIN
+svp BW su N SMAIN
+svp BW su NP SMAIN
+svp BW su NP SSUB
+svp BW su NP SV1
+svp BW su SPEC SMAIN
+svp BW su VNW SMAIN
+svp BW su VNW SSUB
+svp BW su VNW SV1
+svp BW vc CP su VNW SMAIN
+svp N INF
+svp N PPART
+svp N ld PP su NP SMAIN
+svp N obj1 NP INF
+svp N obj1 NP su NP SMAIN
+svp N obj1 NP su VNW SMAIN
+svp N pc PP INF
+svp N pc PP PPART
+svp N pc PP su N SMAIN
+svp N pc PP su NP SMAIN
+svp N pc PP su NP SSUB
+svp N pc PP su SPEC SMAIN
+svp N pc PP su VNW SMAIN
+svp N pc PP su VNW SSUB
+svp N predc CP su NP SMAIN
+svp N predc CP su VNW SSUB
+svp N su N SMAIN
+svp N su NP SMAIN
+svp N su NP SSUB
+svp N su SPEC SMAIN
+svp N su VNW SMAIN
+svp N su VNW SSUB
+svp N svp VZ obj1 NP INF
+svp NP INF
+svp NP PPART
+svp NP SV1
+svp NP mod NP NP
+svp NP obj1 N INF
+svp NP obj1 N PPART
+svp NP obj1 N su NP SMAIN
+svp NP obj1 N su VNW SMAIN
+svp NP obj1 N su VNW SSUB
+svp NP obj1 NP INF
+svp NP obj1 NP PPART
+svp NP obj1 NP SV1
+svp NP obj1 NP su N SMAIN
+svp NP obj1 NP su N SSUB
+svp NP obj1 NP su NP SMAIN
+svp NP obj1 NP su NP SSUB
+svp NP obj1 NP su SPEC SMAIN
+svp NP obj1 NP su VNW SMAIN
+svp NP obj1 NP su VNW SSUB
+svp NP obj1 VNW INF
+svp NP obj1 VNW PPART
+svp NP obj1 VNW SV1
+svp NP obj1 VNW su NP SMAIN
+svp NP obj1 VNW su NP SSUB
+svp NP obj1 VNW su VNW SMAIN
+svp NP obj1 VNW su VNW SSUB
+svp NP obj2 NP INF
+svp NP obj2 NP su NP SMAIN
+svp NP obj2 NP su VNW SMAIN
+svp NP obj2 NP su VNW SSUB
+svp NP obj2 PP INF
+svp NP obj2 VNW INF
+svp NP obj2 VNW su NP SMAIN
+svp NP obj2 VNW su VNW SSUB
+svp NP pc PP INF
+svp NP pc PP PPART
+svp NP pc PP su N SMAIN
+svp NP pc PP su NP SMAIN
+svp NP pc PP su NP SSUB
+svp NP pc PP su SPEC SMAIN
+svp NP pc PP su VNW SMAIN
+svp NP pc PP su VNW SSUB
+svp NP su N SMAIN
+svp NP su N SSUB
+svp NP su NP SMAIN
+svp NP su NP SSUB
+svp NP su SPEC SMAIN
+svp NP su VNW SMAIN
+svp NP su VNW SSUB
+svp NP su VNW SV1
+svp NP svp VZ obj1 NP INF
+svp NP svp VZ su NP SMAIN
+svp NP vc CP su NP SMAIN
+svp NP vc CP su VNW SMAIN
+svp NP vc CP su VNW SSUB
+svp NP vc OTI obj1 VNW INF
+svp NP vc OTI su NP SMAIN
+svp NP vc OTI su VNW SMAIN
+svp NP vc OTI su VNW SSUB
+svp NP vc TI su NP SMAIN
+svp NP vc TI su NP SSUB
+svp NP vc TI su VNW SMAIN
+svp NP vc TI su VNW SSUB
+svp PP INF
+svp PP PPART
+svp PP obj1 NP INF
+svp PP obj1 NP PPART
+svp PP obj1 NP su N SMAIN
+svp PP obj1 NP su NP SMAIN
+svp PP obj1 NP su NP SSUB
+svp PP obj1 NP su VNW SMAIN
+svp PP obj1 NP su VNW SSUB
+svp PP obj1 VNW INF
+svp PP pc PP INF
+svp PP pc PP su NP SMAIN
+svp PP pc PP su VNW SMAIN
+svp PP pc PP su VNW SSUB
+svp PP su NP SMAIN
+svp PP su VNW SMAIN
+svp PP su VNW SSUB
+svp TI pc PP INF
+svp TI pc PP obj1 VNW INF
+svp TI pc PP obj1 VNW su NP SMAIN
+svp TI pc PP obj1 VNW su NP SSUB
+svp TI pc PP obj1 VNW su VNW SMAIN
+svp TI pc PP obj1 VNW su VNW SSUB
+svp TI pc PP su CP SMAIN
+svp TI pc PP su N SMAIN
+svp TI pc PP su NP SMAIN
+svp TI pc PP su NP SSUB
+svp TI pc PP su VNW SMAIN
+svp TI pc PP su VNW SSUB
+svp VNW INF
+svp VNW PPART
+svp VNW obj1 NP INF
+svp VNW obj1 NP su NP SMAIN
+svp VNW predc ADJ su VNW SSUB
+svp VNW predc AP INF
+svp VNW predc BW INF
+svp VNW su NP SMAIN
+svp VNW su NP SSUB
+svp VNW su VNW SSUB
+svp VNW svp VZ predc ADJ su NP SMAIN
+svp VNW svp VZ predc ADJ su VNW SMAIN
+svp VNW svp VZ predc AP su NP SMAIN
+svp VNW svp VZ predc AP su VNW SMAIN
+svp VNW svp VZ su NP SMAIN
+svp VNW svp VZ su VNW SMAIN
+svp VZ INF
+svp VZ PPART
+svp VZ SMAIN
+svp VZ SV1
+svp VZ ld N su NP SMAIN
+svp VZ ld N su VNW SMAIN
+svp VZ ld NP INF
+svp VZ ld NP PPART
+svp VZ ld NP SV1
+svp VZ ld NP obj1 NP INF
+svp VZ ld NP obj1 NP su NP SMAIN
+svp VZ ld NP obj1 NP su VNW SMAIN
+svp VZ ld NP su N SMAIN
+svp VZ ld NP su NP SMAIN
+svp VZ ld NP su NP SSUB
+svp VZ ld NP su SPEC SMAIN
+svp VZ ld NP su VNW SMAIN
+svp VZ ld NP su VNW SSUB
+svp VZ ld PP INF
+svp VZ ld PP SV1
+svp VZ ld PP obj1 N INF
+svp VZ ld PP obj1 N su NP SMAIN
+svp VZ ld PP obj1 NP INF
+svp VZ ld PP obj1 NP su N SMAIN
+svp VZ ld PP obj1 NP su NP SMAIN
+svp VZ ld PP obj1 NP su SPEC SMAIN
+svp VZ ld PP obj1 NP su VNW SMAIN
+svp VZ ld PP obj1 VNW INF
+svp VZ ld PP obj1 VNW su NP SMAIN
+svp VZ ld PP obj1 VNW su VNW SMAIN
+svp VZ ld PP se VNW su NP SMAIN
+svp VZ ld PP su N SMAIN
+svp VZ ld PP su NP SMAIN
+svp VZ ld PP su SPEC SMAIN
+svp VZ ld PP su VNW SMAIN
+svp VZ ld PP su VNW SSUB
+svp VZ ld PP su VNW SV1
+svp VZ ld VNW su VNW SMAIN
+svp VZ obj1 N INF
+svp VZ obj1 N SV1
+svp VZ obj1 N su N SMAIN
+svp VZ obj1 N su NP SMAIN
+svp VZ obj1 N su SPEC SMAIN
+svp VZ obj1 N su VNW SMAIN
+svp VZ obj1 N su VNW SSUB
+svp VZ obj1 N su VNW SV1
+svp VZ obj1 NP INF
+svp VZ obj1 NP PPART
+svp VZ obj1 NP SMAIN
+svp VZ obj1 NP SV1
+svp VZ obj1 NP su N SMAIN
+svp VZ obj1 NP su N SV1
+svp VZ obj1 NP su NP SMAIN
+svp VZ obj1 NP su NP SSUB
+svp VZ obj1 NP su NP SV1
+svp VZ obj1 NP su SPEC SMAIN
+svp VZ obj1 NP su VNW SMAIN
+svp VZ obj1 NP su VNW SSUB
+svp VZ obj1 NP su VNW SV1
+svp VZ obj1 SPEC INF
+svp VZ obj1 SPEC su N SMAIN
+svp VZ obj1 SPEC su NP SMAIN
+svp VZ obj1 SPEC su VNW SMAIN
+svp VZ obj1 VNW INF
+svp VZ obj1 VNW PPART
+svp VZ obj1 VNW SV1
+svp VZ obj1 VNW su N SMAIN
+svp VZ obj1 VNW su NP SMAIN
+svp VZ obj1 VNW su NP SV1
+svp VZ obj1 VNW su SPEC SMAIN
+svp VZ obj1 VNW su VNW SMAIN
+svp VZ obj1 VNW su VNW SSUB
+svp VZ obj1 VNW su VNW SV1
+svp VZ obj2 N obj1 NP INF
+svp VZ obj2 N obj1 NP su NP SMAIN
+svp VZ obj2 NP INF
+svp VZ obj2 NP obj1 NP INF
+svp VZ obj2 NP obj1 NP su N SMAIN
+svp VZ obj2 NP obj1 NP su NP SMAIN
+svp VZ obj2 NP obj1 NP su VNW SMAIN
+svp VZ obj2 NP su NP SMAIN
+svp VZ obj2 NP su VNW SMAIN
+svp VZ obj2 PP INF
+svp VZ obj2 PP obj1 NP INF
+svp VZ obj2 PP obj1 NP su N SMAIN
+svp VZ obj2 PP obj1 NP su NP SMAIN
+svp VZ obj2 PP obj1 NP su VNW SMAIN
+svp VZ obj2 VNW INF
+svp VZ obj2 VNW obj1 NP INF
+svp VZ obj2 VNW obj1 NP su NP SMAIN
+svp VZ obj2 VNW obj1 NP su VNW SMAIN
+svp VZ obj2 VNW obj1 VNW su VNW SMAIN
+svp VZ obj2 VNW su CP sup VNW SMAIN
+svp VZ obj2 VNW su NP SMAIN
+svp VZ obj2 VNW su VNW SMAIN
+svp VZ pc BW INF
+svp VZ pc BW su CP sup VNW SMAIN
+svp VZ pc BW su NP SMAIN
+svp VZ pc BW su VNW SMAIN
+svp VZ pc PP INF
+svp VZ pc PP PPART
+svp VZ pc PP SV1
+svp VZ pc PP obj1 N INF
+svp VZ pc PP obj1 N SV1
+svp VZ pc PP obj1 N su N SMAIN
+svp VZ pc PP obj1 N su NP SMAIN
+svp VZ pc PP obj1 N su SPEC SMAIN
+svp VZ pc PP obj1 N su VNW SMAIN
+svp VZ pc PP obj1 NP INF
+svp VZ pc PP obj1 NP SV1
+svp VZ pc PP obj1 NP su N SMAIN
+svp VZ pc PP obj1 NP su NP SMAIN
+svp VZ pc PP obj1 NP su SPEC SMAIN
+svp VZ pc PP obj1 NP su VNW SMAIN
+svp VZ pc PP obj1 VNW INF
+svp VZ pc PP obj1 VNW SV1
+svp VZ pc PP obj1 VNW su N SMAIN
+svp VZ pc PP obj1 VNW su NP SMAIN
+svp VZ pc PP obj1 VNW su SPEC SMAIN
+svp VZ pc PP obj1 VNW su VNW SMAIN
+svp VZ pc PP se VNW INF
+svp VZ pc PP se VNW su N SMAIN
+svp VZ pc PP se VNW su NP SMAIN
+svp VZ pc PP se VNW su VNW SMAIN
+svp VZ pc PP su CP sup VNW SMAIN
+svp VZ pc PP su N SMAIN
+svp VZ pc PP su NP SMAIN
+svp VZ pc PP su NP SSUB
+svp VZ pc PP su NP SV1
+svp VZ pc PP su SPEC SMAIN
+svp VZ pc PP su VNW SMAIN
+svp VZ pc PP su VNW SSUB
+svp VZ pc PP su VNW SV1
+svp VZ pc VZ INF
+svp VZ predc ADJ INF
+svp VZ predc ADJ su NP SMAIN
+svp VZ predc ADJ su VNW SMAIN
+svp VZ predc AP su NP SMAIN
+svp VZ predc AP su VNW SMAIN
+svp VZ predc CP INF
+svp VZ predc CP obj1 NP INF
+svp VZ predc CP obj1 NP su NP SMAIN
+svp VZ predc CP obj1 NP su VNW SMAIN
+svp VZ predc CP su NP SMAIN
+svp VZ predc CP su VNW SMAIN
+svp VZ se VNW INF
+svp VZ se VNW obj1 VNW su VNW SMAIN
+svp VZ se VNW su N SMAIN
+svp VZ se VNW su NP SMAIN
+svp VZ se VNW su NP SV1
+svp VZ se VNW su VNW SMAIN
+svp VZ se VNW su VNW SV1
+svp VZ su CP SMAIN
+svp VZ su CP sup VNW SMAIN
+svp VZ su N SMAIN
+svp VZ su N SV1
+svp VZ su NP SMAIN
+svp VZ su NP SSUB
+svp VZ su NP SV1
+svp VZ su SPEC SMAIN
+svp VZ su SPEC SV1
+svp VZ su VNW SMAIN
+svp VZ su VNW SSUB
+svp VZ su VNW SV1
+svp VZ svp VZ su NP SMAIN
+svp VZ vc CP INF
+svp VZ vc CP SV1
+svp VZ vc CP pc PP su VNW SMAIN
+svp VZ vc CP se VNW su NP SMAIN
+svp VZ vc CP se VNW su VNW SMAIN
+svp VZ vc CP su N SMAIN
+svp VZ vc CP su NP SMAIN
+svp VZ vc CP su SPEC SMAIN
+svp VZ vc CP su VNW SMAIN
+svp VZ vc CP su VNW SV1
+svp VZ vc OTI INF
+svp VZ vc OTI obj1 NP su NP SMAIN
+svp VZ vc OTI obj1 NP su VNW SMAIN
+svp VZ vc OTI su N SMAIN
+svp VZ vc OTI su NP SMAIN
+svp VZ vc OTI su VNW SMAIN
+svp VZ vc TI INF
+svp VZ vc TI su N SMAIN
+svp VZ vc TI su NP SMAIN
+svp VZ vc TI su VNW SMAIN
+svp VZ vc WHSUB INF
+svp VZ vc WHSUB SV1
+svp VZ vc WHSUB se VNW su NP SMAIN
+svp VZ vc WHSUB se VNW su VNW SMAIN
+svp VZ vc WHSUB su NP SMAIN
+svp VZ vc WHSUB su VNW SMAIN
+svp WW PPART
+svp WW obj1 NP INF
+svp WW obj1 NP su N SMAIN
+svp WW obj1 NP su NP SMAIN
+svp WW obj1 NP su VNW SMAIN
+svp WW obj1 NP su VNW SSUB
+svp WW obj1 VNW INF
+svp WW obj1 VNW su NP SMAIN
+svp WW obj1 VNW su VNW SMAIN
+svp WW obj1 VNW su VNW SSUB
+svp WW pc PP INF
+svp WW pc PP su NP SMAIN
+svp WW su NP SV1
+svp WW vc CP INF
+svp WW vc CP obj2 NP INF
+svp WW vc CP su N SMAIN
+svp WW vc CP su NP SMAIN
+svp WW vc CP su VNW SMAIN
+svp WW vc TI su NP SMAIN
+svp WW vc WHSUB INF
+svp WW vc WHSUB su NP SMAIN
+vc AHI INF
+vc AHI PPART
+vc AHI su NP SMAIN
+vc AHI su NP SSUB
+vc AHI su VNW SMAIN
+vc AHI su VNW SSUB
+vc AHI su VNW SV1
+vc AP su NP SMAIN
+vc AP su VNW SMAIN
+vc BW INF
+vc BW PPART
+vc BW su N SMAIN
+vc BW su NP SMAIN
+vc BW su SPEC SMAIN
+vc BW su VNW SMAIN
+vc BW su VNW SSUB
+vc BW su VNW SV1
+vc CP AP
+vc CP INF
+vc CP NP
+vc CP PP
+vc CP PPART
+vc CP PPRES
+vc CP SMAIN
+vc CP SV1
+vc CP mod INF INF
+vc CP mod NP NP
+vc CP mod PPART PPART
+vc CP mod SMAIN SMAIN
+vc CP mod SSUB SSUB
+vc CP obj1 NP INF
+vc CP obj2 NP INF
+vc CP obj2 NP PPART
+vc CP obj2 NP su NP SMAIN
+vc CP obj2 NP su VNW SMAIN
+vc CP obj2 PP PPART
+vc CP obj2 VNW INF
+vc CP obj2 VNW PPART
+vc CP obj2 VNW SV1
+vc CP obj2 VNW su N SMAIN
+vc CP obj2 VNW su NP SMAIN
+vc CP obj2 VNW su VNW SMAIN
+vc CP obj2 VNW su VNW SSUB
+vc CP pc BW INF
+vc CP pc BW PPART
+vc CP pc PP INF
+vc CP pc PP PPART
+vc CP pc PP su VNW SMAIN
+vc CP predc ADJ INF
+vc CP predc ADJ PPART
+vc CP predc ADJ su NP SMAIN
+vc CP predc ADJ su VNW SMAIN
+vc CP predm SMAIN SMAIN
+vc CP se VNW INF
+vc CP se VNW su VNW SMAIN
+vc CP se VNW su VNW SSUB
+vc CP su ADJ SMAIN
+vc CP su N SMAIN
+vc CP su N SSUB
+vc CP su N SV1
+vc CP su NP SMAIN
+vc CP su NP SSUB
+vc CP su NP SV1
+vc CP su SPEC SMAIN
+vc CP su SPEC SSUB
+vc CP su VNW SMAIN
+vc CP su VNW SSUB
+vc CP su VNW SV1
+vc CP su WHREL SMAIN
+vc INF INF
+vc INF NP
+vc INF SMAIN
+vc INF SSUB
+vc INF SV1
+vc INF obj1 N su N SMAIN
+vc INF obj1 N su NP SMAIN
+vc INF obj1 N su VNW SMAIN
+vc INF obj1 N su VNW SSUB
+vc INF obj1 NP SV1
+vc INF obj1 NP su N SMAIN
+vc INF obj1 NP su NP SMAIN
+vc INF obj1 NP su NP SSUB
+vc INF obj1 NP su SPEC SMAIN
+vc INF obj1 NP su VNW SMAIN
+vc INF obj1 NP su VNW SSUB
+vc INF obj1 NP su VNW SV1
+vc INF obj1 VNW SV1
+vc INF obj1 VNW su N SMAIN
+vc INF obj1 VNW su NP SMAIN
+vc INF obj1 VNW su NP SSUB
+vc INF obj1 VNW su VNW SMAIN
+vc INF obj1 VNW su VNW SSUB
+vc INF obj1 VNW su VNW SV1
+vc INF su ADJ SMAIN
+vc INF su ADJ SSUB
+vc INF su N SMAIN
+vc INF su N SSUB
+vc INF su N SV1
+vc INF su NP SMAIN
+vc INF su NP SSUB
+vc INF su NP SV1
+vc INF su NP mod INF INF
+vc INF su NP mod NP NP
+vc INF su NP mod PPART PPART
+vc INF su NP mod SMAIN SMAIN
+vc INF su NP mod SSUB SSUB
+vc INF su SPEC SMAIN
+vc INF su SPEC SSUB
+vc INF su SPEC SV1
+vc INF su TW SMAIN
+vc INF su TW SSUB
+vc INF su VNW SMAIN
+vc INF su VNW SSUB
+vc INF su VNW SV1
+vc INF su VNW mod INF INF
+vc INF su VNW mod NP NP
+vc INF su VNW mod PPART PPART
+vc INF su VNW mod SMAIN SMAIN
+vc INF su VNW mod SSUB SSUB
+vc INF su VNW mod SV1 SV1
+vc INF su WHREL SMAIN
+vc INF su WHREL SSUB
+vc INF su WW SMAIN
+vc NP INF
+vc NP su NP SMAIN
+vc NP su VNW SMAIN
+vc OTI AP
+vc OTI INF
+vc OTI NP
+vc OTI PP
+vc OTI PPART
+vc OTI SV1
+vc OTI me NP predc ADJ su NP SMAIN
+vc OTI me NP predc ADJ su VNW SMAIN
+vc OTI me NP predc ADJ su VNW SSUB
+vc OTI mod NP NP
+vc OTI mod SMAIN SMAIN
+vc OTI obj1 NP INF
+vc OTI obj1 NP su NP SMAIN
+vc OTI obj1 NP su VNW SMAIN
+vc OTI obj1 NP su VNW SSUB
+vc OTI obj2 NP su NP SMAIN
+vc OTI obj2 NP su VNW SMAIN
+vc OTI obj2 VNW su VNW SMAIN
+vc OTI predm SMAIN SMAIN
+vc OTI se VNW INF
+vc OTI su N SMAIN
+vc OTI su NP SMAIN
+vc OTI su NP SSUB
+vc OTI su SPEC SMAIN
+vc OTI su VNW SMAIN
+vc OTI su VNW SSUB
+vc PP INF
+vc PP su N SMAIN
+vc PP su NP SMAIN
+vc PP su VNW SMAIN
+vc PP su VNW SSUB
+vc PPART INF
+vc PPART PPART
+vc PPART SMAIN
+vc PPART SSUB
+vc PPART SV1
+vc PPART obj1 NP su NP SMAIN
+vc PPART obj1 NP su VNW SMAIN
+vc PPART se VNW su NP SMAIN
+vc PPART se VNW su VNW SMAIN
+vc PPART se VNW su VNW SSUB
+vc PPART su ADJ SMAIN
+vc PPART su ADJ SSUB
+vc PPART su N SMAIN
+vc PPART su N SSUB
+vc PPART su N SV1
+vc PPART su NP SMAIN
+vc PPART su NP SSUB
+vc PPART su NP SV1
+vc PPART su NP mod NP NP
+vc PPART su SPEC SMAIN
+vc PPART su SPEC SSUB
+vc PPART su SPEC SV1
+vc PPART su TW SMAIN
+vc PPART su TW SSUB
+vc PPART su VNW SMAIN
+vc PPART su VNW SSUB
+vc PPART su VNW SV1
+vc PPART su VNW mod NP NP
+vc PPART su WHREL SMAIN
+vc PPART su WW SMAIN
+vc SVAN su VNW SMAIN
+vc TI AP
+vc TI INF
+vc TI NP
+vc TI PP
+vc TI PPART
+vc TI SMAIN
+vc TI SSUB
+vc TI SV1
+vc TI obj1 NP su NP SMAIN
+vc TI obj1 NP su VNW SMAIN
+vc TI obj1 NP su VNW SSUB
+vc TI obj1 VNW su NP SMAIN
+vc TI obj1 VNW su VNW SMAIN
+vc TI obj1 VNW su VNW SSUB
+vc TI obj2 NP su NP SMAIN
+vc TI obj2 NP su VNW SMAIN
+vc TI obj2 NP su VNW SSUB
+vc TI obj2 VNW su NP SMAIN
+vc TI obj2 VNW su VNW SMAIN
+vc TI obj2 VNW su VNW SSUB
+vc TI predm SMAIN SMAIN
+vc TI su ADJ SMAIN
+vc TI su N SMAIN
+vc TI su N SSUB
+vc TI su N SV1
+vc TI su NP SMAIN
+vc TI su NP SSUB
+vc TI su NP SV1
+vc TI su SPEC SMAIN
+vc TI su SPEC SSUB
+vc TI su TW SMAIN
+vc TI su VNW SMAIN
+vc TI su VNW SSUB
+vc TI su VNW SV1
+vc TI su WHREL SMAIN
+vc VG su VNW SMAIN
+vc VNW INF
+vc VNW PPART
+vc VNW su NP SMAIN
+vc VNW su VNW SMAIN
+vc VNW su VNW SSUB
+vc VNW su VNW SV1
+vc WHSUB INF
+vc WHSUB NP
+vc WHSUB PP
+vc WHSUB PPART
+vc WHSUB PPRES
+vc WHSUB SV1
+vc WHSUB mod NP NP
+vc WHSUB mod SMAIN SMAIN
+vc WHSUB obj2 NP INF
+vc WHSUB obj2 VNW INF
+vc WHSUB obj2 VNW PPART
+vc WHSUB obj2 VNW SV1
+vc WHSUB obj2 VNW su VNW SMAIN
+vc WHSUB obj2 VNW su VNW SSUB
+vc WHSUB se VNW INF
+vc WHSUB se VNW su VNW SSUB
+vc WHSUB su N SMAIN
+vc WHSUB su N SSUB
+vc WHSUB su NP SMAIN
+vc WHSUB su NP SSUB
+vc WHSUB su SPEC SMAIN
+vc WHSUB su VNW SMAIN
+vc WHSUB su VNW SSUB
+vc WHSUB su VNW SV1
+vc WW INF
+vc WW NP
+vc WW SMAIN
+vc WW SSUB
+vc WW SV1
+vc WW obj1 N su N SMAIN
+vc WW obj1 N su VNW SMAIN
+vc WW obj1 N su VNW SSUB
+vc WW obj1 NP SV1
+vc WW obj1 NP su N SMAIN
+vc WW obj1 NP su NP SMAIN
+vc WW obj1 NP su NP SSUB
+vc WW obj1 NP su VNW SMAIN
+vc WW obj1 NP su VNW SSUB
+vc WW obj1 NP su VNW SV1
+vc WW obj1 VNW SV1
+vc WW obj1 VNW su N SMAIN
+vc WW obj1 VNW su NP SMAIN
+vc WW obj1 VNW su VNW SMAIN
+vc WW obj1 VNW su VNW SSUB
+vc WW obj1 VNW su VNW SV1
+vc WW se VNW su VNW SMAIN
+vc WW su N SMAIN
+vc WW su N SSUB
+vc WW su N SV1
+vc WW su NP SMAIN
+vc WW su NP SSUB
+vc WW su NP SV1
+vc WW su SPEC SMAIN
+vc WW su SPEC SSUB
+vc WW su VNW SMAIN
+vc WW su VNW SSUB
+vc WW su VNW SV1
+vc WW su WHREL SMAIN
+whd_body ADJ WHSUB
+whd_body ADV WHSUB
+whd_body AP WHSUB
+whd_body BW WHSUB
+whd_body N WHQ
+whd_body NP WHQ
+whd_body NP mod NP NP
+whd_body SSUB WHSUB
+whd_body SV1 WHQ
+whd_body TI WHQ
+whd_body TI WHSUB
+whd_body ld VNW SSUB WHSUB
+whd_body ld VNW SV1 WHQ
+whd_body mod mod INF INF INF WHQ
+whd_body mod mod INF INF SSUB WHSUB
+whd_body mod mod INF INF SV1 SMAIN
+whd_body mod mod INF INF SV1 WHQ
+whd_body mod mod INF INF TI WHSUB
+whd_body mod mod PPART PPART PPART WHQ
+whd_body mod mod PPART PPART SSUB WHSUB
+whd_body mod mod PPART PPART SV1 WHQ
+whd_body mod mod SSUB SSUB SSUB WHSUB
+whd_body mod mod SV1 SV1 SV1 SMAIN
+whd_body mod mod SV1 SV1 SV1 WHQ
+whd_body obj1 TW SSUB WHSUB
+whd_body obj1 VNW SSUB WHSUB
+whd_body obj1 VNW SV1 SMAIN
+whd_body obj1 VNW SV1 WHQ
+whd_body pc BW SSUB WHSUB
+whd_body pc BW SV1 WHQ
+whd_body predc AP SSUB WHSUB
+whd_body predc AP SV1 WHQ
+whd_body predc BW SSUB WHSUB
+whd_body predc BW SV1 WHQ
+whd_body predc VNW SSUB WHSUB
+whd_body predc VNW SV1 WHQ
+whd_body su NP SSUB WHSUB
+whd_body su NP SV1 WHQ
+whd_body su VNW SSUB WHSUB
+whd_body su VNW SV1 SMAIN
+whd_body su VNW SV1 WHQ
