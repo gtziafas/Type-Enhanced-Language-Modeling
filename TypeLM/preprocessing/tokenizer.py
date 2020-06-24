@@ -131,20 +131,43 @@ def _make_atom_set(dump: str = './TypeLM/data/dump') -> Set[str]:
 
 def _make_type_set(dump: str = './TypeLM/data/extraction/dump') -> None:
     with open(dump, 'r') as f:
-        typeset = Counter()
+        counter = defaultdict(lambda: 0)
         while True:
             try:
-                _ = f.__next__()
+                next_line = f.__next__().strip('\n')
+                if next_line == '':
+                    _ = f.__next__().strip('\n')
+                else:
+                    _ = next_line
                 types = _parse_line(f.__next__())
-                _ = f.__next__()
-                typeset += Counter(types)
+                for t in types:
+                    counter[t] += 1
             except StopIteration:
                 break
         with open('./TypeLM/data/indexing/typeset.p', 'wb') as g:
-            pickle.dump(typeset, g)
-        typeset = sorted(typeset.items(), key=lambda pair: pair[1], reverse=True)
+            pickle.dump(dict(counter), g)
+        typeset = sorted(counter.items(), key=lambda pair: pair[1], reverse=True)
         with open('./TypeLM/data/indexing/typeset.txt', 'w') as g:
             g.write('\n'.join([f'{str(fst)}\t{str(snd)}' for fst, snd in typeset]))
+
+
+def _make_small_type_set(type_dump: str = './TypeLM/data/indexing/typeset.txt', inclusion: float = 0.95) -> Set[str]:
+    with open(type_dump, 'r') as f:
+        types = list(map(lambda x: x.split('\t'), f.read().split('\n')))
+
+    total = sum(map(lambda x: int(x[1]), types))
+    curr = 0
+    kept = set()
+
+    for item, count in types:
+        if curr / total >= inclusion:
+            break
+        curr += int(count)
+        kept.add(item)
+    print(f'Last item has {count} occurrences.')
+    with open('./TypeLM/data/indexing/small_typeset.txt', 'w') as f:
+        f.write('\n'.join(sorted(kept)))
+    return kept
 
 
 def _parse_dump_atomic(dump: str = './TypeLM/data/extraction/dump', start_from: int = 0):
@@ -168,6 +191,33 @@ def _parse_dump_atomic(dump: str = './TypeLM/data/extraction/dump', start_from: 
 
                 atoms = list(chain.from_iterable([t.split() + [tokenizer.type_tokenizer.SEP_TOKEN] for t in types]))
                 s_ids_int, t_ids_int = tokenizer.convert_pair_to_ids(sent, atoms)
+                s_ids = list(map(str, s_ids_int))
+                t_ids = list(map(str, t_ids_int))
+                line = f'{s_ids}\t{t_ids}\n'
+                g.write(line)
+
+                with open('./TypeLM/data/indexing/last_file', 'w') as h:
+                    h.write(str(read + 1))
+
+
+def _parse_dump_full(dump: str = './TypeLM/data/extraction/dump', start_from: int = 0) -> None:
+    with open('./TypeLM/data/indexing/small_typeset.txt', 'r') as f:
+        typeset = set(f.read().split('\n'))
+    tokenizer = Tokenizer(type_vocabulary=typeset, atomic=False)
+    with open(dump, 'r') as f:
+        read = 0
+        with open('./TypeLM/data/indexing/atomic_dump', 'a') as g:
+            while True:
+                next_line = f.__next__().strip('\n')
+                if next_line == '':
+                    _ = f.__next__().strip('\n')
+                types = _parse_line(f.__next__())
+
+                read += 1
+                if read <= start_from:
+                    continue
+
+                s_ids_int, t_ids_int = tokenizer.convert_pair_to_ids(sent, types)
                 s_ids = list(map(str, s_ids_int))
                 t_ids = list(map(str, t_ids_int))
                 line = f'{s_ids}\t{t_ids}\n'
