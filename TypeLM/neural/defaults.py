@@ -20,12 +20,10 @@ def default_loss() -> MixedLoss:
                                         tokenizer.word_tokenizer.core.unk_token_id,
                                         tokenizer.word_tokenizer.core.mask_token_id],
                        'reduction': 'mean'}
-    st_loss_kwargs = {'num_classes': len(tokenizer.type_tokenizer.vocabulary),
-                      'mass_redistribution': 0.1,
-                      'ignore_index': [tokenizer.type_tokenizer.PAD_TOKEN_ID,
+    st_loss_kwargs = {'ignore_index': [tokenizer.type_tokenizer.PAD_TOKEN_ID,
                                        tokenizer.type_tokenizer.UNK_TOKEN_ID],
-                      'reduction': 'batchmean'}
-    return MixedLoss(CrossEntropyLossMultiIgnore, FuzzyLoss, mlm_loss_kwargs, st_loss_kwargs, 1)
+                      'reduction': 'mean'}
+    return MixedLoss(CrossEntropyLossMultiIgnore, CrossEntropyLossMultiIgnore, mlm_loss_kwargs, st_loss_kwargs, 1)
 
 
 def default_optimizer(model: TypedLM, warmup_steps: int) -> Scheduler:
