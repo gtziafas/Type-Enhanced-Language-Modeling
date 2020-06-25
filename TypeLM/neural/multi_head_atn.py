@@ -4,6 +4,8 @@ import torch
 from torch import Tensor, LongTensor
 from torch.nn import Module, Linear, Dropout
 
+from opt_einsum import contract
+
 
 def multihead_attn_fn(queries: Tensor, keys: Tensor, values: Tensor,
                       mask: Optional[LongTensor] = None) -> Tensor:
@@ -15,12 +17,12 @@ def mh_scaled_dot_product(queries: Tensor, keys: Tensor, values: Tensor,
     dk, num_heads = keys.shape[-2:]
     dividend = torch.sqrt(torch.tensor(dk, device=queries.device, dtype=torch.float))
 
-    weights = torch.einsum('bidh,bodh->bioh', queries, keys) / dividend
+    weights = contract('bidh,bodh->bioh', queries, keys) / dividend
     if mask is not None:
         mask = mask.unsqueeze(-1).repeat(1, 1, 1, num_heads)
         weights = weights.masked_fill_(mask == 0, value=-1e10)
     weights = weights.softmax(dim=-2)
-    return torch.einsum('bioh,bodh->bidh', weights, values).flatten(-2)
+    return contract('bioh,bodh->bidh', weights, values).flatten(-2)
 
 
 class MultiHeadAttention(Module):
