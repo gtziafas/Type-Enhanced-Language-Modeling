@@ -29,8 +29,7 @@ def default_word_masker() -> Masker:
 
 
 def regularization_type_masker() -> Masker:
-    unmaskable = {_tokenizer.type_tokenizer.PAD_TOKEN_ID, _tokenizer.type_tokenizer.SOS_TOKEN_ID,
-                  _tokenizer.type_tokenizer.SEP_TOKEN_ID}
+    unmaskable = {_tokenizer.type_tokenizer.PAD_TOKEN_ID}
     replacements = set(_tokenizer.type_tokenizer.vocabulary.values()).difference(unmaskable)
     return Masker(outer_chance=0.01, mask_chance=0, keep_chance=0, replacements=replacements, token_mask=None,
                   unmaskable=unmaskable)
