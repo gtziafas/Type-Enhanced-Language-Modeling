@@ -29,8 +29,7 @@ class TypedLM(Module):
         raise NotImplementedError('Forward not implemented for this model.')
 
     def forward_train(self, word_ids: LongTensor, word_mask: LongTensor) -> Tuple[Tensor, Tensor]:
-        shallow = self.encode_shallow(word_ids, word_mask)
-        deep = self.encode_deep(shallow, word_mask)
+        shallow, deep = self.encode(word_ids, word_mask)
         word_out = self.word_embedder.invert(deep)
         type_out = self.type_classifier(shallow)
         return word_out, type_out
@@ -41,3 +40,7 @@ class TypedLM(Module):
 
     def encode_deep(self, shallow: Tensor, word_mask: LongTensor) -> Tensor:
         return self.encoder_2((shallow, word_mask))[0]
+
+    def encode(self, word_ids: LongTensor, word_mask: LongTensor) -> Tuple[Tensor, Tensor]:
+        shallow = self.encode_shallow(word_ids, word_mask)[0]
+        return shallow, self.encode_deep(shallow, word_mask)[0]
