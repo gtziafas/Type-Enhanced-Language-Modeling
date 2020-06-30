@@ -16,7 +16,7 @@ _device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f'Training a dataset of {_sents_in_dset} samples with a batch size of {_batch_size}.')
 print(f'Reporting averages every {_num_batches_per_subepoch * _batch_size} samples.')
 
-loader = default_dataloader(path='/data/s3913171/Lassy-Large/full_dump', chunk_size=1024000,
+loader = default_dataloader(path='/data/s3913171/Lassy-Large/full_dump_small', chunk_size=1024000,
                             batch_size=_batch_size)
 model = default_model().to('cuda')
 loss_fn = default_loss()
