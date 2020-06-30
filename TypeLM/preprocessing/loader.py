@@ -63,35 +63,3 @@ class LazyLoader(DataLoader):
 
     def get_processed_batch(self) -> Any:
         return self.post_proc(self.get_batch())
-
-
-class EagerLoader(DataLoader):
-    def __init__(self, filepath: str, batch_size: int, post_proc: Callable[[Samples], Any]):
-        with open(filepath, 'r') as f:
-            self.lines = list(map(parse, f.readlines()))
-        self.line_iterator = self.make_line_iterator()
-        self.batch_size = batch_size
-        self.post_proc = post_proc
-
-    def make_line_iterator(self):
-        return iter(self.lines)
-
-    def __next__(self) -> Sample:
-        return self.line_iterator.__next__()
-
-    def get_batch(self) -> Samples:
-        batch = []
-        for i in range(self.batch_size):
-            try:
-                batch.append(self.__next__())
-            except StopIteration:
-                break
-        if i == 0:
-            raise StopIteration
-        return batch
-
-    def get_processed_batch(self) -> Any:
-        return self.post_proc(self.get_batch())
-
-
-
