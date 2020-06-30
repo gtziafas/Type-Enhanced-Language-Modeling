@@ -1,6 +1,6 @@
 from TypeLM.preprocessing.tokenizer import Tokenizer
 from TypeLM.neural.embedding import InvertibleEmbedder
-from TypeLM.neural.transformer import make_encoder, make_decoder
+from TypeLM.neural.transformer import make_encoder
 
 from torch.nn import Module, Linear
 from typing import Tuple, NoReturn
@@ -18,10 +18,10 @@ class TypedLM(Module):
                                                 padding_idx=word_padding_idx, scale_by_sqrt=True).to(device)
         type_vocab_size = len(tokenizer.type_tokenizer.vocabulary)
         self.type_classifier = Linear(in_features=encoder_dim, out_features=type_vocab_size).to(device)
-        self.encoder_1 = make_encoder(encoder_layers[0], encoder_heads, encoder_dim, encoder_dim, encoder_dim,
-                                      2 * encoder_dim, 0.1).to(device)
-        self.encoder_2 = make_encoder(encoder_layers[1], encoder_heads, encoder_dim, encoder_dim, encoder_dim,
-                                      2 * encoder_dim, 0.1).to(device)
+        self.encoder_1 = make_encoder(encoder_layers[0], encoder_heads, encoder_dim, encoder_dim//encoder_heads,
+                                      encoder_dim//encoder_heads, 2 * encoder_dim, 0.1).to(device)
+        self.encoder_2 = make_encoder(encoder_layers[1], encoder_heads, encoder_dim, encoder_dim//encoder_heads,
+                                      encoder_dim//encoder_heads, 2 * encoder_dim, 0.1).to(device)
         self.tokenizer = tokenizer
         self.device = device
 
