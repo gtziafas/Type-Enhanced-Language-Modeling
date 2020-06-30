@@ -92,3 +92,14 @@ def train_epoch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Op
         sum_correct_tokens += batch_correct
         epoch_loss += loss
     return epoch_loss / len(dataloader), sum_correct_tokens / sum_tokens
+
+
+# todo
+def eval_batch(*args, **kwargs):
+    pass
+
+
+# todo
+def eval_epoch(*args, **kwargs):
+    pass
+
