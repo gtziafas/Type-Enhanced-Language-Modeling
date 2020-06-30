@@ -5,7 +5,7 @@ from typing import Optional
 import sys
 
 _sents_in_dset = 62373693
-_batch_size = 128
+_batch_size = 256
 _num_batches_in_dset = _sents_in_dset // _batch_size
 _num_subepochs_per_epoch = 10000
 _num_batches_per_subepoch = _num_batches_in_dset // _num_subepochs_per_epoch
