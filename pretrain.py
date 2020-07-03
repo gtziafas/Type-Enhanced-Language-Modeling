@@ -37,7 +37,7 @@ def resume(epoch: int, save_path: str, load_path: Optional[str]):
         tmp = torch.load(load_path)
         model.load_state_dict(tmp['model_state_dict'])
         optim.opt.load_state_dict(tmp['opt'])
-        optim.step_num = epoch * _num_batches_in_dset
+        optim.step_num = epoch * (_num_batches_in_dset - 1)
 
     sprint('=' * 64)
     sprint(f'EPOCH {epoch}')
