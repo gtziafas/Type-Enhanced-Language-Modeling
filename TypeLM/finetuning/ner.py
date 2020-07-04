@@ -18,9 +18,9 @@ def main(ner_path: str, model_path: str, device: str, batch_size_train: int, bat
     # processed_test = tokenize_data(tokenizer, NER.test_data, token_pad_id)
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
-                              collate_fn=token_collator(word_pad_id, token_pad_id))
+                              collate_fn=token_collator(word_pad_id, token_pad_id, offset=1))
     dev_loader = DataLoader(dataset=TokenDataset(processed_dev), batch_size=batch_size_dev, shuffle=True,
-                            collate_fn=token_collator(word_pad_id, token_pad_id))
+                            collate_fn=token_collator(word_pad_id, token_pad_id, offset=1))
     # test_loader = DataLoader(dataset=TokenDataset(processed_test), batch_size=batch_size_dev, shuffle=True,
     #                          collate_fn=token_collator(word_pad_id, token_pad_id))
 
