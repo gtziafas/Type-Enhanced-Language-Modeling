@@ -14,7 +14,7 @@ def main(ner_path: str, model_path: str, device: str, batch_size_train: int, bat
     offset = 1
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
 
-    processed_train = tokenize_data(tokenizer, ner.train_data, token_pad_id, offset)
+    processed_train = tokenize_data(tokenizer, [t for t in ner.train_data if len(t) <= 100], token_pad_id, offset)
     processed_dev = tokenize_data(tokenizer, ner.dev_data, token_pad_id, offset)
     # processed_test = tokenize_data(tokenizer, NER.test_data, token_pad_id, offset)
 
