@@ -42,5 +42,5 @@ class TypedLM(Module):
         return self.encoder_2((shallow, word_mask))[0]
 
     def encode(self, word_ids: LongTensor, word_mask: LongTensor) -> Tuple[Tensor, Tensor]:
-        shallow = self.encode_shallow(word_ids, word_mask)[0]
-        return shallow, self.encode_deep(shallow, word_mask)[0]
+        shallow = self.encode_shallow(word_ids, word_mask)
+        return shallow, self.encode_deep(shallow, word_mask)
