@@ -11,16 +11,17 @@ def main(ner_path: str, model_path: str, device: str, batch_size_train: int, bat
     word_pad_id = tokenizer.word_tokenizer.core.pad_token_id
     token_pad_id = -100
     ner = create_ner(ner_path)
+    offset = 1
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
 
-    processed_train = tokenize_data(tokenizer, ner.train_data, token_pad_id)
-    processed_dev = tokenize_data(tokenizer, ner.dev_data, token_pad_id)
-    # processed_test = tokenize_data(tokenizer, NER.test_data, token_pad_id)
+    processed_train = tokenize_data(tokenizer, ner.train_data, token_pad_id, offset)
+    processed_dev = tokenize_data(tokenizer, ner.dev_data, token_pad_id, offset)
+    # processed_test = tokenize_data(tokenizer, NER.test_data, token_pad_id, offset)
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
-                              collate_fn=token_collator(word_pad_id, token_pad_id, offset=1))
+                              collate_fn=token_collator(word_pad_id, token_pad_id))
     dev_loader = DataLoader(dataset=TokenDataset(processed_dev), batch_size=batch_size_dev, shuffle=True,
-                            collate_fn=token_collator(word_pad_id, token_pad_id, offset=1))
+                            collate_fn=token_collator(word_pad_id, token_pad_id))
     # test_loader = DataLoader(dataset=TokenDataset(processed_test), batch_size=batch_size_dev, shuffle=True,
     #                          collate_fn=token_collator(word_pad_id, token_pad_id))
 

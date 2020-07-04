@@ -15,16 +15,17 @@ Sample = Tuple[List[int], List[int]]
 Samples = List[Sample]
 
 
-def tokenize_data(tokenizer: Tokenizer, data: List[List[Tuple[str, int]]], pad: int) -> Samples:
+def tokenize_data(tokenizer: Tokenizer, data: List[List[Tuple[str, int]]], pad: int, offset: int = 0) -> Samples:
     unzipped = [list(zip(*datum)) for datum in data]
     wss, tss = list(zip(*unzipped))
-    return [tokenize_token_pairs(tokenizer.word_tokenizer, ws, ts, pad) for ws, ts in zip(wss, tss)]
+    return [tokenize_token_pairs(tokenizer.word_tokenizer, ws, ts, pad, offset) for ws, ts in zip(wss, tss)]
 
 
-def tokenize_token_pairs(wtokenizer: WordTokenizer, words: List[str], tokens: List[int], pad: int) -> Sample:
+def tokenize_token_pairs(wtokenizer: WordTokenizer, words: List[str], tokens: List[int], pad: int, offset: int) \
+        -> Sample:
     assert len(words) == len(tokens)
     words = [wtokenizer.core.tokenize(w) for w in words]
-    tokens = [[t] + [pad] * (len(w) - 1) for w, t in zip(words, tokens)]
+    tokens = [[t - offset] + [pad] * (len(w) - 1) for w, t in zip(words, tokens)]
     words = sum(words, [])
     tokens = sum(tokens, [])
     assert len(words) == len(tokens)
@@ -47,12 +48,11 @@ class TokenDataset(Dataset):
         return self.data[item]
 
 
-def token_collator(word_pad: int, token_pad: int, offset: int = 0) \
-        -> Callable[[Samples], Tuple[LongTensor, LongTensor]]:
+def token_collator(word_pad: int, token_pad: int) -> Callable[[Samples], Tuple[LongTensor, LongTensor]]:
     def collate_fn(samples: Samples) -> Tuple[LongTensor, LongTensor]:
         xs, ys = list(zip(*samples))
         return (_pad_sequence([tensor(x, dtype=long) for x in xs], batch_first=True, padding_value=word_pad),
-                _pad_sequence([tensor(y, dtype=long) - offset for y in ys], batch_first=True, padding_value=token_pad))
+                _pad_sequence([tensor(y, dtype=long) for y in ys], batch_first=True, padding_value=token_pad))
     return collate_fn
 
 
