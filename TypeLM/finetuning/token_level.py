@@ -2,7 +2,7 @@ from TypeLM.preprocessing.tokenizer import Tokenizer, WordTokenizer
 from typing import List, Tuple, Callable
 from torch.utils.data import Dataset, DataLoader
 from torch.nn.utils.rnn import pad_sequence as _pad_sequence
-from torch import LongTensor, tensor, long, FloatTensor
+from torch import LongTensor, tensor, long, FloatTensor, no_grad
 from TypeLM.neural.model import TypedLM
 from torch.nn import Module, Linear
 from TypeLM.neural.training import type_accuracy as token_accuracy
@@ -94,12 +94,29 @@ def train_epoch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Op
     return epoch_loss / len(dataloader), sum_correct_tokens / sum_tokens
 
 
-# todo
-def eval_batch(*args, **kwargs):
-    pass
+@no_grad()
+def eval_batch(model: TypedLMForTokenClassification, loss_fn: Module, words: LongTensor,
+               padding_mask: LongTensor, tokens: LongTensor, token_pad: int) -> Tuple[float, Tuple[int, int]]:
+    model.eval()
+
+    num_tokens = words.shape[0] * words.shape[1]
+    predictions = model.forward(words, padding_mask)
+    _, token_stats = token_accuracy(predictions.argmax(dim=-1), tokens, token_pad)
+
+    batch_loss = loss_fn(predictions.view(num_tokens, -1), tokens.flatten())
+    return batch_loss.item(), token_stats
 
 
-# todo
-def eval_epoch(*args, **kwargs):
-    pass
+def eval_epoch(model: TypedLMForTokenClassification, loss_fn: Module, dataloader: DataLoader, token_pad: int,
+               word_pad: int, device: str) -> Tuple[float, float]:
+    epoch_loss, sum_tokens, sum_correct_tokens = 0., 0, 0
 
+    for words, tokens in dataloader:
+        padding_mask = (words != word_pad).unsqueeze(1).repeat(1, words.shape[1], 1).long().to(device)
+        words = words.to(device)
+        tokens = tokens.to(device)
+        loss, (batch_total, batch_correct) = eval_batch(model, loss_fn, words, padding_mask, tokens, token_pad)
+        sum_tokens += batch_total
+        sum_correct_tokens += batch_correct
+        epoch_loss += loss
+    return epoch_loss / len(dataloader), sum_correct_tokens / sum_tokens
