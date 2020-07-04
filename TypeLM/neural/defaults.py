@@ -10,7 +10,7 @@ _d_model = 768
 
 
 def default_model() -> TypedLM:
-    return TypedLM(tokenizer, _d_model, (4, 4), 12, 'cuda')
+    return TypedLM(tokenizer, _d_model, (4, 8), 12, 'cuda')
 
 
 def default_loss() -> MixedLoss:
