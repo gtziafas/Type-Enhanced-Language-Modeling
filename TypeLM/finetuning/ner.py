@@ -43,9 +43,9 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--ner_path', help='Path to ner folder.')
     parser.add_argument('-m', '--model_path', help='Path to pretrained model')
     parser.add_argument('-d', '--device', help='Which device to use', default='cuda')
-    parser.add_argument('-b', '--batch_size_train', help='Training batch size', default=32)
-    parser.add_argument('-bd', '--batch_size_dev', help='Validation batch size', default=512)
-    parser.add_argument('-e', '--num_epochs', help='How many epochs to train for', default=10)
+    parser.add_argument('-b', '--batch_size_train', help='Training batch size', default=32, type=int)
+    parser.add_argument('-bd', '--batch_size_dev', help='Validation batch size', default=512, type=int)
+    parser.add_argument('-e', '--num_epochs', help='How many epochs to train for', default=10, type=int)
 
     kwargs = vars(parser.parse_args())
 
