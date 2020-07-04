@@ -20,15 +20,15 @@ def main(ner_path: str, model_path: str, device: str, batch_size_train: int, bat
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
 
     processed_train = tokenize_data(tokenizer, [t for t in ner.train_data if len(t) <= 100], token_pad_id, offset)
-    processed_dev = tokenize_data(tokenizer, ner.dev_data, token_pad_id, offset)
-    # processed_test = tokenize_data(tokenizer, NER.test_data, token_pad_id, offset)
+    processed_dev = tokenize_data(tokenizer, [t for t in ner.dev_data if len(t) <= 100], token_pad_id, offset)
+    processed_test = tokenize_data(tokenizer, [t for t in ner.test_data if len(t) <= 100], token_pad_id, offset)
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=token_collator(word_pad_id, token_pad_id))
     dev_loader = DataLoader(dataset=TokenDataset(processed_dev), batch_size=batch_size_dev, shuffle=True,
                             collate_fn=token_collator(word_pad_id, token_pad_id))
-    # test_loader = DataLoader(dataset=TokenDataset(processed_test), batch_size=batch_size_dev, shuffle=True,
-    #                          collate_fn=token_collator(word_pad_id, token_pad_id))
+    test_loader = DataLoader(dataset=TokenDataset(processed_test), batch_size=batch_size_dev, shuffle=True,
+                             collate_fn=token_collator(word_pad_id, token_pad_id))
 
     model = TypedLMForTokenClassification(default_pretrained(model_path), len(ner.class_map)).to(device)
     optim = AdamW(model.parameters(), lr=5e-05)
@@ -38,6 +38,9 @@ def main(ner_path: str, model_path: str, device: str, batch_size_train: int, bat
         sprint(f'Train loss:\t\t{train_loss}')
         sprint(f'Train accu:\t\t{train_accu}')
         val_loss, val_accu = eval_epoch(model, loss_fn, dev_loader, token_pad_id, word_pad_id, device)
+        sprint(f'Dev loss:\t\t{val_loss}')
+        sprint(f'Dev accu:\t\t{val_accu}')
+        val_loss, val_accu = eval_epoch(model, loss_fn, test_loader, token_pad_id, word_pad_id, device)
         sprint(f'Dev loss:\t\t{val_loss}')
         sprint(f'Dev accu:\t\t{val_accu}')
 
