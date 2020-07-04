@@ -47,11 +47,12 @@ class TokenDataset(Dataset):
         return self.data[item]
 
 
-def token_collator(word_pad: int, token_pad: int) -> Callable[[Samples], Tuple[LongTensor, LongTensor]]:
+def token_collator(word_pad: int, token_pad: int, offset: int = 0) \
+        -> Callable[[Samples], Tuple[LongTensor, LongTensor]]:
     def collate_fn(samples: Samples) -> Tuple[LongTensor, LongTensor]:
         xs, ys = list(zip(*samples))
         return (_pad_sequence([tensor(x, dtype=long) for x in xs], batch_first=True, padding_value=word_pad),
-                _pad_sequence([tensor(y, dtype=long) for y in ys], batch_first=True, padding_value=token_pad))
+                _pad_sequence([tensor(y, dtype=long) - offset for y in ys], batch_first=True, padding_value=token_pad))
     return collate_fn
 
 
