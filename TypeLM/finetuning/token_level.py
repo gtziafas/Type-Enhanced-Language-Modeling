@@ -72,7 +72,7 @@ def default_pretrained(path: str) -> Callable[[], TypedLM]:
         tmp = torch.load(path)
         model.load_state_dict(tmp['model_state_dict'])
         return model
-    return model_maker()
+    return model_maker
 
 
 def train_batch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Optimizer, words: LongTensor,
