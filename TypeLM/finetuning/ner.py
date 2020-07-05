@@ -3,7 +3,14 @@ from nlp_nl.nl_eval.datasets import create_ner
 from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, token_collator, DataLoader, CrossEntropyLoss,
                                            TypedLMForTokenClassification, default_pretrained, train_epoch, eval_epoch)
 from torch.optim import AdamW
+from typing import List, Dict
 import sys
+
+
+def convert_predictions_to_tokens(predictions: List[List[int]], pad: int, mapping: Dict[int, str]) -> List[List[str]]:
+    def convert_one(prediction: List[int]) -> List[str]:
+        return [mapping[p] for p in prediction if p != pad]
+    return [convert_one(prediction) for prediction in predictions]
 
 
 def main(ner_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
@@ -25,9 +32,9 @@ def main(ner_path: str, model_path: str, device: str, batch_size_train: int, bat
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=token_collator(word_pad_id, token_pad_id))
-    dev_loader = DataLoader(dataset=TokenDataset(processed_dev), batch_size=batch_size_dev, shuffle=True,
+    dev_loader = DataLoader(dataset=TokenDataset(processed_dev), batch_size=batch_size_dev, shuffle=False,
                             collate_fn=token_collator(word_pad_id, token_pad_id))
-    test_loader = DataLoader(dataset=TokenDataset(processed_test), batch_size=batch_size_dev, shuffle=True,
+    test_loader = DataLoader(dataset=TokenDataset(processed_test), batch_size=batch_size_dev, shuffle=False,
                              collate_fn=token_collator(word_pad_id, token_pad_id))
 
     model = TypedLMForTokenClassification(default_pretrained(model_path), len(ner.class_map)).to(device)
@@ -37,12 +44,14 @@ def main(ner_path: str, model_path: str, device: str, batch_size_train: int, bat
         train_loss, train_accu = train_epoch(model, loss_fn, optim, train_loader, token_pad_id, word_pad_id, device)
         sprint(f'Train loss:\t\t{train_loss}')
         sprint(f'Train accu:\t\t{train_accu}')
-        val_loss, val_accu = eval_epoch(model, loss_fn, dev_loader, token_pad_id, word_pad_id, device)
+        val_loss, val_accu, predictions = eval_epoch(model, loss_fn, dev_loader, token_pad_id, word_pad_id, device)
+        val_predictions = convert_predictions_to_tokens(predictions, token_pad_id, ner.class_map)
         sprint(f'Dev loss:\t\t{val_loss}')
         sprint(f'Dev accu:\t\t{val_accu}')
-        val_loss, val_accu = eval_epoch(model, loss_fn, test_loader, token_pad_id, word_pad_id, device)
-        sprint(f'Dev loss:\t\t{val_loss}')
-        sprint(f'Dev accu:\t\t{val_accu}')
+        test_loss, test_accu, predictions = eval_epoch(model, loss_fn, test_loader, token_pad_id, word_pad_id, device)
+        test_predictions = convert_predictions_to_tokens(predictions, token_pad_id, ner.class_map)
+        sprint(f'Dev loss:\t\t{test_loss}')
+        sprint(f'Dev accu:\t\t{test_accu}')
 
 
 if __name__ == '__main__':

@@ -108,27 +108,30 @@ def train_epoch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Op
 
 @no_grad()
 def eval_batch(model: TypedLMForTokenClassification, loss_fn: Module, words: LongTensor,
-               padding_mask: LongTensor, tokens: LongTensor, token_pad: int) -> Tuple[float, Tuple[int, int]]:
+               padding_mask: LongTensor, tokens: LongTensor, token_pad: int) \
+        -> Tuple[float, Tuple[int, int], List[List[int]]]:
     model.eval()
 
     num_tokens = words.shape[0] * words.shape[1]
-    predictions = model.forward(words, padding_mask)
-    _, token_stats = token_accuracy(predictions.argmax(dim=-1), tokens, token_pad)
+    predictions = model.forward(words, padding_mask).argmax(dim=-1)
+    _, token_stats = token_accuracy(predictions, tokens, token_pad)
 
     batch_loss = loss_fn(predictions.view(num_tokens, -1), tokens.flatten())
-    return batch_loss.item(), token_stats
+    return batch_loss.item(), token_stats, predictions.numpy().tolist()
 
 
 def eval_epoch(model: TypedLMForTokenClassification, loss_fn: Module, dataloader: DataLoader, token_pad: int,
-               word_pad: int, device: str) -> Tuple[float, float]:
+               word_pad: int, device: str) -> Tuple[float, float, List[List[int]]]:
     epoch_loss, sum_tokens, sum_correct_tokens = 0., 0, 0
+    predictions: List[List[int]] = []
 
     for words, tokens in dataloader:
         padding_mask = (words != word_pad).unsqueeze(1).repeat(1, words.shape[1], 1).long().to(device)
         words = words.to(device)
         tokens = tokens.to(device)
-        loss, (batch_total, batch_correct) = eval_batch(model, loss_fn, words, padding_mask, tokens, token_pad)
+        loss, (batch_total, batch_correct), preds = eval_batch(model, loss_fn, words, padding_mask, tokens, token_pad)
         sum_tokens += batch_total
         sum_correct_tokens += batch_correct
         epoch_loss += loss
-    return epoch_loss / len(dataloader), sum_correct_tokens / sum_tokens
+        predictions += preds
+    return epoch_loss / len(dataloader), sum_correct_tokens / sum_tokens, predictions
