@@ -2,8 +2,9 @@ from TypeLM.preprocessing.defaults import default_tokenizer
 from nlp_nl.nl_eval.datasets import create_ner
 from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, token_collator, DataLoader, CrossEntropyLoss,
                                            TypedLMForTokenClassification, default_pretrained, train_epoch, eval_epoch)
+from TypeLM.finetuning.conlleval import evaluate
 from torch.optim import AdamW
-from typing import List, Dict
+from typing import List, Dict, Tuple
 import sys
 
 
@@ -11,6 +12,25 @@ def convert_predictions_to_tokens(predictions: List[List[int]], pad: int, mappin
     def convert_one(prediction: List[int]) -> List[str]:
         return [mapping[p] for p in prediction if p != pad]
     return [convert_one(prediction) for prediction in predictions]
+
+
+def measure_ner_accuracy(predictions: List[List[int]], truths: List[List[int]], pad: int, mapping: Dict[int, str]) \
+        -> float:
+    def remove_pads(_prediction: List[int], _truth: List[int]) -> Tuple[List[int], List[int]]:
+        return [_p for i, _p in enumerate(_prediction) if _truth[i] != pad], [_t for _t in _truth if _t != pad]
+
+    def convert_to_str(_prediction: List[int]) -> List[str]:
+        return [mapping[_p] for _p in _prediction]
+
+    pairs = tuple(map(remove_pads, predictions, truths))
+    predictions, truths = [pair[0] for pair in pairs], [pair[1] for pair in pairs]
+    predictions_str = list(map(convert_to_str, predictions))
+    truths_str = list(map(convert_to_str, truths))
+    evaluate(truths_str, predictions_str, True)
+
+
+
+
 
 
 def main(ner_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
