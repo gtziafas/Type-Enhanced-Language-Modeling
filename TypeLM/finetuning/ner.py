@@ -8,14 +8,8 @@ from typing import List, Dict, Tuple
 import sys
 
 
-def convert_predictions_to_tokens(predictions: List[List[int]], pad: int, mapping: Dict[int, str]) -> List[List[str]]:
-    def convert_one(prediction: List[int]) -> List[str]:
-        return [mapping[p] for p in prediction if p != pad]
-    return [convert_one(prediction) for prediction in predictions]
-
-
 def measure_ner_accuracy(predictions: List[List[int]], truths: List[List[int]], pad: int, mapping: Dict[int, str]) \
-        -> float:
+        -> Tuple[float, float, float]:
     def remove_pads(_prediction: List[int], _truth: List[int]) -> Tuple[List[int], List[int]]:
         return [_p for i, _p in enumerate(_prediction) if _truth[i] != pad], [_t for _t in _truth if _t != pad]
 
@@ -26,11 +20,7 @@ def measure_ner_accuracy(predictions: List[List[int]], truths: List[List[int]], 
     predictions, truths = [pair[0] for pair in pairs], [pair[1] for pair in pairs]
     predictions_str = list(map(convert_to_str, predictions))
     truths_str = list(map(convert_to_str, truths))
-    evaluate(truths_str, predictions_str, True)
-
-
-
-
+    return evaluate(truths_str, predictions_str, True)
 
 
 def main(ner_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
@@ -60,18 +50,23 @@ def main(ner_path: str, model_path: str, device: str, batch_size_train: int, bat
     model = TypedLMForTokenClassification(default_pretrained(model_path), len(ner.class_map)).to(device)
     optim = AdamW(model.parameters(), lr=5e-05)
 
+    val_truth = [sample[1] for sample in processed_dev]
+    test_truth = [sample[1] for sample in processed_test]
+
     for epoch in range(num_epochs):
         train_loss, train_accu = train_epoch(model, loss_fn, optim, train_loader, token_pad_id, word_pad_id, device)
         sprint(f'Train loss:\t\t{train_loss}')
         sprint(f'Train accu:\t\t{train_accu}')
         val_loss, val_accu, predictions = eval_epoch(model, loss_fn, dev_loader, token_pad_id, word_pad_id, device)
-        val_predictions = convert_predictions_to_tokens(predictions, token_pad_id, ner.class_map)
+        val_predictions = measure_ner_accuracy(predictions, val_truth, token_pad_id, ner.class_map)
         sprint(f'Dev loss:\t\t{val_loss}')
         sprint(f'Dev accu:\t\t{val_accu}')
+        sprint(f'Scores:\t\t{val_predictions}')
         test_loss, test_accu, predictions = eval_epoch(model, loss_fn, test_loader, token_pad_id, word_pad_id, device)
-        test_predictions = convert_predictions_to_tokens(predictions, token_pad_id, ner.class_map)
+        test_predictions = measure_ner_accuracy(predictions, test_truth, token_pad_id, ner.class_map)
         sprint(f'Dev loss:\t\t{test_loss}')
         sprint(f'Dev accu:\t\t{test_accu}')
+        sprint(f'Scores:\t\t{test_predictions}')
 
 
 if __name__ == '__main__':
