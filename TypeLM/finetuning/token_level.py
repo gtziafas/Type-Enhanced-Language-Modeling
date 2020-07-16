@@ -114,10 +114,11 @@ def eval_batch(model: TypedLMForTokenClassification, loss_fn: Module, words: Lon
 
     num_tokens = words.shape[0] * words.shape[1]
     predictions = model.forward(words, padding_mask)
-    _, token_stats = token_accuracy(predictions.argmax(dim=-1), tokens, token_pad)
+    predictions_sharp = predictions.argmax(dim=-1)
+    _, token_stats = token_accuracy(predictions_sharp, tokens, token_pad)
 
     batch_loss = loss_fn(predictions.view(num_tokens, -1), tokens.flatten())
-    return batch_loss.item(), token_stats, predictions.tolist()
+    return batch_loss.item(), token_stats, predictions_sharp.tolist()
 
 
 def eval_epoch(model: TypedLMForTokenClassification, loss_fn: Module, dataloader: DataLoader, token_pad: int,
