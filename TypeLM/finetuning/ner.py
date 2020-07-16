@@ -11,6 +11,7 @@ import sys
 def measure_ner_accuracy(predictions: List[List[int]], truths: List[List[int]], pad: int, mapping: Dict[int, str]) \
         -> Tuple[float, float, float]:
     def remove_pads(_prediction: List[int], _truth: List[int]) -> Tuple[List[int], List[int]]:
+        _prediction = _prediction[:len(_truth)]
         return [_p for i, _p in enumerate(_prediction) if _truth[i] != pad], [_t for _t in _truth if _t != pad]
 
     def convert_to_str(_prediction: List[int]) -> List[str]:
