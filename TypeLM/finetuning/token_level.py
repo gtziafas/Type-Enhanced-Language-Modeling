@@ -113,8 +113,8 @@ def eval_batch(model: TypedLMForTokenClassification, loss_fn: Module, words: Lon
     model.eval()
 
     num_tokens = words.shape[0] * words.shape[1]
-    predictions = model.forward(words, padding_mask).argmax(dim=-1)
-    _, token_stats = token_accuracy(predictions, tokens, token_pad)
+    predictions = model.forward(words, padding_mask)
+    _, token_stats = token_accuracy(predictions.argmax(dim=-1), tokens, token_pad)
 
     batch_loss = loss_fn(predictions.view(num_tokens, -1), tokens.flatten())
     return batch_loss.item(), token_stats, predictions.numpy().tolist()
