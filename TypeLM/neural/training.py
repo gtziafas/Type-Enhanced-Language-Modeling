@@ -36,7 +36,6 @@ def train_batch(model: TypedLM, loss_fn: MixedLoss, optim: Optimizer, masked_wor
     batch_losses = loss_fn(word_preds.view(num_words, -1), true_words.flatten(),
                            type_preds.view(num_words, -1), true_types.flatten(), masked_ids.flatten())
     sum(batch_losses).backward()
-    batch_losses.backward()
     optim.step()
     optim.zero_grad()
 
