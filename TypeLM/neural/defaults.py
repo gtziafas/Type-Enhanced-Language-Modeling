@@ -1,6 +1,6 @@
 from TypeLM.neural.model import TypedLM
 from TypeLM.neural.loss import *
-from TypeLM.neural.optimizer import Scheduler, make_noam_scheme
+from TypeLM.neural.optimizer import Scheduler, make_linear_schedule
 from TypeLM.preprocessing.defaults import *
 from torch.optim import AdamW
 
@@ -25,8 +25,3 @@ def default_loss() -> MixedLoss:
                       'reduction': 'mean'}
     return MixedLoss(CrossEntropyLossMultiIgnore, CrossEntropyLossMultiIgnore, mlm_loss_kwargs, st_loss_kwargs, 1)
 
-
-def default_optimizer(model: TypedLM, warmup_steps: int) -> Scheduler:
-    schedule = make_noam_scheme(d_model=_d_model, warmup_steps=warmup_steps, factor=1.)
-    _opt = AdamW(model.parameters(), lr=1e10, betas=(0.9, 0.999), eps=1e-09, weight_decay=1e-02)
-    return Scheduler(_opt, schedule, [1])

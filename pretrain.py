@@ -10,7 +10,9 @@ _num_batches_in_dset = _sents_in_dset // _batch_size
 _num_subepochs_per_epoch = 10000
 _num_batches_per_subepoch = _num_batches_in_dset // _num_subepochs_per_epoch
 # _warmup_subepochs = 100
-_warmup_steps = 1e04
+_warmup_steps = 10000
+_total_epochs = 10
+_total_batches = _total_epochs * _num_batches_in_dset
 _device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 print(f'Training a dataset of {_sents_in_dset} samples with a batch size of {_batch_size}.')
@@ -20,7 +22,10 @@ loader = default_dataloader(path='/data/s3913171/Lassy-Large/full_dump_small', c
                             batch_size=_batch_size)
 model = default_model().to('cuda')
 loss_fn = default_loss()
-optim = default_optimizer(model, warmup_steps=int(_warmup_steps))
+
+optim = Scheduler(AdamW(model.parameters(), lr=1e10, betas=(0.9, 0.999), eps=1e-09, weight_decay=1e-02),
+                  make_linear_schedule(warmup_steps=_warmup_steps, total_steps=_total_batches, max_lr=1e-04),
+                  [1])
 
 
 def sprint(in_str: str) -> None:

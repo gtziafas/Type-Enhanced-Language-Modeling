@@ -2,11 +2,14 @@ from typing import Callable, Sequence
 from torch.optim import Optimizer
 
 
-def make_noam_scheme(d_model: int, warmup_steps: int, factor: float) -> Callable[[int], float]:
-    def noam_scheme(step: int) -> float:
-        step += 1
-        return d_model**-0.5 * min(step**-0.5, step*warmup_steps**-1.5) * factor
-    return noam_scheme
+def make_linear_schedule(warmup_steps: int, total_steps: int, max_lr: float) -> Callable[[int], float]:
+    def linear_schedule(step: int) -> float:
+        l = max_lr / (warmup_steps - total_steps)
+        beta = total_steps * max_lr / (total_steps - warmup_steps)
+        if step <= warmup_steps:
+            return max_lr * step/warmup_steps
+        return l * step + beta
+    return linear_schedule
 
 
 class Scheduler:

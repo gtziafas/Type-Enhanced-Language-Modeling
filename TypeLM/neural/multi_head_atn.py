@@ -30,10 +30,10 @@ class MultiHeadAttention(Module):
                  d_atn: int, d_v: int, d_out: int, dropout_rate: float = 0.1) -> None:
         super(MultiHeadAttention, self).__init__()
         self.num_heads = num_heads
-        self.q_transformation = Linear(in_features=d_q_in, out_features=d_atn*num_heads, bias=False)
-        self.k_transformation = Linear(in_features=d_k_in, out_features=d_atn*num_heads, bias=False)
-        self.v_transformation = Linear(in_features=d_v_in, out_features=d_v*num_heads, bias=False)
-        self.wo = Linear(in_features=num_heads * d_v, out_features=d_out, bias=False)
+        self.q_transformation = Linear(in_features=d_q_in, out_features=d_atn*num_heads, bias=True)
+        self.k_transformation = Linear(in_features=d_k_in, out_features=d_atn*num_heads, bias=True)
+        self.v_transformation = Linear(in_features=d_v_in, out_features=d_v*num_heads, bias=True)
+        self.wo = Linear(in_features=num_heads * d_v, out_features=d_out, bias=True)
         self.dropout = Dropout(dropout_rate)
 
     def forward(self, queries: Tensor, keys: Tensor, values: Tensor, mask: Optional[LongTensor] = None) -> Tensor:
