@@ -8,14 +8,14 @@ from typing import List, Dict, Tuple
 import sys
 
 
-def measure_ner_accuracy(predictions: List[List[int]], truths: List[List[int]], pad: int, mapping: Dict[int, str]) \
-        -> Tuple[float, float, float]:
+def measure_ner_accuracy(predictions: List[List[int]], truths: List[List[int]], pad: int, mapping: Dict[int, str], \
+        offset: int) -> Tuple[float, float, float]:
     def remove_pads(_prediction: List[int], _truth: List[int]) -> Tuple[List[int], List[int]]:
         _prediction = _prediction[:len(_truth)]
         return [_p for i, _p in enumerate(_prediction) if _truth[i] != pad], [_t for _t in _truth if _t != pad]
 
     def convert_to_str(_prediction: List[int]) -> List[str]:
-        return [mapping[_p] for _p in _prediction]
+        return [mapping[_p + offset] for _p in _prediction]
 
     pairs = tuple(map(remove_pads, predictions, truths))
     predictions, truths = [pair[0] for pair in pairs], [pair[1] for pair in pairs]
@@ -59,12 +59,12 @@ def main(ner_path: str, model_path: str, device: str, batch_size_train: int, bat
         sprint(f'Train loss:\t\t{train_loss}')
         sprint(f'Train accu:\t\t{train_accu}')
         val_loss, val_accu, predictions = eval_epoch(model, loss_fn, dev_loader, token_pad_id, word_pad_id, device)
-        val_predictions = measure_ner_accuracy(predictions, val_truth, token_pad_id, ner.class_map)
+        val_predictions = measure_ner_accuracy(predictions, val_truth, token_pad_id, ner.class_map, offset)
         sprint(f'Dev loss:\t\t{val_loss}')
         sprint(f'Dev accu:\t\t{val_accu}')
         sprint(f'Scores:\t\t{val_predictions}')
         test_loss, test_accu, predictions = eval_epoch(model, loss_fn, test_loader, token_pad_id, word_pad_id, device)
-        test_predictions = measure_ner_accuracy(predictions, test_truth, token_pad_id, ner.class_map)
+        test_predictions = measure_ner_accuracy(predictions, test_truth, token_pad_id, ner.class_map, offset)
         sprint(f'Dev loss:\t\t{test_loss}')
         sprint(f'Dev accu:\t\t{test_accu}')
         sprint(f'Scores:\t\t{test_predictions}')
