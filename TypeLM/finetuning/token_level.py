@@ -117,7 +117,7 @@ def eval_batch(model: TypedLMForTokenClassification, loss_fn: Module, words: Lon
     _, token_stats = token_accuracy(predictions.argmax(dim=-1), tokens, token_pad)
 
     batch_loss = loss_fn(predictions.view(num_tokens, -1), tokens.flatten())
-    return batch_loss.item(), token_stats, predictions.numpy().tolist()
+    return batch_loss.item(), token_stats, predictions.tolist()
 
 
 def eval_epoch(model: TypedLMForTokenClassification, loss_fn: Module, dataloader: DataLoader, token_pad: int,
