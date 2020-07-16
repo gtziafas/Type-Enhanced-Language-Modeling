@@ -35,7 +35,7 @@ def train_batch(model: TypedLM, loss_fn: MixedLoss, optim: Optimizer, masked_wor
     sent_stats, type_stats = type_accuracy(type_preds.argmax(dim=-1), true_types, type_pad_idx)
     batch_losses = loss_fn(word_preds.view(num_words, -1), true_words.flatten(),
                            type_preds.view(num_words, -1), true_types.flatten(), masked_ids.flatten())
-    batch_losses = torch.sum(batch_losses)
+    batch_losses.sum().backward()
     batch_losses.backward()
     optim.step()
     optim.zero_grad()
