@@ -5,7 +5,7 @@ from TypeLM.neural.loss import MixedLoss
 from TypeLM.preprocessing.loader import LazyLoader
 from torch.optim import Optimizer
 import torch
-
+import sys
 
 def type_accuracy(predictions: LongTensor, truth: LongTensor, ignore_idx: int) \
         -> Tuple[Tuple[int, int], Tuple[int, int]]:
@@ -29,7 +29,7 @@ def train_batch(model: TypedLM, loss_fn: MixedLoss, optim: Optimizer, masked_wor
 
     num_words = masked_words.shape[0] * masked_words.shape[1]
     type_pad_idx = model.tokenizer.type_tokenizer.PAD_TOKEN_ID
-
+    
     word_preds, type_preds = model.forward_train(masked_words, padding_mask)
     # todo: replace python indexing with pytorch indexing
     sent_stats, type_stats = type_accuracy(type_preds.argmax(dim=-1), true_types, type_pad_idx)
