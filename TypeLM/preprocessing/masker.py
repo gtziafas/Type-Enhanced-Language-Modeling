@@ -21,9 +21,9 @@ def mask_indices(seq: Sequence[Token], random_chance: float, unmaskable: Set[Tok
         mask = 0
     elif force is not None:
         mask = (0 if random() > random_chance else 1) if t not in subwords else force
-        force = mask
     else:
         raise ValueError('Trying to mask subword but no force assigned.')
+    force = mask
     return [mask] + list(mask_indices(seq[1:], random_chance, unmaskable, subwords, force))
 
 
