@@ -1,4 +1,4 @@
-from typing import Set, TypeVar, Generic, Sequence, Callable, Tuple
+from typing import Set, TypeVar, Generic, Sequence, Callable, Tuple, Optional
 from random import choice, random
 
 Token = TypeVar('Token')
@@ -12,8 +12,19 @@ def mask_sequence(seq: Sequence[Token], indices: Sequence[int], masker: Callable
     return [masker(t) if indices[i] == 1 else t for i, t in enumerate(seq)]
 
 
-def mask_indices(seq: Sequence[Token], random_chance: float, unmaskable: Set[Token]) -> Sequence[int]:
-    return [0 if t in unmaskable or random() > random_chance else 1 for t in seq]
+def mask_indices(seq: Sequence[Token], random_chance: float, unmaskable: Set[Token],
+                 subwords: Set[Token], force: Optional[int]) -> Sequence[int]:
+    if not seq:
+        return []
+    t = seq[0]
+    if t in unmaskable:
+        mask = 0
+    elif force is not None:
+        mask = (0 if random() > random_chance else 1) if t not in subwords else force
+        force = mask
+    else:
+        raise ValueError('Trying to mask subword but no force assigned.')
+    return [mask] + list(mask_indices(seq[1:], random_chance, unmaskable, subwords, force))
 
 
 class RandomReplacer(Generic[Token]):
@@ -29,7 +40,7 @@ class RandomReplacer(Generic[Token]):
 
 class Masker(Generic[Token]):
     def __init__(self, outer_chance: float, mask_chance: float, keep_chance: float, replacements: Set[Token],
-                 token_mask: Token, unmaskable: Set[Token]):
+                 token_mask: Token, unmaskable: Set[Token], subwords: Set[Token]):
         """
             Masker class that handles masking and replacement functions.
 
@@ -39,11 +50,13 @@ class Masker(Generic[Token]):
         :param replacements:    A set of tokens that can be used as replacements.
         :param token_mask:      The [MASK] token.
         :param unmaskable:      A set of tokens that can never be masked.
+        :param subwords:        A set of tokens that indicate word spans.
         """
         self.outer_chance = outer_chance
         self.unmaskable = unmaskable
+        self.subwords = subwords
         self.replacer = RandomReplacer(token_mask, mask_chance, keep_chance, replacements)
 
     def __call__(self, sent: Sequence[Token]) -> Tuple[Sequence[int], Sequence[Token]]:
-        indices = mask_indices(sent, self.outer_chance, self.unmaskable)
+        indices = mask_indices(sent, self.outer_chance, self.unmaskable, self.subwords, None)
         return indices, mask_sequence(sent, indices, self.replacer.__call__)

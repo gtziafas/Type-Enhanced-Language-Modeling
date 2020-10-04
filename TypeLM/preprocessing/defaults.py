@@ -23,16 +23,17 @@ def default_tokenizer() -> Tokenizer:
 def default_word_masker() -> Masker:
     unmaskable = set(_tokenizer.word_tokenizer.core.all_special_ids)
     replacements = set(_tokenizer.word_tokenizer.core.vocab.values()).difference(unmaskable)
+    subwords = set({k: v for k, v in _tokenizer.word_tokenizer.core.get_vocab().items() if k.startswith('##')}.values())
     mask = _tokenizer.word_tokenizer.core.mask_token_id
     return Masker(outer_chance=0.15, mask_chance=0.8, keep_chance=0.5, replacements=replacements, token_mask=mask,
-                  unmaskable=unmaskable)
+                  unmaskable=unmaskable, subwords=subwords)
 
 
 def regularization_type_masker() -> Masker:
     unmaskable = {_tokenizer.type_tokenizer.PAD_TOKEN_ID}
     replacements = set(_tokenizer.type_tokenizer.vocabulary.values()).difference(unmaskable)
     return Masker(outer_chance=0.01, mask_chance=0, keep_chance=0, replacements=replacements, token_mask=None,
-                  unmaskable=unmaskable)
+                  unmaskable=unmaskable, subwords=set())
 
 
 def default_dataloader(path: str, chunk_size: int, batch_size: int) -> LazyLoader:
