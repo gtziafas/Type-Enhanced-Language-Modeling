@@ -68,8 +68,8 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--save_path', help='where to save the model once training ends', type=str)
-    parser.add_argument('-l', '--load_path', help='where to load the model from for resuming training', type=Optional[str], default=None)
-    parser.add_argument('-e', '--epoch', help='which epoch to resume training from', type=Optional[int], default=None)
+    parser.add_argument('-l', '--load_path', help='where to load the model from for resuming training', type=str, default=None)
+    parser.add_argument('-e', '--epoch', help='which epoch to resume training from', type=int, default=None)
 
     kwargs = vars(parser.parse_args())
     if kwargs['epoch'] is None:
