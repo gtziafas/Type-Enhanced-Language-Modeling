@@ -3,7 +3,7 @@ from TypeLM.preprocessing.defaults import *
 
 import torch
 
-_device = torch._device("cuda" if torch.cuda.is_available() else "cpu")
+_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 _model_path = '/data/s3913171/Lassy-Large/256_bertbase_1.pth'
 
 tokenizer = default_tokenizer().word_tokenizer
