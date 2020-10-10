@@ -9,7 +9,7 @@ _model_path = '/data/s3913171/Lassy-Large/256_bertbase_1.pth'
 tokenizer = default_tokenizer().word_tokenizer
 
 
-def load_model(modelpath: str) -> TypedLM:
+def load_model(modelpath: str = _model_path) -> TypedLM:
   model = default_model().to(_device)  
   tmp = torch.load(modelpath)
   model.load_state_dict(tmp['model_state_dict'])
