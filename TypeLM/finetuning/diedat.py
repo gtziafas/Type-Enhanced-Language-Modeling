@@ -19,9 +19,12 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
     offset = 0
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
 
-    processed_train = tokenize_data(tokenizer, [t for t in diedat.train_data if len(t) <= 100], token_pad_id, offset)
-    processed_dev = tokenize_data(tokenizer, [t for t in diedat.dev_data if len(t) <= 100], token_pad_id, offset)
-    processed_test = tokenize_data(tokenizer, [t for t in diedat.test_data if len(t) <= 100], token_pad_id, offset)
+    processed_train = tokenize_data(tokenizer, [list(zip(*t)) for t in diedat.train_data if len(t) <= 100] \
+        token_pad_id, offset)
+    processed_dev = tokenize_data(tokenizer, [list(zip(*t)) for t in diedat.dev_data if len(t) <= 100], \
+        token_pad_id, offset)
+    processed_test = tokenize_data(tokenizer, [list(zip(*t)) for t in diedat.test_data if len(t) <= 100], \
+        token_pad_id, offset)
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=token_collator(word_pad_id, token_pad_id))
