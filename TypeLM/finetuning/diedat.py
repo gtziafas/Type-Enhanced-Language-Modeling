@@ -7,16 +7,6 @@ from typing import List, Dict, Tuple
 import sys
 
 
-def clean_diedat_data(data: List[Tuple[List[str], List[int]]],
-            null_char: str = '\xad') -> List[List[Tuple[str, int]]]:
-    data = [list(zip(*t)) for t in data]
-    for datum in data:
-        words, tokens = zip(*datum)
-        if null_char in words:
-            data.remove(datum)
-    return data
-
-
 def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
          num_epochs: int) -> None:
     def sprint(s: str) -> None:
@@ -30,11 +20,11 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
     offset = 0
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
 
-    processed_train = tokenize_data(tokenizer, [t for t in clean_diedat_data(diedat.train_data) if len(t) <= 100] \
+    processed_train = tokenize_data(tokenizer, [t for t in diedat.train_data if len(t) <= 100] \
         token_pad_id, offset)
-    processed_dev = tokenize_data(tokenizer, [t for t in clean_diedat_data(diedat.dev_data) if len(t) <= 100], \
+    processed_dev = tokenize_data(tokenizer, [t for t in diedat.dev_data if len(t) <= 100], \
         token_pad_id, offset)
-    processed_test = tokenize_data(tokenizer, [t for t in clean_diedat_data(diedat.test_data) if len(t) <= 100], \
+    processed_test = tokenize_data(tokenizer, [t for t in diedat.test_data if len(t) <= 100], \
         token_pad_id, offset)
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
