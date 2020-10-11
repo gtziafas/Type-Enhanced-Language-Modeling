@@ -5,7 +5,7 @@ from torch.nn.utils.rnn import pad_sequence as _pad_sequence
 from torch import LongTensor, Tensor, tensor, long, no_grad
 from TypeLM.neural.model import TypedLM
 from TypeLM.neural.defaults import default_model
-from torch.nn import Module, Linear, CrossEntropyLoss
+from torch.nn import Module, Linear, CrossEntropyLoss, Dropout
 from TypeLM.neural.training import type_accuracy as token_accuracy
 from torch.optim import Optimizer
 import torch
@@ -57,14 +57,15 @@ def token_collator(word_pad: int, token_pad: int) -> Callable[[Samples], Tuple[L
 
 
 class TypedLMForTokenClassification(Module):
-    def __init__(self, model_maker: Callable[[], TypedLM], num_classes: int):
+    def __init__(self, model_maker: Callable[[], TypedLM], num_classes: int, dropout_rate: float = 0.1):
         super(TypedLMForTokenClassification, self).__init__()
         self.core = model_maker()
         self.token_classifier = Linear(in_features=self.core.word_embedder.embedding_dim, out_features=num_classes)
+        self.dropout = Dropout(dropout_rate)
 
     def forward(self, words: LongTensor, pad_mask: LongTensor) -> Tensor:
         deep = self.core.encode(words, pad_mask)[1]
-        return self.token_classifier(deep)
+        return self.token_classifier(self.dropout(deep))
 
 
 def default_pretrained(path: str) -> Callable[[], TypedLM]:

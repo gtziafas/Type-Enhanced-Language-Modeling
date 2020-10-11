@@ -52,7 +52,7 @@ def main(ner_path: str, model_path: str, device: str, batch_size_train: int, bat
                              collate_fn=token_collator(word_pad_id, token_pad_id))
 
     model = TypedLMForTokenClassification(default_pretrained(model_path), len(ner.class_map)).to(device)
-    optim = AdamW(model.parameters(), lr=5e-05)
+    optim = AdamW(model.parameters(), lr=3e-05)
 
     val_truth = [sample[1] for sample in processed_dev]
     test_truth = [sample[1] for sample in processed_test]
