@@ -96,7 +96,7 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
     token_pad_id = -100
     diedat = create_diedat(diedat_path)
     offset = 0
-    loss_fn = DieDatLoss(loss=CrossEntropyLoss, loss_kwargs={'ignore_index':token_pad_id, 'reduction':'mean'})
+    loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
 
     processed_train = tokenize_data(tokenizer, [t for t in diedat.train_data if len(t) <= 100], \
         token_pad_id, offset)
