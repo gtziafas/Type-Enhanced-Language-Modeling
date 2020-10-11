@@ -68,7 +68,6 @@ class TypedLMForTokenClassification(Module):
         return self.token_classifier(self.dropout(deep))
 
 
-
 def default_pretrained(path: str) -> Callable[[], TypedLM]:
     def model_maker() -> TypedLM:
         model = default_model()
