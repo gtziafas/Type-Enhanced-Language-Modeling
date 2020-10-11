@@ -37,9 +37,7 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
     model = TypedLMForTokenClassification(default_pretrained(model_path), len(diedat.class_map)).to(device)
     optim = AdamW(model.parameters(), lr=3e-05)
 
-    val_truth = [sample[1] for sample in processed_dev]
-    test_truth = [sample[1] for sample in processed_test]
-
+    sprint('Done with tokenization/loading, starting to train...')
     for epoch in range(num_epochs):
         train_loss, train_accu = train_epoch(model, loss_fn, optim, train_loader, token_pad_id, word_pad_id, device)
         sprint(f'Train loss:\t\t{train_loss}')
