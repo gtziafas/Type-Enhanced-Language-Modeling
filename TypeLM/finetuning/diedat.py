@@ -1,11 +1,15 @@
 from TypeLM.preprocessing.defaults import default_tokenizer
 from nlp_nl.nl_eval.datasets import create_diedat
-from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, DataLoader, CrossEntropyLoss, 
-                                           TypedLMForTokenClassification, default_pretrained, token_collator,
-                                           Samples, Tensor, LongTensor, Module, token_accuracy, _pad_sequence)
+from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, DataLoader, CrossEntropyLoss, tensor,
+                                           TypedLMForTokenClassification, default_pretrained, _pad_sequence,
+                                           Samples, Tensor, LongTensor, Module, token_accuracy)
 from torch.optim import AdamW, Optimizer
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Callable
 import sys
+
+
+def mask_from_tokens(preds: Tensor, tokens: LongTensor) -> Tuple[Tensor, LongTensor]:
+    return preds[tokens>0].unsqueeze(0), tokens[tokens>0].unsqueeze(0)
 
 
 def train_batch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Optimizer, words: LongTensor,
@@ -14,8 +18,7 @@ def train_batch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Op
 
     num_tokens = words.shape[0] * words.shape[1]
     predictions = model.forward(words, padding_mask)
-    predictions = predictions[tokens>0, :]
-    tokens = tokens[tokens>0]
+    predictions, tokens = mask_from_tokens(predictions, tokens)
 
     _, token_stats = token_accuracy(predictions.argmax(dim=-1), tokens, token_pad)
 
@@ -49,8 +52,7 @@ def eval_batch(model: TypedLMForTokenClassification, loss_fn: Module, words: Lon
 
     num_tokens = words.shape[0] * words.shape[1]
     predictions = model.forward(words, padding_mask)
-    predictions = predictions[tokens>0,:]
-    tokens = tokens[tokens>0]
+    predictions, tokens = mask_from_tokens(predictions, tokens)
     predictions_sharp = predictions.argmax(dim=-1)
     _, token_stats = token_accuracy(predictions_sharp, tokens, token_pad)
 
@@ -78,7 +80,7 @@ def eval_epoch(model: TypedLMForTokenClassification, loss_fn: Module, dataloader
 def token_collator(word_pad: int, token_pad: int, mask_token: int) -> Callable[[Samples], Tuple[LongTensor, LongTensor]]:
     def collate_fn(samples: Samples) -> Tuple[LongTensor, LongTensor]:
         xs, ys = list(zip(*samples))
-        xs = [mask_token if ys[i]>0 else x for i, x in enumerate(xs)]
+        xs = [[mask_token if y[j]>0 else w for j,w in enumerate(x)] for x,y in samples]
         return (_pad_sequence([tensor(x, dtype=long) for x in xs], batch_first=True, padding_value=word_pad),
                 _pad_sequence([tensor(y, dtype=long) for y in ys], batch_first=True, padding_value=token_pad))
     return collate_fn
