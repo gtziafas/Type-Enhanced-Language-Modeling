@@ -15,7 +15,7 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
     tokenizer = default_tokenizer()
     word_pad_id = tokenizer.word_tokenizer.core.pad_token_id
     token_pad_id = -100
-    diedat = create_ner(diedat_path)
+    diedat = create_diedat(diedat_path)
     offset = 1
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
 
