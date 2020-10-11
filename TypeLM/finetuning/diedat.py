@@ -16,13 +16,12 @@ def train_batch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Op
                 padding_mask: LongTensor, tokens: LongTensor, token_pad: int) -> Tuple[float, Tuple[int, int]]:
     model.train()
 
-    num_tokens = words.shape[0] * words.shape[1]
     predictions = model.forward(words, padding_mask)
     predictions, tokens = mask_from_tokens(predictions, tokens)
 
     _, token_stats = token_accuracy(predictions.argmax(dim=-1), tokens, token_pad)
 
-    batch_loss = loss_fn(predictions.view(num_tokens, -1), tokens.flatten())
+    batch_loss = loss_fn(predictions.flatten(), tokens.flatten())
     batch_loss.backward()
     optim.step()
     optim.zero_grad()
@@ -50,13 +49,12 @@ def eval_batch(model: TypedLMForTokenClassification, loss_fn: Module, words: Lon
         -> Tuple[float, Tuple[int, int], List[List[int]]]:
     model.eval()
 
-    num_tokens = words.shape[0] * words.shape[1]
     predictions = model.forward(words, padding_mask)
     predictions, tokens = mask_from_tokens(predictions, tokens)
     predictions_sharp = predictions.argmax(dim=-1)
     _, token_stats = token_accuracy(predictions_sharp, tokens, token_pad)
 
-    batch_loss = loss_fn(predictions.view(num_tokens, -1), tokens.flatten())
+    batch_loss = loss_fn(predictions.flatten(), tokens.flatten())
     return batch_loss.item(), token_stats, predictions_sharp.tolist()
 
 
