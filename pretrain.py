@@ -57,7 +57,7 @@ def resume(epoch: int, save_path: str, load_path: Optional[str]):
         sprint(f'\tST Loss:\t\t{st_loss:.5f}')
         sprint(f'\tSentence acc:\t\t{s_acc:.5f}')
         sprint(f'\tAtom acc:\t\t{atom_acc:.5f}')
-        sprint(f'\tCurrent lr:\t\t{optim.lr:.5f}')
+        sprint(f'\tCurrent lr:\t\t{optim.lr}')
 
     sprint('Finished training epoch.')
     torch.save({'model_state_dict': model.state_dict(), 'opt': optim.opt.state_dict()}, save_path)
