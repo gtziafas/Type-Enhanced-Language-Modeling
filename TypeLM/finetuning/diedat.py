@@ -2,7 +2,7 @@ from TypeLM.preprocessing.defaults import default_tokenizer
 from nlp_nl.nl_eval.datasets import create_diedat
 from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, DataLoader, CrossEntropyLoss, tensor,
                                            TypedLMForTokenClassification, default_pretrained, _pad_sequence,
-                                           Samples, Tensor, LongTensor, Module, token_accuracy)
+                                           Samples, Tensor, LongTensor, Module, token_accuracy, no_grad)
 from torch.optim import AdamW, Optimizer
 from typing import List, Dict, Tuple, Callable
 import sys
