@@ -43,17 +43,17 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
         val_loss, val_accu, predictions = eval_epoch(model, loss_fn, dev_loader, token_pad_id, word_pad_id, device)
         sprint(f'Dev loss:\t\t{val_loss}')
         sprint(f'Dev accu:\t\t{val_accu}')
-        sprint(f'Scores:\t\t{predictions}')
+        #sprint(f'Scores:\t\t{predictions}')
         test_loss, test_accu, predictions = eval_epoch(model, loss_fn, test_loader, token_pad_id, word_pad_id, device)
         sprint(f'Dev loss:\t\t{test_loss}')
         sprint(f'Dev accu:\t\t{test_accu}')
-        sprint(f'Scores:\t\t{predictions}')
+        #sprint(f'Scores:\t\t{predictions}')
 
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
     parser = ArgumentParser()
-    parser.add_argument('-d', '--diedat_path', help='Path to diedat folder.')
+    parser.add_argument('-p', '--diedat_path', help='Path to diedat folder.')
     parser.add_argument('-m', '--model_path', help='Path to pretrained model')
     parser.add_argument('-d', '--device', help='Which device to use', default='cuda')
     parser.add_argument('-b', '--batch_size_train', help='Training batch size', default=32, type=int)
