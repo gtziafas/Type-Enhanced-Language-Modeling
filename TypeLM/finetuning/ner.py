@@ -7,6 +7,9 @@ from torch.optim import AdamW
 from typing import List, Dict, Tuple
 import sys
 
+from functools import reduce
+from operator import add
+
 
 def measure_ner_accuracy(predictions: List[List[int]], truths: List[List[int]], pad: int, mapping: Dict[int, str], \
         offset: int) -> Tuple[float, float, float]:
@@ -19,8 +22,8 @@ def measure_ner_accuracy(predictions: List[List[int]], truths: List[List[int]], 
 
     pairs = tuple(map(remove_pads, predictions, truths))
     predictions, truths = [pair[0] for pair in pairs], [pair[1] for pair in pairs]
-    predictions_str = list(map(convert_to_str, predictions))
-    truths_str = list(map(convert_to_str, truths))
+    predictions_str: List[str] = reduce(add, list(map(convert_to_str, predictions)))
+    truths_str: List[str] = reduce(add, list(map(convert_to_str, truths)))
     return evaluate(truths_str, predictions_str, True)
 
 
