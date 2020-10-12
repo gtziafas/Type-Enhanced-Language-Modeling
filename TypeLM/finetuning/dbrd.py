@@ -16,7 +16,7 @@ def main(dbrd_path: str, model_path: str, device: str, batch_size_train: int, ba
 
     tokenizer = default_tokenizer()
     word_pad_id = tokenizer.word_tokenizer.core.pad_token_id
-    loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
+    loss_fn = CrossEntropyLoss(reduction='mean')
 
     dbrd = create_dbrd(drbd_path)
     processed_train = tokenize_data(tokenizer, [t for t in dbrd.train_data if len(t) <= 100])
