@@ -38,7 +38,7 @@ def main(dbrd_path: str, model_path: str, device: str, batch_size_train: int, ba
     test_loader = DataLoader(dataset=SequenceDataset(processed_test), batch_size=batch_size_dev, shuffle=False,
                              collate_fn=sequence_collator(word_pad_id))
 
-    model = TypedLMForSequenceClassification(default_pretrained(model_path), len(dbrd.class_map)).to(device)
+    model = TypedLMForSequenceClassification(default_pretrained(model_path), 2).to(device)
     optim = AdamW(model.parameters(), lr=3e-05)
 
     sprint('Done with tokenization/loading, starting to train...')
