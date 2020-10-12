@@ -13,8 +13,8 @@ import os
 _PROC_DATA = ['proc_train.p', 'proc_dev.p', 'proc_test.p']
 
 
-def mask_from_tokens(preds: Tensor, tokens: LongTensor) -> Tuple[Tensor, LongTensor]:
-    return preds[tokens>0].contiguous(), (tokens[tokens>0]-1).contiguous()
+def mask_from_tokens(preds: Tensor, tokens: LongTensor, offset: int = 1) -> Tuple[Tensor, LongTensor]:
+    return preds[tokens>0], (tokens[tokens>0]-offset)
 
 
 def train_batch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Optimizer, words: LongTensor,
