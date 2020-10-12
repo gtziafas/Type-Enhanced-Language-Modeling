@@ -1,9 +1,10 @@
 from TypeLM.preprocessing.defaults import default_tokenizer
 from nlp_nl.nl_eval.datasets import create_diedat
 from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, DataLoader, CrossEntropyLoss, tensor,
-                                           TypedLMForTokenClassification, default_pretrained, _pad_sequence,
-                                           Samples, Tensor, LongTensor, Module, token_accuracy, no_grad, long)
+                                           TypedLMForTokenClassification, default_pretrained, token_collator,
+                                           Samples, Tensor, LongTensor, Module, train_batch, eval_batch)
 from torch.optim import AdamW, Optimizer
+from torch import long, bool, zeros_like
 from typing import List, Dict, Tuple, Callable
 import pickle
 import sys
@@ -17,54 +18,31 @@ def mask_from_tokens(preds: Tensor, tokens: LongTensor, offset: int = 1) -> Tupl
     return preds[tokens>0], (tokens[tokens>0]-offset)
 
 
-def train_batch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Optimizer, words: LongTensor,
-                padding_mask: LongTensor, tokens: LongTensor, token_pad: int) -> Tuple[float, Tuple[int, int]]:
-    model.train()
-
-    predictions = model.forward(words, padding_mask)
-    predictions, tokens = mask_from_tokens(predictions, tokens)
-
-    _, token_stats = token_accuracy(predictions.argmax(dim=-1).unsqueeze(0), tokens.unsqueeze(0), token_pad)
-
-    batch_loss = loss_fn(predictions, tokens)
-    batch_loss.backward()
-    optim.step()
-    optim.zero_grad()
-    return batch_loss.item(), token_stats
-
-
 def train_epoch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Optimizer,
-                dataloader: DataLoader, token_pad: int, word_pad: int, device: str) -> Tuple[float, float]:
+                dataloader: DataLoader, token_pad: int, word_pad: int, mask_token: int,
+                device: str) -> Tuple[float, float]:
     epoch_loss, sum_tokens, sum_correct_tokens = 0., 0, 0
 
     for words, tokens in dataloader:
         padding_mask = (words != word_pad).unsqueeze(1).repeat(1, words.shape[1], 1).long().to(device)
         words = words.to(device)
         tokens = tokens.to(device)
-        loss, (batch_total, batch_correct) = train_batch(model, loss_fn, optim, words, padding_mask, tokens, token_pad)
+
+        mask = torch.zeros_like(tokens, dtype=bool)
+        mask = mask.masked_fill_(tokens>0, 1)
+        words[mask] = mask_token
+        tokens[mask==0] = token_pad
+
+        loss, (batch_total, batch_correct) = train_batch(model, loss_fn, optim, words, \
+            padding_mask, tokens, token_pad)
         sum_tokens += batch_total
         sum_correct_tokens += batch_correct
         epoch_loss += loss
     return epoch_loss / len(dataloader), sum_correct_tokens / sum_tokens
 
 
-@no_grad()
-def eval_batch(model: TypedLMForTokenClassification, loss_fn: Module, words: LongTensor,
-               padding_mask: LongTensor, tokens: LongTensor, token_pad: int) \
-        -> Tuple[float, Tuple[int, int], List[List[int]]]:
-    model.eval()
-
-    predictions = model.forward(words, padding_mask)
-    predictions, tokens = mask_from_tokens(predictions, tokens)
-    predictions_sharp = predictions.argmax(dim=-1)
-    _, token_stats = token_accuracy(predictions_sharp, tokens, token_pad)
-
-    batch_loss = loss_fn(predictions, tokens)
-    return batch_loss.item(), token_stats, predictions_sharp.tolist()
-
-
 def eval_epoch(model: TypedLMForTokenClassification, loss_fn: Module, dataloader: DataLoader, token_pad: int,
-               word_pad: int, device: str) -> Tuple[float, float]:
+               word_pad: int, mask_token: int, device: str) -> Tuple[float, float]:
     epoch_loss, sum_tokens, sum_correct_tokens = 0., 0, 0
     predictions: List[List[int]] = []
 
@@ -72,20 +50,18 @@ def eval_epoch(model: TypedLMForTokenClassification, loss_fn: Module, dataloader
         padding_mask = (words != word_pad).unsqueeze(1).repeat(1, words.shape[1], 1).long().to(device)
         words = words.to(device)
         tokens = tokens.to(device)
-        loss, (batch_total, batch_correct), preds = eval_batch(model, loss_fn, words, padding_mask, tokens, token_pad)
+
+        mask = torch.zeros_like(tokens, dtype=bool)
+        mask = mask.masked_fill_(tokens>0, 1)
+        words[mask] = mask_token
+        tokens[mask==0] = token_pad
+
+        loss, (batch_total, batch_correct), preds = eval_batch(model, loss_fn, words, \
+            padding_mask, tokens, token_pad)
         sum_tokens += batch_total
         sum_correct_tokens += batch_correct
         epoch_loss += loss
     return epoch_loss / len(dataloader), sum_correct_tokens / sum_tokens
-
-
-def token_collator(word_pad: int, token_pad: int, mask_token: int) -> Callable[[Samples], Tuple[LongTensor, LongTensor]]:
-    def collate_fn(samples: Samples) -> Tuple[LongTensor, LongTensor]:
-        xs, ys = list(zip(*samples))
-        xs = [[mask_token if y[j]>0 else w for j,w in enumerate(x)] for x,y in samples]
-        return (_pad_sequence([tensor(x, dtype=long) for x in xs], batch_first=True, padding_value=word_pad),
-                _pad_sequence([tensor(y, dtype=long) for y in ys], batch_first=True, padding_value=token_pad))
-    return collate_fn
 
 
 def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
@@ -117,11 +93,11 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
     processed_test = pickle.load(open(os.path.join(diedat_path, _PROC_DATA[2]), "rb"))
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
-                              collate_fn=token_collator(word_pad_id, token_pad_id, mask_token_id))
+                              collate_fn=token_collator(word_pad_id, token_pad_id))
     dev_loader = DataLoader(dataset=TokenDataset(processed_dev), batch_size=batch_size_dev, shuffle=False,
-                            collate_fn=token_collator(word_pad_id, token_pad_id, mask_token_id))
+                            collate_fn=token_collator(word_pad_id, token_pad_id))
     test_loader = DataLoader(dataset=TokenDataset(processed_test), batch_size=batch_size_dev, shuffle=False,
-                             collate_fn=token_collator(word_pad_id, token_pad_id, mask_token_id))
+                             collate_fn=token_collator(word_pad_id, token_pad_id))
 
     model = TypedLMForTokenClassification(default_pretrained(model_path), 2).to(device)
     optim = AdamW(model.parameters(), lr=3e-05)
