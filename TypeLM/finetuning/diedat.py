@@ -2,14 +2,19 @@ from TypeLM.preprocessing.defaults import default_tokenizer
 from nlp_nl.nl_eval.datasets import create_diedat
 from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, DataLoader, CrossEntropyLoss, tensor,
                                            TypedLMForTokenClassification, default_pretrained, _pad_sequence,
-                                           Samples, Tensor, LongTensor, Module, token_accuracy, no_grad)
+                                           Samples, Tensor, LongTensor, Module, token_accuracy, no_grad, long)
 from torch.optim import AdamW, Optimizer
 from typing import List, Dict, Tuple, Callable
+import pickle
 import sys
+import os
+
+
+_PROC_DATA = ['proc_train.p', 'proc_dev.p', 'proc_test.p']
 
 
 def mask_from_tokens(preds: Tensor, tokens: LongTensor) -> Tuple[Tensor, LongTensor]:
-    return preds[tokens>0].unsqueeze(0), tokens[tokens>0].unsqueeze(0)
+    return preds[tokens>0].contiguous(), (tokens[tokens>0]-1).contiguous()
 
 
 def train_batch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Optimizer, words: LongTensor,
@@ -19,9 +24,9 @@ def train_batch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Op
     predictions = model.forward(words, padding_mask)
     predictions, tokens = mask_from_tokens(predictions, tokens)
 
-    _, token_stats = token_accuracy(predictions.argmax(dim=-1), tokens, token_pad)
+    _, token_stats = token_accuracy(predictions.argmax(dim=-1).unsqueeze(0), tokens.unsqueeze(0), token_pad)
 
-    batch_loss = loss_fn(predictions.flatten(), tokens.flatten())
+    batch_loss = loss_fn(predictions, tokens)
     batch_loss.backward()
     optim.step()
     optim.zero_grad()
@@ -54,9 +59,8 @@ def eval_batch(model: TypedLMForTokenClassification, loss_fn: Module, words: Lon
     predictions_sharp = predictions.argmax(dim=-1)
     _, token_stats = token_accuracy(predictions_sharp, tokens, token_pad)
 
-    batch_loss = loss_fn(predictions.flatten(), tokens.flatten())
+    batch_loss = loss_fn(predictions, tokens)
     return batch_loss.item(), token_stats, predictions_sharp.tolist()
-
 
 
 def eval_epoch(model: TypedLMForTokenClassification, loss_fn: Module, dataloader: DataLoader, token_pad: int,
@@ -94,16 +98,23 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
     mask_token_id = tokenizer.word_tokenizer.core.mask_token_id
     word_pad_id = tokenizer.word_tokenizer.core.pad_token_id
     token_pad_id = -100
-    diedat = create_diedat(diedat_path)
     offset = 0
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
 
-    processed_train = tokenize_data(tokenizer, [t for t in diedat.train_data if len(t) <= 100], \
-        token_pad_id, offset)
-    processed_dev = tokenize_data(tokenizer, [t for t in diedat.dev_data if len(t) <= 100], \
-        token_pad_id, offset)
-    processed_test = tokenize_data(tokenizer, [t for t in diedat.test_data if len(t) <= 100], \
-        token_pad_id, offset)
+    # diedat = create_diedat(diedat_path)
+    # processed_train = tokenize_data(tokenizer, [t for t in diedat.train_data if len(t) <= 100], \
+    #     token_pad_id, offset)
+    # processed_dev = tokenize_data(tokenizer, [t for t in diedat.dev_data if len(t) <= 100], \
+    #     token_pad_id, offset)
+    # processed_test = tokenize_data(tokenizer, [t for t in diedat.test_data if len(t) <= 100], \
+    #     token_pad_id, offset)
+    # pickle.dump(processed_train, open(os.path.join(diedat_path, _PROC_DATA[0], "wb"))
+    # pickle.dump(processed_dev, open(os.path.join(diedat_path, _PROC_DATA[1], "wb"))
+    # pickle.dump(processed_test, open(os.path.join(diedat_path, _PROC_DATA[2], "wb"))
+
+    processed_train = pickle.load(open(os.path.join(diedat_path, _PROC_DATA[0]), "rb"))
+    processed_dev = pickle.load(open(os.path.join(diedat_path, _PROC_DATA[1]), "rb"))
+    processed_test = pickle.load(open(os.path.join(diedat_path, _PROC_DATA[2]), "rb"))
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=token_collator(word_pad_id, token_pad_id, mask_token_id))
@@ -112,7 +123,7 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
     test_loader = DataLoader(dataset=TokenDataset(processed_test), batch_size=batch_size_dev, shuffle=False,
                              collate_fn=token_collator(word_pad_id, token_pad_id, mask_token_id))
 
-    model = TypedLMForTokenClassification(default_pretrained(model_path), len(diedat.class_map)).to(device)
+    model = TypedLMForTokenClassification(default_pretrained(model_path), 2).to(device)
     optim = AdamW(model.parameters(), lr=3e-05)
 
     sprint('Done with tokenization/loading, starting to train...')
