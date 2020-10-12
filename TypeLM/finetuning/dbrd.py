@@ -24,11 +24,11 @@ def main(dbrd_path: str, model_path: str, device: str, batch_size_train: int, ba
     processed_test = tokenize_data(tokenizer, [t for t in dbrd.test_data if len(t) <= 100])
 
     train_loader = DataLoader(dataset=SequenceDataset(processed_train), batch_size=batch_size_train, shuffle=True,
-                              collate_fn=token_collator(word_pad_id))
+                              collate_fn=sequence_collator(word_pad_id))
     #dev_loader = DataLoader(dataset=SequenceDataset(processed_dev), batch_size=batch_size_dev, shuffle=False,
-    #                        collate_fn=token_collator(word_pad_id))
+    #                        collate_fn=sequence_collator(word_pad_id))
     test_loader = DataLoader(dataset=SequenceDataset(processed_test), batch_size=batch_size_dev, shuffle=False,
-                             collate_fn=token_collator(word_pad_id))
+                             collate_fn=sequence_collator(word_pad_id))
 
     model = TypedLMForSequenceClassification(default_pretrained(model_path), len(dbrd.class_map)).to(device)
     optim = AdamW(model.parameters(), lr=3e-05)
