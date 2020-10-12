@@ -11,7 +11,7 @@ import sys
 import os
 
 
-_PROC_DATA = ['proc_train.p', 'proc_dev.p', 'proc_test.p']
+_PROC_DATA = ['proc_train_filtered.p', 'proc_dev_filtered.p', 'proc_test_filtered.p']
 
 
 def train_epoch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Optimizer,
