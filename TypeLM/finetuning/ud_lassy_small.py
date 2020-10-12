@@ -41,18 +41,15 @@ def main(udls_path: str, model_path: str, device: str, batch_size_train: int, ba
     sprint('Done with tokenization/loading, starting to train...')
     for epoch in range(num_epochs):
         sprint(f'\tEPOCH {epoch+1}:')
-        train_loss, train_accu = train_epoch(model, loss_fn, optim, train_loader, \
-                token_pad_id, word_pad_id, mask_token_id, device)
+        train_loss, train_accu = train_epoch(model, loss_fn, optim, train_loader, token_pad_id, word_pad_id, device)
         sprint(f'Train loss:\t\t{train_loss:.5f}')
         sprint(f'Train accu:\t\t{train_accu:.5f}')
         sprint()
-        val_loss, val_accu = eval_epoch(model, loss_fn, dev_loader, token_pad_id, \
-                word_pad_id, mask_token_id, device)
+        val_loss, val_accu = eval_epoch(model, loss_fn, dev_loader, token_pad_id, word_pad_id, device)
         sprint(f'Dev loss:\t\t{val_loss:.5f}')
         sprint(f'Dev accu:\t\t{val_accu:.5f}')
         sprint()
-        test_loss, test_accu = eval_epoch(model, loss_fn, test_loader, token_pad_id, \
-                word_pad_id, mask_token_id, device)
+        test_loss, test_accu = eval_epoch(model, loss_fn, test_loader, token_pad_id, word_pad_id, device)
         sprint(f'Test loss:\t\t{test_loss:.5f}')
         sprint(f'Test accu:\t\t{test_accu:.5f}')
         sprint('-' * 64)
