@@ -18,7 +18,7 @@ def vanilla_accuracy(predictions: Tensor, truths: LongTensor) -> float:
 
 
 def tokenize_data(tokenizer: Tokenizer, data: Samples) -> List[Tuple[List[int], int]]:
-    return [(tokenize_words(tokenizer.word_tokenizer, words), tag) for words, tag in zip(*data)]
+    return [(tokenize_words(tokenizer.word_tokenizer, words), tag) for words, tag in data]
 
 
 def tokenize_words(wtokenizer: WordTokenizer, words: List[int], tag: int) -> List[int]:
