@@ -21,7 +21,7 @@ def tokenize_data(tokenizer: Tokenizer, data: Samples) -> List[Tuple[List[int], 
     return [(tokenize_words(tokenizer.word_tokenizer, words), tag) for words, tag in data]
 
 
-def tokenize_words(wtokenizer: WordTokenizer, words: List[int], tag: int) -> List[int]:
+def tokenize_words(wtokenizer: WordTokenizer, words: List[int]) -> List[int]:
     words = [wtokenizer.core.tokenize(w) for w in words]
     word_ids = wtokenizer.core.convert_tokens_to_ids(words)
     _cls = [wtokenizer.core.cls_token_id]
