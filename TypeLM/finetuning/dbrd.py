@@ -1,7 +1,7 @@
 from TypeLM.preprocessing.defaults import default_tokenizer
 from nlp_nl.nl_eval.datasets import create_dbrd
 from TypeLM.finetuning.sequence_level import (tokenize_data, SequenceDataset, DataLoader, CrossEntropyLoss,
-                                              default_pretrained, sequence_collator, train_epoch, eval_epoch
+                                              default_pretrained, sequence_collator, train_epoch, eval_epoch,
                                               train_batch, eval_batch, TypedLMForSequenceClassification)
 from torch.optim import AdamW
 from typing import List, Dict, Tuple, Callable
