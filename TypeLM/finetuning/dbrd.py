@@ -20,13 +20,13 @@ def main(dbrd_path: str, model_path: str, device: str, batch_size_train: int, ba
 
     dbrd = create_dbrd(dbrd_path)
     processed_train = tokenize_data(tokenizer, [t for t in dbrd.train_data if len(t) <= 100])
-    processed_dev = tokenize_data(tokenizer, [t for t in dbrd.dev_data if len(t) <= 100])
+    #processed_dev = tokenize_data(tokenizer, [t for t in dbrd.dev_data if len(t) <= 100])
     processed_test = tokenize_data(tokenizer, [t for t in dbrd.test_data if len(t) <= 100])
 
     train_loader = DataLoader(dataset=SequenceDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=token_collator(word_pad_id))
-    dev_loader = DataLoader(dataset=SequenceDataset(processed_dev), batch_size=batch_size_dev, shuffle=False,
-                            collate_fn=token_collator(word_pad_id))
+    #dev_loader = DataLoader(dataset=SequenceDataset(processed_dev), batch_size=batch_size_dev, shuffle=False,
+    #                        collate_fn=token_collator(word_pad_id))
     test_loader = DataLoader(dataset=SequenceDataset(processed_test), batch_size=batch_size_dev, shuffle=False,
                              collate_fn=token_collator(word_pad_id))
 
@@ -40,10 +40,10 @@ def main(dbrd_path: str, model_path: str, device: str, batch_size_train: int, ba
         sprint(f'Train loss:\t\t{train_loss:.5f}')
         sprint(f'Train accu:\t\t{train_accu:.5f}')
         sprint('')
-        val_loss, val_accu, _ = eval_epoch(model, loss_fn, dev_loader, token_pad_id, word_pad_id, device)
-        sprint(f'Dev loss:\t\t{val_loss:.5f}')
-        sprint(f'Dev accu:\t\t{val_accu:.5f}')
-        sprint('')
+        # val_loss, val_accu, _ = eval_epoch(model, loss_fn, dev_loader, token_pad_id, word_pad_id, device)
+        # sprint(f'Dev loss:\t\t{val_loss:.5f}')
+        # sprint(f'Dev accu:\t\t{val_accu:.5f}')
+        # sprint('')
         test_loss, test_accu, _ = eval_epoch(model, loss_fn, test_loader, token_pad_id, word_pad_id, device)
         sprint(f'Test loss:\t\t{test_loss:.5f}')
         sprint(f'Test accu:\t\t{test_accu:.5f}')
