@@ -104,13 +104,16 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
 
     sprint('Done with tokenization/loading, starting to train...')
     for epoch in range(num_epochs):
-        train_loss, train_accu = train_epoch(model, loss_fn, optim, train_loader, token_pad_id, word_pad_id, device)
+        train_loss, train_accu = train_epoch(model, loss_fn, optim, train_loader, \
+                token_pad_id, word_pad_id, mask_token_id, device)
         sprint(f'Train loss:\t\t{train_loss}')
         sprint(f'Train accu:\t\t{train_accu}')
-        val_loss, val_accu = eval_epoch(model, loss_fn, dev_loader, token_pad_id, word_pad_id, device)
+        val_loss, val_accu = eval_epoch(model, loss_fn, dev_loader, token_pad_id, \
+                word_pad_id, mask_token_id, device)
         sprint(f'Dev loss:\t\t{val_loss}')
         sprint(f'Dev accu:\t\t{val_accu}')
-        test_loss, test_accu = eval_epoch(model, loss_fn, test_loader, token_pad_id, word_pad_id, device)
+        test_loss, test_accu = eval_epoch(model, loss_fn, test_loader, token_pad_id, \
+                word_pad_id, mask_token_id, device)
         sprint(f'Dev loss:\t\t{test_loss}')
         sprint(f'Dev accu:\t\t{test_accu}')
 
