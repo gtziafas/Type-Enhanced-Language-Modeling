@@ -58,20 +58,23 @@ def main(ner_path: str, model_path: str, device: str, batch_size_train: int, bat
     test_truth = [sample[1] for sample in processed_test]
 
     for epoch in range(num_epochs):
+        sprint(f'\tEPOCH {epoch+1}:')
         train_loss, train_accu = train_epoch(model, loss_fn, optim, train_loader, token_pad_id, word_pad_id, device)
         sprint(f'Train loss:\t\t{train_loss}')
         sprint(f'Train accu:\t\t{train_accu}')
+        sprint('')
         val_loss, val_accu, predictions = eval_epoch(model, loss_fn, dev_loader, token_pad_id, word_pad_id, device)
         val_predictions = measure_ner_accuracy(predictions, val_truth, token_pad_id, ner.class_map, offset)
         sprint(f'Dev loss:\t\t{val_loss}')
         sprint(f'Dev accu:\t\t{val_accu}')
         sprint(f'Scores:\t\t{val_predictions}')
+        sprint('')
         test_loss, test_accu, predictions = eval_epoch(model, loss_fn, test_loader, token_pad_id, word_pad_id, device)
         test_predictions = measure_ner_accuracy(predictions, test_truth, token_pad_id, ner.class_map, offset)
         sprint(f'Test loss:\t\t{test_loss}')
         sprint(f'Test accu:\t\t{test_accu}')
         sprint(f'Scores:\t\t{test_predictions}')
-
+        sprint('-' * 64)
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
