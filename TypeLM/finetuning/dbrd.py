@@ -26,11 +26,11 @@ def main(dbrd_path: str, model_path: str, device: str, batch_size_train: int, ba
     # processed_train = tokenize_data(tokenizer, [t for t in dbrd.train_data if len(t) <= 100])
     # no dev split
     # processed_test = tokenize_data(tokenizer, [t for t in dbrd.test_data if len(t) <= 100])
-    # pickle.dump(open(os.path.join(dbrd_path, _PROC_DATA[0]), "wb"))
-    # pickle.dump(open(os.path.join(dbrd_path, _PROC_DATA[1]), "wb"))
+    # pickle.dump(processed_train, open(os.path.join(dbrd_path, _PROC_DATA[0]), "wb"))
+    # pickle.dump(processed_test, open(os.path.join(dbrd_path, _PROC_DATA[1]), "wb"))
 
-    processed_train = pikle.load(open(os.path.join(dbrd_path, _PROC_DATA[0]), "rb"))
-    proc_test = pickle.load(open(os.path.join(dbrd_path, _PROC_DATA[1]), "wb"))
+    processed_train = pickle.load(open(os.path.join(dbrd_path, _PROC_DATA[0]), "rb"))
+    proc_test = pickle.load(open(os.path.join(dbrd_path, _PROC_DATA[1]), "rb"))
 
     train_loader = DataLoader(dataset=SequenceDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=sequence_collator(word_pad_id))
