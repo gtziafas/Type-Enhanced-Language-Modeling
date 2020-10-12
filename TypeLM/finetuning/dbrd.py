@@ -5,6 +5,7 @@ from TypeLM.finetuning.sequence_level import (tokenize_data, SequenceDataset, Da
                                               train_batch, eval_batch, TypedLMForSequenceClassification)
 from torch.optim import AdamW
 from typing import List, Dict, Tuple, Callable
+import pickle
 import sys
 import os
 
