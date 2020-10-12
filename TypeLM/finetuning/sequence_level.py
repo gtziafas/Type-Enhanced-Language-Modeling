@@ -89,7 +89,7 @@ def train_batch(model: TypedLMForSequenceClassification, loss_fn: Module, optim:
 
 
 def train_epoch(model: TypedLMForSequenceClassification, loss_fn: Module, optim: Optimizer,
-                dataloader: DataLoader, token_pad: int, word_pad: int, device: str) -> Tuple[float, float]:
+                dataloader: DataLoader, word_pad: int, device: str) -> Tuple[float, float]:
     epoch_loss, epoch_accuracy = 0., 0.
 
     for words, tokens in dataloader:
