@@ -28,9 +28,11 @@ def train_epoch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Op
         words = words.to(device)
         tokens = tokens.to(device)
 
+        # masking die/dat word ids and ignoring all other tokens for loss + accuracy computation
         mask = zeros_like(tokens, dtype=bool)
         mask = mask.masked_fill_(tokens>0, 1)
         words[mask] = mask_token
+        tokens[mask] = tokens[mask]-1
         tokens[mask==0] = token_pad
 
         loss, (batch_total, batch_correct) = train_batch(model, loss_fn, optim, words, \
@@ -51,9 +53,11 @@ def eval_epoch(model: TypedLMForTokenClassification, loss_fn: Module, dataloader
         words = words.to(device)
         tokens = tokens.to(device)
 
+        # masking die/dat word ids and ignoring all other tokens for loss + accuracy computation
         mask = zeros_like(tokens, dtype=bool)
         mask = mask.masked_fill_(tokens>0, 1)
         words[mask] = mask_token
+        tokens[mask] = tokens[mask]-1
         tokens[mask==0] = token_pad
 
         loss, (batch_total, batch_correct), preds = eval_batch(model, loss_fn, words, \
