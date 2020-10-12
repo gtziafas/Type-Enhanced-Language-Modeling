@@ -68,8 +68,8 @@ def main(ner_path: str, model_path: str, device: str, batch_size_train: int, bat
         sprint(f'Scores:\t\t{val_predictions}')
         test_loss, test_accu, predictions = eval_epoch(model, loss_fn, test_loader, token_pad_id, word_pad_id, device)
         test_predictions = measure_ner_accuracy(predictions, test_truth, token_pad_id, ner.class_map, offset)
-        sprint(f'Dev loss:\t\t{test_loss}')
-        sprint(f'Dev accu:\t\t{test_accu}')
+        sprint(f'Test loss:\t\t{test_loss}')
+        sprint(f'Test accu:\t\t{test_accu}')
         sprint(f'Scores:\t\t{test_predictions}')
 
 
