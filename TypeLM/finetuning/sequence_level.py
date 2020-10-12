@@ -23,6 +23,7 @@ def tokenize_data(tokenizer: Tokenizer, data: Samples) -> List[Tuple[List[int], 
 
 def tokenize_words(wtokenizer: WordTokenizer, words: List[int]) -> List[int]:
     words = [wtokenizer.core.tokenize(w) for w in words]
+    words = sum(words, [])
     word_ids = wtokenizer.core.convert_tokens_to_ids(words)
     _cls = [wtokenizer.core.cls_token_id]
     _sep = [wtokenizer.core.sep_token_id]
