@@ -74,16 +74,15 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
     mask_token_id = tokenizer.word_tokenizer.core.mask_token_id
     word_pad_id = tokenizer.word_tokenizer.core.pad_token_id
     token_pad_id = -100
-    offset = 0
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
 
     # diedat = create_diedat(diedat_path)
     # processed_train = tokenize_data(tokenizer, [t for t in diedat.train_data if len(t) <= 100], \
-    #     token_pad_id, offset)
+    #     token_pad_id)
     # processed_dev = tokenize_data(tokenizer, [t for t in diedat.dev_data if len(t) <= 100], \
-    #     token_pad_id, offset)
+    #     token_pad_id)
     # processed_test = tokenize_data(tokenizer, [t for t in diedat.test_data if len(t) <= 100], \
-    #     token_pad_id, offset)
+    #     token_pad_id)
     # pickle.dump(processed_train, open(os.path.join(diedat_path, _PROC_DATA[0], "wb"))
     # pickle.dump(processed_dev, open(os.path.join(diedat_path, _PROC_DATA[1], "wb"))
     # pickle.dump(processed_test, open(os.path.join(diedat_path, _PROC_DATA[2], "wb"))

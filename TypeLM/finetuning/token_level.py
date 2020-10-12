@@ -2,13 +2,12 @@ from TypeLM.preprocessing.tokenizer import Tokenizer, WordTokenizer
 from typing import List, Tuple, Callable
 from torch.utils.data import Dataset, DataLoader
 from torch.nn.utils.rnn import pad_sequence as _pad_sequence
-from torch import LongTensor, Tensor, tensor, long, no_grad
+from torch import LongTensor, Tensor, tensor, long, no_grad, load
 from TypeLM.neural.model import TypedLM
 from TypeLM.neural.defaults import default_model
 from torch.nn import Module, Linear, CrossEntropyLoss, Dropout
 from TypeLM.neural.training import type_accuracy as token_accuracy
 from torch.optim import Optimizer
-import torch
 
 
 Sample = Tuple[List[int], List[int]]
@@ -71,7 +70,7 @@ class TypedLMForTokenClassification(Module):
 def default_pretrained(path: str) -> Callable[[], TypedLM]:
     def model_maker() -> TypedLM:
         model = default_model()
-        tmp = torch.load(path)
+        tmp = load(path)
         model.load_state_dict(tmp['model_state_dict'])
         return model
     return model_maker

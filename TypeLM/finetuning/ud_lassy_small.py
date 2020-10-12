@@ -17,16 +17,15 @@ def main(udls_path: str, model_path: str, device: str, batch_size_train: int, ba
     tokenizer = default_tokenizer()
     word_pad_id = tokenizer.word_tokenizer.core.pad_token_id
     token_pad_id = -100
-    offset = 0
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
 
     udls = create_ud_lassy_small(udls_path)
     processed_train = tokenize_data(tokenizer, [t for t in udls.train_data if len(t) <= 100], \
-        token_pad_id, offset)
+        token_pad_id)
     processed_dev = tokenize_data(tokenizer, [t for t in udls.dev_data if len(t) <= 100], \
-        token_pad_id, offset)
+        token_pad_id)
     processed_test = tokenize_data(tokenizer, [t for t in udls.test_data if len(t) <= 100], \
-        token_pad_id, offset)
+        token_pad_id)
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=token_collator(word_pad_id, token_pad_id))
