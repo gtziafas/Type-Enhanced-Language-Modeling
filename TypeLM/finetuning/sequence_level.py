@@ -73,7 +73,7 @@ def sequence_collator(word_pad: int) -> Callable[[Samples], Tuple[LongTensor, Lo
     return collate_fn
 
 
-def train_batch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Optimizer, words: LongTensor,
+def train_batch(model: TypedLMForSequenceClassification, loss_fn: Module, optim: Optimizer, words: LongTensor,
                 padding_mask: LongTensor, tokens: LongTensor) -> Tuple[float, float]:
     model.train()
 
@@ -87,7 +87,7 @@ def train_batch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Op
     return batch_loss.item(), token_stats
 
 
-def train_epoch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Optimizer,
+def train_epoch(model: TypedLMForSequenceClassification, loss_fn: Module, optim: Optimizer,
                 dataloader: DataLoader, token_pad: int, word_pad: int, device: str) -> Tuple[float, float]:
     epoch_loss, epoch_accuracy = 0., 0.
 
@@ -102,7 +102,7 @@ def train_epoch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Op
 
 
 @no_grad()
-def eval_batch(model: TypedLMForTokenClassification, loss_fn: Module, words: LongTensor,
+def eval_batch(model: TypedLMForSequenceClassification, loss_fn: Module, words: LongTensor,
                padding_mask: LongTensor, tokens: LongTensor) \
         -> Tuple[float, float]:
     model.eval()
@@ -115,7 +115,7 @@ def eval_batch(model: TypedLMForTokenClassification, loss_fn: Module, words: Lon
     return batch_loss.item(), accuracy
 
 
-def eval_epoch(model: TypedLMForTokenClassification, loss_fn: Module, dataloader: DataLoader, \
+def eval_epoch(model: TypedLMForSequenceClassification, loss_fn: Module, dataloader: DataLoader, \
                 word_pad: int, device: str) -> Tuple[float, float, List[List[int]]]:
     epoch_loss, epoch_accuracy = 0., 0.
 
