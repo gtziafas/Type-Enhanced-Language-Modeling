@@ -14,10 +14,6 @@ import os
 _PROC_DATA = ['proc_train.p', 'proc_dev.p', 'proc_test.p']
 
 
-def mask_from_tokens(preds: Tensor, tokens: LongTensor, offset: int = 1) -> Tuple[Tensor, LongTensor]:
-    return preds[tokens>0], (tokens[tokens>0]-offset)
-
-
 def train_epoch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Optimizer,
                 dataloader: DataLoader, token_pad: int, word_pad: int, mask_token: int,
                 device: str) -> Tuple[float, float]:
@@ -32,7 +28,7 @@ def train_epoch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Op
         mask = zeros_like(tokens, dtype=bool)
         mask = mask.masked_fill_(tokens>0, 1)
         words[mask] = mask_token
-        tokens[mask] = tokens[mask]-1
+        tokens -= 1
         tokens[mask==0] = token_pad
 
         loss, (batch_total, batch_correct) = train_batch(model, loss_fn, optim, words, \
@@ -57,7 +53,7 @@ def eval_epoch(model: TypedLMForTokenClassification, loss_fn: Module, dataloader
         mask = zeros_like(tokens, dtype=bool)
         mask = mask.masked_fill_(tokens>0, 1)
         words[mask] = mask_token
-        tokens[mask] = tokens[mask]-1
+        tokens -= 1
         tokens[mask==0] = token_pad
 
         loss, (batch_total, batch_correct), preds = eval_batch(model, loss_fn, words, \
