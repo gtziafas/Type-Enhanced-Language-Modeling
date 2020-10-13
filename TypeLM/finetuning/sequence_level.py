@@ -21,9 +21,8 @@ def tokenize_data(tokenizer: Tokenizer, data: Samples) -> List[Tuple[List[int], 
     return [(tokenize_words(tokenizer.word_tokenizer, words), tag) for words, tag in data]
 
 
-def tokenize_words(wtokenizer: WordTokenizer, words: List[int]) -> List[int]:
-    words = [wtokenizer.core.tokenize(w) for w in words]
-    words = sum(words, [])
+def tokenize_words(wtokenizer: WordTokenizer, words: List[str]) -> List[int]:
+    words = sum([wtokenizer.core.tokenize(w) for w in words], [])
     word_ids = wtokenizer.core.convert_tokens_to_ids(words)
     _cls = [wtokenizer.core.cls_token_id]
     _sep = [wtokenizer.core.sep_token_id]
@@ -54,7 +53,7 @@ class TypedLMForSequenceClassification(Module):
 
     def forward(self, words: LongTensor, pad_mask: LongTensor) -> Tensor:
         deep = self.core.encode(words, pad_mask)[1]
-        return self.classifier(self.dropout(deep[:,0,:]))
+        return self.classifier(self.dropout(deep[:, 0, :]))
 
 
 def default_pretrained(path: str) -> Callable[[], TypedLM]:
@@ -85,7 +84,7 @@ def train_batch(model: TypedLMForSequenceClassification, loss_fn: Module, optim:
     batch_loss.backward()
     optim.step()
     optim.zero_grad()
-    return batch_loss.item(), token_stats
+    return batch_loss.item(), accuracy
 
 
 def train_epoch(model: TypedLMForSequenceClassification, loss_fn: Module, optim: Optimizer,
@@ -116,15 +115,15 @@ def eval_batch(model: TypedLMForSequenceClassification, loss_fn: Module, words: 
     return batch_loss.item(), accuracy
 
 
-def eval_epoch(model: TypedLMForSequenceClassification, loss_fn: Module, dataloader: DataLoader, \
-                word_pad: int, device: str) -> Tuple[float, float, List[List[int]]]:
+def eval_epoch(model: TypedLMForSequenceClassification, loss_fn: Module, dataloader: DataLoader,
+               word_pad: int, device: str) -> Tuple[float, float]:
     epoch_loss, epoch_accuracy = 0., 0.
 
     for words, tokens in dataloader:
         padding_mask = (words != word_pad).unsqueeze(1).repeat(1, words.shape[1], 1).long().to(device)
         words = words.to(device)
         tokens = tokens.to(device)
-        loss, accuracy = eval_batch(model, loss_fn, words, padding_mask, tokens, token_pad)
+        loss, accuracy = eval_batch(model, loss_fn, words, padding_mask, tokens)
         epoch_loss += loss
         epoch_accuracy += accuracy
     return epoch_loss / len(dataloader), epoch_accuracy / len(dataloader)
