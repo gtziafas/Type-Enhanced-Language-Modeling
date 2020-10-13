@@ -27,16 +27,16 @@ def main(dbrd_path: str, model_path: str, device: str, batch_size_train: int, ba
     word_pad_id = tokenizer.word_tokenizer.core.pad_token_id
     loss_fn = CrossEntropyLoss(reduction='mean')
 
-    dbrd = create_dbrd(dbrd_path)
-    split = int(0.9 * len(dbrd.train_data))
-    processed_train = tokenize_data(tokenizer, [(subsample(ws, 100), t) for (ws, t) in dbrd.train_data[:split]])
-    processed_dev = tokenize_data(tokenizer, sorted(
-        [(subsample(ws, 100), t) for (ws, t) in dbrd.train_data[split:]], key=lambda x: len(x[0])))
-    processed_test = tokenize_data(tokenizer, sorted(
-        [(subsample(ws, 100), t) for (ws, t) in dbrd.test_data], key=lambda x: len(x[0])))
-    pickle.dump(processed_train, open(os.path.join(dbrd_path, _PROC_DATA[0]), "wb"))
-    pickle.dump(processed_dev, open(os.path.join(dbrd_path, _PROC_DATA[1]), "wb"))
-    pickle.dump(processed_test, open(os.path.join(dbrd_path, _PROC_DATA[2]), "wb"))
+    # dbrd = create_dbrd(dbrd_path)
+    # split = int(0.9 * len(dbrd.train_data))
+    # processed_train = tokenize_data(tokenizer, [(subsample(ws, 100), t) for (ws, t) in dbrd.train_data[:split]])
+    # processed_dev = tokenize_data(tokenizer, sorted(
+    #     [(subsample(ws, 100), t) for (ws, t) in dbrd.train_data[split:]], key=lambda x: len(x[0])))
+    # processed_test = tokenize_data(tokenizer, sorted(
+    #     [(subsample(ws, 100), t) for (ws, t) in dbrd.test_data], key=lambda x: len(x[0])))
+    # pickle.dump(processed_train, open(os.path.join(dbrd_path, _PROC_DATA[0]), "wb"))
+    # pickle.dump(processed_dev, open(os.path.join(dbrd_path, _PROC_DATA[1]), "wb"))
+    # pickle.dump(processed_test, open(os.path.join(dbrd_path, _PROC_DATA[2]), "wb"))
 
     processed_train = pickle.load(open(os.path.join(dbrd_path, _PROC_DATA[0]), "rb"))
     processed_dev = pickle.load(open(os.path.join(dbrd_path, _PROC_DATA[1]), "rb"))
