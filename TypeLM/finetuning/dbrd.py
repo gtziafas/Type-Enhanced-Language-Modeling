@@ -48,7 +48,7 @@ def main(dbrd_path: str, model_path: str, device: str, batch_size_train: int, ba
         sprint(f'Train loss:\t\t{train_loss:.5f}')
         sprint(f'Train accu:\t\t{train_accu:.5f}')
         sprint('')
-        test_loss, test_accu, _ = eval_epoch(model, loss_fn, test_loader, word_pad_id, device)
+        test_loss, test_accu = eval_epoch(model, loss_fn, test_loader, word_pad_id, device)
         sprint(f'Test loss:\t\t{test_loss:.5f}')
         sprint(f'Test accu:\t\t{test_accu:.5f}')
         sprint('-' * 64)

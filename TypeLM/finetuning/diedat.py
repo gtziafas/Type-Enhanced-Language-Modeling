@@ -1,10 +1,9 @@
 from TypeLM.preprocessing.defaults import default_tokenizer
-from nlp_nl.nl_eval.datasets import create_diedat
 from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, DataLoader, CrossEntropyLoss, tensor,
                                            TypedLMForTokenClassification, default_pretrained, token_collator,
                                            Samples, Tensor, LongTensor, Module, train_batch, eval_batch)
 from torch.optim import AdamW, Optimizer
-from torch import long, bool, zeros_like, where
+from torch import long, bool, zeros_like
 from typing import List, Dict, Tuple, Callable
 import pickle
 import sys
