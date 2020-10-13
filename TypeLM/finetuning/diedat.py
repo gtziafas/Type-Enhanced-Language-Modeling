@@ -4,7 +4,7 @@ from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, DataLoad
                                            TypedLMForTokenClassification, default_pretrained, token_collator,
                                            Samples, Tensor, LongTensor, Module, train_batch, eval_batch)
 from torch.optim import AdamW, Optimizer
-from torch import long, bool, zeros_like
+from torch import long, bool, zeros_like, where
 from typing import List, Dict, Tuple, Callable
 import pickle
 import sys
@@ -25,8 +25,7 @@ def train_epoch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Op
         tokens = tokens.to(device)
 
         # masking die/dat word ids and ignoring all other tokens for loss + accuracy computation
-        mask = zeros_like(tokens, dtype=bool, device=device)
-        mask = mask.masked_fill_(tokens>0, 1)
+        mask = tokens > 0
         words[mask] = mask_token
         tokens -= 1
         tokens[mask==0] = token_pad
@@ -108,17 +107,18 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
                 token_pad_id, word_pad_id, mask_token_id, device)
         sprint(f'Train loss:\t\t{train_loss:.5f}')
         sprint(f'Train accu:\t\t{train_accu:.5f}')
-        sprint()
+        sprint('')
         val_loss, val_accu = eval_epoch(model, loss_fn, dev_loader, token_pad_id, \
                 word_pad_id, mask_token_id, device)
         sprint(f'Dev loss:\t\t{val_loss:.5f}')
         sprint(f'Dev accu:\t\t{val_accu:.5f}')
-        sprint()
+        sprint('')
         test_loss, test_accu = eval_epoch(model, loss_fn, test_loader, token_pad_id, \
                 word_pad_id, mask_token_id, device)
         sprint(f'Test loss:\t\t{test_loss:.5f}')
         sprint(f'Test accu:\t\t{test_accu:.5f}')
         sprint('-' * 64)
+
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
