@@ -45,3 +45,50 @@ class TypedLM(Module):
         shallow = self.encode_shallow(word_ids, word_mask)
         deep = self.encode_deep(shallow, word_mask)
         return shallow, deep
+
+
+class TypedLMFusion(Module):
+    def __init__(self, tokenizer: Tokenizer, encoder_dim: int, encoder_layers: Tuple[int, int],
+                 encoder_heads: int, fusion_fn: Callable[[Tensor], Tensor], device: str):
+        super(TypedLMFusion, self).__init__()
+        word_vocab_size = tokenizer.word_tokenizer.core.vocab_size
+        word_padding_idx = tokenizer.word_tokenizer.core.pad_token_id
+        self.word_embedder = InvertibleEmbedder(embedding_dim=encoder_dim, num_embeddings=word_vocab_size,
+                                                padding_idx=word_padding_idx, scale_by_sqrt=True).to(device)
+        type_vocab_size = len(tokenizer.type_tokenizer.vocabulary)
+        self.type_classifier = Linear(in_features=encoder_dim, out_features=type_vocab_size).to(device)
+        self.type_embedder = Linear(in_features=type_vocab_size, out_features=encoder_dim).to(device)
+        self.encoder_1 = make_encoder(encoder_layers[0], encoder_heads, encoder_dim, encoder_dim//encoder_heads,
+                                      encoder_dim//encoder_heads, 2 * encoder_dim, 0.1).to(device)
+        self.encoder_2 = make_encoder(encoder_layers[1], encoder_heads, encoder_dim, encoder_dim//encoder_heads,
+                                      encoder_dim//encoder_heads, 2 * encoder_dim, 0.1).to(device)
+        self.tokenizer = tokenizer
+        self.fusion = fusion_fn
+        self.device = device
+
+    def forward(self, *args, **kwargs) -> NoReturn:
+        raise NotImplementedError('Forward not implemented for this model.')
+
+    def forward_train(self, word_ids: LongTensor, word_mask: LongTensor) -> Tuple[Tensor, Tensor]:
+        shallow, deep = self.encode(word_ids, word_mask)
+        type_out = self.type_classifier(shallow)
+        fused = self.fuse(deep, type_out)
+        word_out = self.word_embedder.invert(fused)
+        return word_out, type_out
+
+    # maybe add guidance???
+    def fuse(self, word_reprs: Tensor, types: LongTensor) -> Tensor:
+        type_probs = types.softmax(dim=-1)
+        type_reprs = self.type_embedder(type_probs)
+        return self.fusion(word_reprs, type_reprs)
+
+    def encode_shallow(self, word_ids: LongTensor, word_mask: LongTensor) -> Tensor:
+        word_reprs = self.word_embedder.embed(word_ids)
+        return self.encoder_1((word_reprs, word_mask))[0]
+
+    def encode_deep(self, shallow: Tensor, word_mask: LongTensor) -> Tensor:
+        return self.encoder_2((shallow, word_mask))[0]
+
+    def encode(self, word_ids: LongTensor, word_mask: LongTensor) -> Tuple[Tensor, Tensor]:
+        shallow = self.encode_shallow(word_ids, word_mask)
+        return shallow, self.encode_deep(shallow, word_mask)
