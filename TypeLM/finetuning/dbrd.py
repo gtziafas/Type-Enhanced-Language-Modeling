@@ -2,15 +2,16 @@ from TypeLM.preprocessing.defaults import default_tokenizer
 from nlp_nl.nl_eval.datasets import create_dbrd
 from TypeLM.finetuning.sequence_level import (tokenize_data, SequenceDataset, DataLoader, CrossEntropyLoss,
                                               default_pretrained, sequence_collator, train_epoch, eval_epoch,
-                                              train_batch, eval_batch, TypedLMForSequenceClassification)
+                                              TypedLMForSequenceClassification)
 from torch.optim import AdamW
-from typing import List, Dict, Tuple, Callable
+from typing import List, TypeVar
 import pickle
 import sys
 import os
 
 
-_PROC_DATA = ['proc_train.p', 'proc_test.p']
+_T = TypeVar('_T')
+_PROC_DATA = ['proc_train.p', 'proc_dev.p', 'proc_test.p']
 
 
 def main(dbrd_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
@@ -19,22 +20,32 @@ def main(dbrd_path: str, model_path: str, device: str, batch_size_train: int, ba
         print(s)
         sys.stdout.flush()
 
+    def subsample(xs: List[_T], maxlen: int) -> List[_T]:
+        return xs if len(xs) < maxlen else xs[-100:]
+
     tokenizer = default_tokenizer()
     word_pad_id = tokenizer.word_tokenizer.core.pad_token_id
     loss_fn = CrossEntropyLoss(reduction='mean')
 
-    # dbrd = create_dbrd(dbrd_path)
-    # processed_train = tokenize_data(tokenizer, [t for t in dbrd.train_data if len(t) <= 100])
-    # no dev split
-    # processed_test = tokenize_data(tokenizer, [t for t in dbrd.test_data if len(t) <= 100])
-    # pickle.dump(processed_train, open(os.path.join(dbrd_path, _PROC_DATA[0]), "wb"))
-    # pickle.dump(processed_test, open(os.path.join(dbrd_path, _PROC_DATA[1]), "wb"))
+    dbrd = create_dbrd(dbrd_path)
+    split = int(0.9 * len(dbrd.train_data))
+    processed_train = tokenize_data(tokenizer, [(subsample(ws, 100), t) for (ws, t) in dbrd.train_data[:split]])
+    processed_dev = tokenize_data(tokenizer, sorted(
+        [(subsample(ws, 100), t) for (ws, t) in dbrd.train_data[split:]], key=lambda x: len(x[0])))
+    processed_test = tokenize_data(tokenizer, sorted(
+        [(subsample(ws, 100), t) for (ws, t) in dbrd.test_data], key=lambda x: len(x[0])))
+    pickle.dump(processed_train, open(os.path.join(dbrd_path, _PROC_DATA[0]), "wb"))
+    pickle.dump(processed_dev, open(os.path.join(dbrd_path, _PROC_DATA[1]), "wb"))
+    pickle.dump(processed_test, open(os.path.join(dbrd_path, _PROC_DATA[2]), "wb"))
 
     processed_train = pickle.load(open(os.path.join(dbrd_path, _PROC_DATA[0]), "rb"))
-    processed_test = pickle.load(open(os.path.join(dbrd_path, _PROC_DATA[1]), "rb"))
+    processed_dev = pickle.load(open(os.path.join(dbrd_path, _PROC_DATA[1]), "rb"))
+    processed_test = pickle.load(open(os.path.join(dbrd_path, _PROC_DATA[2]), "rb"))
 
     train_loader = DataLoader(dataset=SequenceDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=sequence_collator(word_pad_id))
+    dev_loader = DataLoader(dataset=SequenceDataset(processed_dev), batch_size=batch_size_dev, shuffle=False,
+                            collate_fn=sequence_collator(word_pad_id))
     test_loader = DataLoader(dataset=SequenceDataset(processed_test), batch_size=batch_size_dev, shuffle=False,
                              collate_fn=sequence_collator(word_pad_id))
 
@@ -47,6 +58,10 @@ def main(dbrd_path: str, model_path: str, device: str, batch_size_train: int, ba
         train_loss, train_accu = train_epoch(model, loss_fn, optim, train_loader, word_pad_id, device)
         sprint(f'Train loss:\t\t{train_loss:.5f}')
         sprint(f'Train accu:\t\t{train_accu:.5f}')
+        sprint('')
+        dev_loss, dev_accu = eval_epoch(model, loss_fn, dev_loader, word_pad_id, device)
+        sprint(f'Test loss:\t\t{dev_loss:.5f}')
+        sprint(f'Test accu:\t\t{dev_accu:.5f}')
         sprint('')
         test_loss, test_accu = eval_epoch(model, loss_fn, test_loader, word_pad_id, device)
         sprint(f'Test loss:\t\t{test_loss:.5f}')
