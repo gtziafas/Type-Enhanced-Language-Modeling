@@ -3,7 +3,7 @@ from TypeLM.neural.embedding import InvertibleEmbedder
 from TypeLM.neural.transformer import make_encoder
 
 from torch.nn import Module, Linear
-from typing import Tuple, NoReturn
+from typing import Tuple, NoReturn, Callable
 
 from torch import Tensor, LongTensor
 
