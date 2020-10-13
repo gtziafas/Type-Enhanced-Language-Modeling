@@ -21,7 +21,7 @@ def main(dbrd_path: str, model_path: str, device: str, batch_size_train: int, ba
         sys.stdout.flush()
 
     def subsample(xs: List[_T], maxlen: int) -> List[_T]:
-        return xs if len(xs) < maxlen else xs[-100:]
+        return xs if len(xs) < maxlen else xs[-maxlen:]
 
     tokenizer = default_tokenizer()
     word_pad_id = tokenizer.word_tokenizer.core.pad_token_id
