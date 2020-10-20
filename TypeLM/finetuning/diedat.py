@@ -150,11 +150,6 @@ def zero_shot_eval(model: TypedLM, dataloader: DataLoader, token_pad: int,
         predictions[predictions == die_tokens[1]] = 0
         predictions[predictions == dat_tokens[0]] = 1
         predictions[predictions == dat_tokens[1]] = 1
-        
-
-        import pdb
-        pdb.set_trace()
-
 
         sum_tokens += predictions.shape[0]
         sum_correct_tokens += (predictions == tokens[mask]).sum().item()
