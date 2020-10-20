@@ -3,9 +3,26 @@ from nlp_nl.nl_eval.datasets import create_sonar_srl
 from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, DataLoader, CrossEntropyLoss, tensor,
                                            TypedLMForTokenClassification, default_pretrained, token_collator,
                                            train_epoch, eval_epoch, train_batch, eval_batch)
+from TypeLM.finetuning.conlleval import evaluate
 from torch.optim import AdamW
 from typing import List, Dict, Tuple, Callable
 import sys
+
+
+def measure_ner_accuracy(predictions: List[List[int]], truths: List[List[int]], pad: int, mapping: Dict[int, str], \
+        offset: int) -> Tuple[float, float, float]:
+    def remove_pads(_prediction: List[int], _truth: List[int]) -> Tuple[List[int], List[int]]:
+        _prediction = _prediction[:len(_truth)]
+        return [_p for i, _p in enumerate(_prediction) if _truth[i] != pad], [_t for _t in _truth if _t != pad]
+
+    def convert_to_str(_prediction: List[int]) -> List[str]:
+        return [mapping[_p + offset] for _p in _prediction]
+
+    pairs = tuple(map(remove_pads, predictions, truths))
+    predictions, truths = [pair[0] for pair in pairs], [pair[1] for pair in pairs]
+    predictions_str: List[str] = reduce(add, list(map(convert_to_str, predictions)))
+    truths_str: List[str] = reduce(add, list(map(convert_to_str, truths)))
+    return evaluate(truths_str, predictions_str, True)
 
 
 def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
@@ -37,21 +54,28 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     model = TypedLMForTokenClassification(default_pretrained(model_path), len(sonar_srl.class_map)).to(device)
     optim = AdamW(model.parameters(), lr=3e-05)
 
+    val_truth = [sample[1] for sample in processed_dev]
+    test_truth = [sample[1] for sample in processed_test]
+
     sprint('Done with tokenization/loading, starting to train...')
     for epoch in range(num_epochs):
         sprint(f'\tEPOCH {epoch+1}:')
         train_loss, train_accu = train_epoch(model, loss_fn, optim, train_loader, token_pad_id, word_pad_id, device)
-        sprint(f'Train loss:\t\t{train_loss:.5f}')
-        sprint(f'Train accu:\t\t{train_accu:.5f}')
+        sprint(f'Train loss:\t\t{train_loss}')
+        sprint(f'Train accu:\t\t{train_accu}')
         sprint('')
-        val_loss, val_accu, _ = eval_epoch(model, loss_fn, dev_loader, token_pad_id, word_pad_id, device)
-        sprint(f'Dev loss:\t\t{val_loss:.5f}')
-        sprint(f'Dev accu:\t\t{val_accu:.5f}')
+        val_loss, val_accu, predictions = eval_epoch(model, loss_fn, dev_loader, token_pad_id, word_pad_id, device)
+        val_predictions = measure_ner_accuracy(predictions, val_truth, token_pad_id, sonar_ner.class_map, offset)
+        sprint(f'Dev loss:\t\t{val_loss}')
+        sprint(f'Dev accu:\t\t{val_accu}')
+        sprint(f'Scores:\t\t{val_predictions}')
         sprint('')
-        test_loss, test_accu, _ = eval_epoch(model, loss_fn, test_loader, token_pad_id, word_pad_id, device)
-        sprint(f'Test loss:\t\t{test_loss:.5f}')
-        sprint(f'Test accu:\t\t{test_accu:.5f}')
-        sprint('-' * 64)
+        test_loss, test_accu, predictions = eval_epoch(model, loss_fn, test_loader, token_pad_id, word_pad_id, device)
+        test_predictions = measure_ner_accuracy(predictions, test_truth, token_pad_id, sonar_ner.class_map, offset)
+        sprint(f'Test loss:\t\t{test_loss}')
+        sprint(f'Test accu:\t\t{test_accu}')
+        sprint(f'Scores:\t\t{test_predictions}')
+        sprint('-' * 120)
 
 
 if __name__ == '__main__':
