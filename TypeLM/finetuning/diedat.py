@@ -144,12 +144,9 @@ def zero_shot_eval(model: TypedLM, dataloader: DataLoader, token_pad: int,
 
         contextualized = model.encode(words, padding_mask)[1][mask]
         contextualized = model.word_embedder.invert(contextualized)
-        predictions = contextualized.argmax(dim=-1)
-        
-        predictions[predictions == die_tokens[0]] = 0
-        predictions[predictions == die_tokens[1]] = 0
-        predictions[predictions == dat_tokens[0]] = 1
-        predictions[predictions == dat_tokens[1]] = 1
+        die_prob = contextualized[..., die_tokens[0]] + contextualized[:, :, die_tokens[1]]
+        dat_prob = contextualized[..., dat_prob[0]] + contextualized[:, :, dat_tokens[1]]
+        predictions = where(die_prob > dat_prob, zeros_like(die_prob), ones_like(dat_prob))
 
         sum_tokens += predictions.shape[0]
         sum_correct_tokens += (predictions == tokens[mask]).sum().item()
