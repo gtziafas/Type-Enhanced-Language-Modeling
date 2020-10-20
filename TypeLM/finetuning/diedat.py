@@ -139,8 +139,9 @@ def zero_shot_eval(model: TypedLM, dataloader: DataLoader, token_pad: int,
         tokens -= 1
         tokens[mask==0] = token_pad
 
-        words_out, _ = model.forward_train(words, padding_mask)
-        predictions = words_out[mask].argmax(dim=-1)  # ids ston tokenizer
+        contextualized = model.encode(words, padding_mask)[1][mask]
+        contextualized = model.word_embedder.invert(contextualized)
+        predictions = contextualized.argmax(dim=-1)
         predictions = where(logical_or(predictions == die_tokens[0], predictions == die_tokens[1]), 
             zeros_like(predictions), - ones_like(predictions))
         predictions = where(logical_or(predictions == dat_tokens[0], predictions == dat_tokens[1]), 
