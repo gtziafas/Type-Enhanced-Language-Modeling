@@ -1,5 +1,5 @@
 from TypeLM.preprocessing.defaults import default_tokenizer
-from nlp_nl.nl_eval.datasets import create_pos_sonar
+from nlp_nl.nl_eval.datasets import create_sonar_pos
 from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, DataLoader, CrossEntropyLoss, tensor,
                                            TypedLMForTokenClassification, default_pretrained, token_collator,
                                            train_epoch, eval_epoch, train_batch, eval_batch)
