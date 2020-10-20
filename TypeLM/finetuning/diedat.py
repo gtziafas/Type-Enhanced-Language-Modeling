@@ -146,7 +146,7 @@ def zero_shot_eval(model: TypedLM, dataloader: DataLoader, token_pad: int,
         predictions = where(logical_or(predictions == dat_tokens[0], predictions == dat_tokens[1]), 
             ones_like(predictions), - ones_like(predictions))
         sum_tokens += predictions.shape[0]
-        sum_correct_tokens += (predictions == tokens).sum().item()
+        sum_correct_tokens += (predictions == tokens[mask]).sum().item()
     return sum_correct_tokens, sum_tokens
 
 
