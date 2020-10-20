@@ -157,7 +157,7 @@ if __name__ == '__main__':
     parser.add_argument('-b', '--batch_size_train', help='Training batch size', default=32, type=int)
     parser.add_argument('-bd', '--batch_size_dev', help='Validation batch size', default=512, type=int)
     parser.add_argument('-e', '--num_epochs', help='How many epochs to train for', default=10, type=int)
-    parser.add_argument('-z', '--zero_shot', help='Whether to go zero-shot', default=False, type=bool)
+    parser.add_argument('--zero_shot', dest='zero_shot', action='store_true', help='Whether to go zero-shot')
 
     kwargs = vars(parser.parse_args())
     if kwargs['zero_shot']:
