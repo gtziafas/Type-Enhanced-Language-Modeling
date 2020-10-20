@@ -51,7 +51,7 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
         test_loss, test_accu, _ = eval_epoch(model, loss_fn, test_loader, token_pad_id, word_pad_id, device)
         sprint(f'Test loss:\t\t{test_loss:.5f}')
         sprint(f'Test accu:\t\t{test_accu:.5f}')
-        sprint('-' * 64)
+        sprint('-' * 120)
 
 
 if __name__ == '__main__':
@@ -63,8 +63,8 @@ if __name__ == '__main__':
     parser.add_argument('-b', '--batch_size_train', help='Training batch size', default=32, type=int)
     parser.add_argument('-bd', '--batch_size_dev', help='Validation batch size', default=512, type=int)
     parser.add_argument('-e', '--num_epochs', help='How many epochs to train for', default=10, type=int)
-    parser.add_argument('--coarse', dest='coarse', action='store_true', default=True, 
-        help='Whether to use coarse of fine-grained')
+    parser.add_argument('--coarse', dest='coarse', action='store_true', default=False, 
+        help='Whether to use coarse or fine-grained version')
 
     kwargs = vars(parser.parse_args())
 
