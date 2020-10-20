@@ -3,7 +3,7 @@ from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, DataLoad
                                            TypedLMForTokenClassification, default_pretrained, token_collator,
                                            Samples, Tensor, LongTensor, Module, train_batch, eval_batch, TypedLM)
 from torch.optim import AdamW, Optimizer
-from torch import long, bool, zeros_like, where, logical_or
+from torch import long, bool, zeros_like, where, logical_or, ones_like
 from typing import List, Dict, Tuple, Callable
 import pickle
 import sys
@@ -141,8 +141,10 @@ def zero_shot_eval(model: TypedLM, dataloader: DataLoader, token_pad: int,
 
         words_out, _ = model.forward_train(words, padding_mask)
         predictions = words_out[mask].argmax(dim=-1)  # ids ston tokenizer
-        predictions = where(logical_or(predictions == die_tokens[0], predictions == die_tokens[1]), 0, -1)
-        predictions = where(logical_or(predictions == dat_tokens[0], predictions == dat_tokens[1]), 1, -1)
+        predictions = where(logical_or(predictions == die_tokens[0], predictions == die_tokens[1]), 
+            zeros_like(predictions), - ones_like(predictions))
+        predictions = where(logical_or(predictions == dat_tokens[0], predictions == dat_tokens[1]), 
+            ones_like(predictions), - ones_like(predictions))
         sum_tokens += predictions.shape[0]
         sum_correct_tokens += (predictions == tokens).sum().item()
     return sum_correct_tokens, sum_tokens
@@ -168,8 +170,8 @@ if __name__ == '__main__':
                                          model.tokenizer.word_tokenizer.core.mask_token_id)
         test_loader = DataLoader(dataset=TokenDataset(processed_test), batch_size=kwargs['batch_size_dev'],
                                  shuffle=False, collate_fn=token_collator(word_pad, token_pad))
-        total, corr = zero_shot_eval(model, test_loader, token_pad, word_pad, mask_pad, kwargs['device'])
         sprint('Starting zero-shot evaluation.')
+        total, corr = zero_shot_eval(model, test_loader, token_pad, word_pad, mask_pad, kwargs['device'])
         sprint(f'Total: {total}\t Correct: {corr}\t (%): {100 * corr/total:.3f}')
 
     main(**kwargs)
