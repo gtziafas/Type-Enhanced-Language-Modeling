@@ -67,7 +67,7 @@ def eval_epoch(model: TypedLMForTokenClassification, loss_fn: Module, dataloader
 
 
 def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
-         num_epochs: int) -> None:
+         num_epochs: int, zero_shot: bool) -> None:
 
     tokenizer = default_tokenizer()
     mask_token_id = tokenizer.word_tokenizer.core.mask_token_id
@@ -144,8 +144,8 @@ def zero_shot_eval(model: TypedLM, dataloader: DataLoader, token_pad: int,
 
         contextualized = model.encode(words, padding_mask)[1][mask]
         contextualized = model.word_embedder.invert(contextualized)
-        die_prob = contextualized[..., die_tokens[0]] + contextualized[:, :, die_tokens[1]]
-        dat_prob = contextualized[..., dat_prob[0]] + contextualized[:, :, dat_tokens[1]]
+        die_prob = contextualized[..., die_tokens[0]] + contextualized[..., die_tokens[1]]
+        dat_prob = contextualized[..., dat_tokens[0]] + contextualized[..., dat_tokens[1]]
         predictions = where(die_prob > dat_prob, zeros_like(die_prob), ones_like(dat_prob))
 
         sum_tokens += predictions.shape[0]
@@ -176,5 +176,5 @@ if __name__ == '__main__':
         sprint('Starting zero-shot evaluation.')
         corr, total = zero_shot_eval(model, test_loader, token_pad, word_pad, mask_pad, kwargs['device'])
         sprint(f'Total: {total}\t Correct: {corr}\t (%): {100 * corr/total:.3f}')
-
-    main(**kwargs)
+    else:
+    	main(**kwargs)
