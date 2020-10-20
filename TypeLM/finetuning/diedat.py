@@ -123,6 +123,8 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
 @no_grad()
 def zero_shot_eval(model: TypedLM, dataloader: DataLoader, token_pad: int,
                    word_pad: int, mask_token: int, device: str) -> Tuple[int, int]:
+    model.eval()
+
     die_tokens = [v for k, v in model.tokenizer.word_tokenizer.core.vocab.items() if k in {'die', 'Die'}]
     dat_tokens = [v for k, v in model.tokenizer.word_tokenizer.core.vocab.items() if k in {'dat', 'Dat'}]
 
@@ -143,6 +145,12 @@ def zero_shot_eval(model: TypedLM, dataloader: DataLoader, token_pad: int,
         contextualized = model.encode(words, padding_mask)[1][mask]
         contextualized = model.word_embedder.invert(contextualized)
         predictions = contextualized.argmax(dim=-1)
+        
+
+        import pdb
+        pdb.set_trace()
+
+
         predictions = where(logical_or(predictions == die_tokens[0], predictions == die_tokens[1]), 
             zeros_like(predictions), - ones_like(predictions))
         predictions = where(logical_or(predictions == dat_tokens[0], predictions == dat_tokens[1]), 
@@ -173,7 +181,7 @@ if __name__ == '__main__':
         test_loader = DataLoader(dataset=TokenDataset(processed_test), batch_size=kwargs['batch_size_dev'],
                                  shuffle=False, collate_fn=token_collator(word_pad, token_pad))
         sprint('Starting zero-shot evaluation.')
-        total, corr = zero_shot_eval(model, test_loader, token_pad, word_pad, mask_pad, kwargs['device'])
+        corr, total = zero_shot_eval(model, test_loader, token_pad, word_pad, mask_pad, kwargs['device'])
         sprint(f'Total: {total}\t Correct: {corr}\t (%): {100 * corr/total:.3f}')
 
     main(**kwargs)
