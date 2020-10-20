@@ -3,7 +3,7 @@ from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, DataLoad
                                            TypedLMForTokenClassification, default_pretrained, token_collator,
                                            Samples, Tensor, LongTensor, Module, train_batch, eval_batch, TypedLM)
 from torch.optim import AdamW, Optimizer
-from torch import long, bool, zeros_like, where, logical_or, ones_like
+from torch import long, bool, zeros_like, where, logical_or, ones_like, no_grad
 from typing import List, Dict, Tuple, Callable
 import pickle
 import sys
@@ -120,6 +120,7 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
         sprint('-' * 64)
 
 
+@no_grad()
 def zero_shot_eval(model: TypedLM, dataloader: DataLoader, token_pad: int,
                    word_pad: int, mask_token: int, device: str) -> Tuple[int, int]:
     die_tokens = [v for k, v in model.tokenizer.word_tokenizer.core.vocab.items() if k in {'die', 'Die'}]
