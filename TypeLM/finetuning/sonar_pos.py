@@ -19,7 +19,7 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     token_pad_id = -100
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
 
-    sonar = create_pos_sonar(sonar_path, coarse)
+    sonar = create_sonar_pos(sonar_path, coarse)
     processed_train = tokenize_data(tokenizer, [t for t in sonar.train_data if len(t) <= 100], \
         token_pad_id)
     processed_dev = tokenize_data(tokenizer, [t for t in sonar.dev_data if len(t) <= 100], \
