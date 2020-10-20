@@ -1,9 +1,9 @@
 from TypeLM.preprocessing.defaults import default_tokenizer
 from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, DataLoader, CrossEntropyLoss, tensor,
                                            TypedLMForTokenClassification, default_pretrained, token_collator,
-                                           Samples, Tensor, LongTensor, Module, train_batch, eval_batch)
+                                           Samples, Tensor, LongTensor, Module, train_batch, eval_batch, TypedLM)
 from torch.optim import AdamW, Optimizer
-from torch import long, bool, zeros_like
+from torch import long, bool, zeros_like, where, logical_or
 from typing import List, Dict, Tuple, Callable
 import pickle
 import sys
@@ -11,6 +11,11 @@ import os
 
 
 _PROC_DATA = ['proc_train_filtered.p', 'proc_dev_filtered.p', 'proc_test_filtered.p']
+
+
+def sprint(s: str) -> None:
+    print(s)
+    sys.stdout.flush()
 
 
 def train_epoch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Optimizer,
@@ -40,7 +45,6 @@ def train_epoch(model: TypedLMForTokenClassification, loss_fn: Module, optim: Op
 def eval_epoch(model: TypedLMForTokenClassification, loss_fn: Module, dataloader: DataLoader, token_pad: int,
                word_pad: int, mask_token: int, device: str) -> Tuple[float, float]:
     epoch_loss, sum_tokens, sum_correct_tokens = 0., 0, 0
-    predictions: List[List[int]] = []
 
     for words, tokens in dataloader:
         padding_mask = (words != word_pad).unsqueeze(1).repeat(1, words.shape[1], 1).long().to(device)
@@ -64,9 +68,6 @@ def eval_epoch(model: TypedLMForTokenClassification, loss_fn: Module, dataloader
 
 def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
          num_epochs: int) -> None:
-    def sprint(s: str) -> None:
-        print(s)
-        sys.stdout.flush()
 
     tokenizer = default_tokenizer()
     mask_token_id = tokenizer.word_tokenizer.core.mask_token_id
@@ -119,6 +120,34 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
         sprint('-' * 64)
 
 
+def zero_shot_eval(model: TypedLM, dataloader: DataLoader, token_pad: int,
+                   word_pad: int, mask_token: int, device: str) -> Tuple[int, int]:
+    die_tokens = [v for k, v in model.tokenizer.word_tokenizer.core.vocab if k in {'die', 'Die'}]
+    dat_tokens = [v for k, v in model.tokenizer.word_tokenizer.core.vocab if k in {'dat', 'Dat'}]
+
+    sum_tokens, sum_correct_tokens = 0, 0
+
+    for words, tokens in dataloader:
+        padding_mask = (words != word_pad).unsqueeze(1).repeat(1, words.shape[1], 1).long().to(device)
+        words = words.to(device)
+        tokens = tokens.to(device)
+
+        # masking die/dat word ids and ignoring all other tokens for loss + accuracy computation
+        mask = zeros_like(tokens, dtype=bool, device=device)
+        mask = mask.masked_fill_(tokens>0, 1)
+        words[mask] = mask_token
+        tokens -= 1
+        tokens[mask==0] = token_pad
+
+        words_out, _ = model.forward_train(words, padding_mask)
+        predictions = words_out[mask].argmax(dim=-1)  # ids ston tokenizer
+        predictions = where(logical_or(predictions == die_tokens[0], predictions == die_tokens[1]), 0, -1)
+        predictions = where(logical_or(predictions == dat_tokens[0], predictions == dat_tokens[1]), 1, -1)
+        sum_tokens += predictions.shape[0]
+        sum_correct_tokens += (predictions == tokens).sum().item()
+    return sum_correct_tokens, sum_tokens
+
+
 if __name__ == '__main__':
     from argparse import ArgumentParser
     parser = ArgumentParser()
@@ -128,7 +157,18 @@ if __name__ == '__main__':
     parser.add_argument('-b', '--batch_size_train', help='Training batch size', default=32, type=int)
     parser.add_argument('-bd', '--batch_size_dev', help='Validation batch size', default=512, type=int)
     parser.add_argument('-e', '--num_epochs', help='How many epochs to train for', default=10, type=int)
+    parser.add_argument('-z', '--zero_shot', help='Whether to go zero-shot', default=False, type=bool)
 
     kwargs = vars(parser.parse_args())
+    if kwargs['zero_shot']:
+        model = default_pretrained(kwargs['model_path'])().to(kwargs['device'])
+        processed_test = pickle.load(open(os.path.join(kwargs['diedat_path'], _PROC_DATA[2]), "rb"))
+        word_pad, token_pad, mask_pad = (model.tokenizer.word_tokenizer.core.pad_token_id,
+                                         -100,
+                                         model.tokenizer.word_tokenizer.core.mask_token_id)
+        test_loader = DataLoader(dataset=TokenDataset(processed_test), batch_size=kwargs['batch_size_dev'],
+                                 shuffle=False, collate_fn=token_collator(word_pad, token_pad))
+        total, corr = zero_shot_eval(model, test_loader, token_pad, word_pad, mask_pad, kwargs['device'])
+        sprint(f'Total: {total}\t Correct: {corr}\t (%): {100 * corr/total:.3f}')
 
     main(**kwargs)
