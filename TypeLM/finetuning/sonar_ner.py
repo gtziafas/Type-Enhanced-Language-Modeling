@@ -74,7 +74,7 @@ def main(sonar_ner_path: str, model_path: str, device: str, batch_size_train: in
         sprint(f'Test loss:\t\t{test_loss}')
         sprint(f'Test accu:\t\t{test_accu}')
         sprint(f'Scores:\t\t{test_predictions}')
-        sprint('-' * 64)
+        sprint('-' * 120)
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
