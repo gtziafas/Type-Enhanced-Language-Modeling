@@ -122,8 +122,8 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
 
 def zero_shot_eval(model: TypedLM, dataloader: DataLoader, token_pad: int,
                    word_pad: int, mask_token: int, device: str) -> Tuple[int, int]:
-    die_tokens = [v for k, v in model.tokenizer.word_tokenizer.core.vocab if k in {'die', 'Die'}]
-    dat_tokens = [v for k, v in model.tokenizer.word_tokenizer.core.vocab if k in {'dat', 'Dat'}]
+    die_tokens = [v for k, v in model.tokenizer.word_tokenizer.core.vocab.items() if k in {'die', 'Die'}]
+    dat_tokens = [v for k, v in model.tokenizer.word_tokenizer.core.vocab.items() if k in {'dat', 'Dat'}]
 
     sum_tokens, sum_correct_tokens = 0, 0
 
