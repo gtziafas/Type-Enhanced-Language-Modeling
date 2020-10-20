@@ -5,10 +5,15 @@ from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, token_co
 from TypeLM.finetuning.conlleval import evaluate
 from torch.optim import AdamW
 from typing import List, Dict, Tuple
+import pickle
 import sys
+import os
 
 from functools import reduce
 from operator import add
+
+
+_PROC_DATA = ['proc_train.p', 'proc_dev.p', 'proc_test.p']
 
 
 def measure_ner_accuracy(predictions: List[List[int]], truths: List[List[int]], pad: int, mapping: Dict[int, str], \
@@ -27,7 +32,7 @@ def measure_ner_accuracy(predictions: List[List[int]], truths: List[List[int]], 
     return evaluate(truths_str, predictions_str, True)
 
 
-def main(sonar_ner_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
+def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
          num_epochs: int) -> None:
     def sprint(s: str) -> None:
         print(s)
@@ -36,13 +41,20 @@ def main(sonar_ner_path: str, model_path: str, device: str, batch_size_train: in
     tokenizer = default_tokenizer()
     word_pad_id = tokenizer.word_tokenizer.core.pad_token_id
     token_pad_id = -100
-    sonar_ner = create_sonar_ner(sonar_ner_path)
     offset = 0
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
+    
+    # sonar_ner = create_sonar_ner(sonar_path)
+    # processed_train = tokenize_data(tokenizer, [t for t in sonar_ner.train_data if len(t) <= 100], token_pad_id, offset)
+    # processed_dev = tokenize_data(tokenizer, [t for t in sonar_ner.dev_data if len(t) <= 100], token_pad_id, offset)
+    # processed_test = tokenize_data(tokenizer, [t for t in sonar_ner.test_data if len(t) <= 100], token_pad_id, offset)
+    # pickle.dump(processed_train, open(os.path.join(sonar_path, _PROC_DATA[0]), 'wb'))
+    # pickle.dump(processed_dev, open(os.path.join(sonar_path, _PROC_DATA[1]), 'wb'))
+    # pickle.dump(processed_test, open(os.path.join(sonar_path, _PROC_DATA[2]), 'wb'))
 
-    processed_train = tokenize_data(tokenizer, [t for t in sonar_ner.train_data if len(t) <= 100], token_pad_id, offset)
-    processed_dev = tokenize_data(tokenizer, [t for t in sonar_ner.dev_data if len(t) <= 100], token_pad_id, offset)
-    processed_test = tokenize_data(tokenizer, [t for t in sonar_ner.test_data if len(t) <= 100], token_pad_id, offset)
+    processed_train = pickle.load(open(os.path.join(sonar_path, _PROC_DATA[0]), 'rb'))
+    processed_dev = pickle.load(open(os.path.join(sonar_path, _PROC_DATA[1]), 'rb'))
+    processed_test = pickle.load(open(os.path.join(sonar_path, _PROC_DATA[2]), 'rb'))
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=token_collator(word_pad_id, token_pad_id))
@@ -79,7 +91,7 @@ def main(sonar_ner_path: str, model_path: str, device: str, batch_size_train: in
 if __name__ == '__main__':
     from argparse import ArgumentParser
     parser = ArgumentParser()
-    parser.add_argument('-p', '--sonar_ner_path', help='Path to sonar ner folder.')
+    parser.add_argument('-p', '--sonar_path', help='Path to sonar ner folder.')
     parser.add_argument('-m', '--model_path', help='Path to pretrained model')
     parser.add_argument('-d', '--device', help='Which device to use', default='cuda')
     parser.add_argument('-b', '--batch_size_train', help='Training batch size', default=32, type=int)

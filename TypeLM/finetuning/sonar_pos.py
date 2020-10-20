@@ -5,7 +5,12 @@ from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, DataLoad
                                            train_epoch, eval_epoch, train_batch, eval_batch)
 from torch.optim import AdamW
 from typing import List, Dict, Tuple, Callable
+import pickle
 import sys
+import os
+
+
+_PROC_DATA = ['proc_train.p', 'proc_dev.p', 'proc_test.p']
 
 
 def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
@@ -18,14 +23,22 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     word_pad_id = tokenizer.word_tokenizer.core.pad_token_id
     token_pad_id = -100
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
+    index = 'coarse_' if coarse else 'fine_'
 
-    sonar = create_sonar_pos(sonar_path, coarse)
-    processed_train = tokenize_data(tokenizer, [t for t in sonar.train_data if len(t) <= 100], \
-        token_pad_id)
-    processed_dev = tokenize_data(tokenizer, [t for t in sonar.dev_data if len(t) <= 100], \
-        token_pad_id)
-    processed_test = tokenize_data(tokenizer, [t for t in sonar.test_data if len(t) <= 100], \
-        token_pad_id)
+    # sonar = create_sonar_pos(sonar_path, coarse)
+    # processed_train = tokenize_data(tokenizer, [t for t in sonar.train_data if len(t) <= 100], \
+    #     token_pad_id)
+    # processed_dev = tokenize_data(tokenizer, [t for t in sonar.dev_data if len(t) <= 100], \
+    #     token_pad_id)
+    # processed_test = tokenize_data(tokenizer, [t for t in sonar.test_data if len(t) <= 100], \
+    #     token_pad_id)
+    # pickle.dump(processed_train, open(os.path.join(sonar_path, index + _PROC_DATA[0]), 'wb'))
+    # pickle.dump(processed_dev, open(os.path.join(sonar_path, index + _PROC_DATA[1]), 'wb'))
+    # pickle.dump(processed_test, open(os.path.join(sonar_path, index + _PROC_DATA[2]), 'wb'))
+
+    processed_train = pickle.load(open(os.path.join(sonar_path, index + _PROC_DATA[0]), 'rb'))
+    processed_dev = pickle.load(open(os.path.join(sonar_path, index + _PROC_DATA[1]), 'rb'))
+    processed_test = pickle.load(open(os.path.join(sonar_path, index + _PROC_DATA[2]), 'rb'))
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=token_collator(word_pad_id, token_pad_id))
