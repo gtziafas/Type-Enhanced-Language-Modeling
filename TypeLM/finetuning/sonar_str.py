@@ -96,8 +96,6 @@ if __name__ == '__main__':
     parser.add_argument('-b', '--batch_size_train', help='Training batch size', default=32, type=int)
     parser.add_argument('-bd', '--batch_size_dev', help='Validation batch size', default=512, type=int)
     parser.add_argument('-e', '--num_epochs', help='How many epochs to train for', default=10, type=int)
-    parser.add_argument('--coarse', dest='coarse', action='store_true', default=False, 
-        help='Whether to use coarse or fine-grained version')
 
     kwargs = vars(parser.parse_args())
 
