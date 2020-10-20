@@ -169,6 +169,7 @@ if __name__ == '__main__':
         test_loader = DataLoader(dataset=TokenDataset(processed_test), batch_size=kwargs['batch_size_dev'],
                                  shuffle=False, collate_fn=token_collator(word_pad, token_pad))
         total, corr = zero_shot_eval(model, test_loader, token_pad, word_pad, mask_pad, kwargs['device'])
+        sprint('Starting zero-shot evaluation.')
         sprint(f'Total: {total}\t Correct: {corr}\t (%): {100 * corr/total:.3f}')
 
     main(**kwargs)
