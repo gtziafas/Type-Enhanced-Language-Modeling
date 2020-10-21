@@ -64,6 +64,9 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     model = TypedLMForTokenClassification(default_pretrained(model_path), num_classes).to(device)
     optim = AdamW(model.parameters(), lr=3e-05)
 
+    val_truth = [sample[1] for sample in processed_dev]
+    test_truth = [sample[1] for sample in processed_test]
+
     sprint('Done with tokenization/loading, starting to train...')
     for epoch in range(num_epochs):
             sprint(f'\tEPOCH {epoch+1}:')
