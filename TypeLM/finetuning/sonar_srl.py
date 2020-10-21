@@ -52,7 +52,7 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     #              processed_test),
     #             open(os.path.join(sonar_path, index + 'proc.p'), 'wb'))
     
-    num_classes, processed_train, processed_test, processed_test = pickle.load(
+    num_classes, processed_train, processed_dev, processed_test = pickle.load(
         open(os.path.join(sonar_path, index + 'proc.p'), 'rb'))
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
