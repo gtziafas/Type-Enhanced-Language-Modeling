@@ -10,6 +10,9 @@ import pickle
 import sys
 import os
 
+from functools import reduce
+from operator import add
+
 
 def measure_ner_accuracy(predictions: List[List[int]], truths: List[List[int]], pad: int, mapping: Dict[int, str], \
         offset: int) -> Tuple[float, float, float]:
