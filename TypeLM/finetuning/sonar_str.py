@@ -37,6 +37,7 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     word_pad_id = tokenizer.word_tokenizer.core.pad_token_id
     token_pad_id = -100
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
+    offset = 0
 
     # sonar_str = create_sonar_str(sonar_path)
     # processed_train = tokenize_data(tokenizer, [t for t in sonar_str.train_data if len(t) <= 100], \
@@ -51,7 +52,7 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     #              processed_test),
     #             open(os.path.join(sonar_path, 'proc.p'), 'wb'))
     
-    num_classes, processed_train, processed_dev, processed_test = pickle.load(
+    class_map, processed_train, processed_dev, processed_test = pickle.load(
         open(os.path.join(sonar_path, 'proc.p'), 'rb'))
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
@@ -61,7 +62,7 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     test_loader = DataLoader(dataset=TokenDataset(processed_test), batch_size=batch_size_dev, shuffle=False,
                              collate_fn=token_collator(word_pad_id, token_pad_id))
 
-    model = TypedLMForTokenClassification(default_pretrained(model_path), num_classes).to(device)
+    model = TypedLMForTokenClassification(default_pretrained(model_path), len(class_map)).to(device)
     optim = AdamW(model.parameters(), lr=3e-05)
 
     val_truth = [sample[1] for sample in processed_dev]
@@ -75,13 +76,13 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
             sprint(f'Train accu:\t\t{train_accu}')
             sprint('')
             val_loss, val_accu, predictions = eval_epoch(model, loss_fn, dev_loader, token_pad_id, word_pad_id, device)
-            val_predictions = measure_ner_accuracy(predictions, val_truth, token_pad_id, sonar_ner.class_map, offset)
+            val_predictions = measure_ner_accuracy(predictions, val_truth, token_pad_id, class_map, offset)
             sprint(f'Dev loss:\t\t{val_loss}')
             sprint(f'Dev accu:\t\t{val_accu}')
             sprint(f'Scores:\t\t{val_predictions}')
             sprint('')
             test_loss, test_accu, predictions = eval_epoch(model, loss_fn, test_loader, token_pad_id, word_pad_id, device)
-            test_predictions = measure_ner_accuracy(predictions, test_truth, token_pad_id, sonar_ner.class_map, offset)
+            test_predictions = measure_ner_accuracy(predictions, test_truth, token_pad_id, class_map, offset)
             sprint(f'Test loss:\t\t{test_loss}')
             sprint(f'Test accu:\t\t{test_accu}')
             sprint(f'Scores:\t\t{test_predictions}')
