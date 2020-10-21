@@ -10,9 +10,6 @@ import sys
 import os
 
 
-_PROC_DATA = ['proc_train.p', 'proc_dev.p', 'proc_test.p']
-
-
 def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
          num_epochs: int, coarse: bool) -> None:
     def sprint(s: str) -> None:
@@ -32,13 +29,14 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     #     token_pad_id)
     # processed_test = tokenize_data(tokenizer, [t for t in sonar.test_data if len(t) <= 100], \
     #     token_pad_id)
-    # pickle.dump(processed_train, open(os.path.join(sonar_path, index + _PROC_DATA[0]), 'wb'))
-    # pickle.dump(processed_dev, open(os.path.join(sonar_path, index + _PROC_DATA[1]), 'wb'))
-    # pickle.dump(processed_test, open(os.path.join(sonar_path, index + _PROC_DATA[2]), 'wb'))
-
-    processed_train = pickle.load(open(os.path.join(sonar_path, index + _PROC_DATA[0]), 'rb'))
-    processed_dev = pickle.load(open(os.path.join(sonar_path, index + _PROC_DATA[1]), 'rb'))
-    processed_test = pickle.load(open(os.path.join(sonar_path, index + _PROC_DATA[2]), 'rb'))
+    # pickle.dump((len(sonar.class_map),
+    #              processed_train, 
+    #              processed_dev,
+    #              processed_test),
+    #             open(os.path.join(sonar_path, index + 'proc.p'), 'wb'))
+    
+    num_classes, processed_train, processed_test, processed_test = pickle.load(
+        open(os.path.join(sonar_path, index + 'proc.p'), 'rb'))
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=token_collator(word_pad_id, token_pad_id))
@@ -47,7 +45,7 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     test_loader = DataLoader(dataset=TokenDataset(processed_test), batch_size=batch_size_dev, shuffle=False,
                              collate_fn=token_collator(word_pad_id, token_pad_id))
 
-    model = TypedLMForTokenClassification(default_pretrained(model_path), len(sonar.class_map)).to(device)
+    model = TypedLMForTokenClassification(default_pretrained(model_path), num_classes).to(device)
     optim = AdamW(model.parameters(), lr=3e-05)
 
     sprint('Done with tokenization/loading, starting to train...')
