@@ -1,4 +1,5 @@
 from TypeLM.preprocessing.defaults import default_tokenizer
+from nlp_nl.nl_eval.datasets import create_diedat
 from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, DataLoader, CrossEntropyLoss, tensor,
                                            TypedLMForTokenClassification, default_pretrained, token_collator,
                                            Samples, Tensor, LongTensor, Module, train_batch, eval_batch, TypedLM)
@@ -8,6 +9,9 @@ from typing import List, Dict, Tuple, Callable
 import pickle
 import sys
 import os
+
+
+_PROC_FILE = 'proc_filtered.p'
 
 
 def sprint(s: str) -> None:
@@ -85,10 +89,10 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
                      processed_train, 
                      processed_dev,
                      processed_test),
-                    open(os.path.join(diedat_path, 'proc.p'), 'wb'))
+                    open(os.path.join(diedat_path, _PROC_FILE), 'wb'))
     else:
         class_map, processed_train, processed_dev, processed_test = pickle.load(
-            open(os.path.join(diedat_path, 'proc.p'), 'rb'))           
+            open(os.path.join(diedat_path, _PROC_FILE), 'rb'))           
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=token_collator(word_pad_id, token_pad_id))
@@ -169,7 +173,7 @@ if __name__ == '__main__':
     kwargs = vars(parser.parse_args())
     if kwargs['zero_shot']:
         model = default_pretrained(kwargs['model_path'])().to(kwargs['device'])
-        _, _, _, processed_test = pickle.load(open(os.path.join(kwargs['diedat_path'], 'proc.p'), "rb"))
+        _, _, _, processed_test = pickle.load(open(os.path.join(kwargs['diedat_path'], _PROC_FILE), "rb"))
         word_pad, token_pad, mask_pad = (model.tokenizer.word_tokenizer.core.pad_token_id,
                                          -100,
                                          model.tokenizer.word_tokenizer.core.mask_token_id)
