@@ -39,6 +39,7 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     tokenizer = default_tokenizer()
     word_pad_id = tokenizer.word_tokenizer.core.pad_token_id
     token_pad_id = -100
+    offset = 0
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
     index = 'main_' if mod else 'mod_'
 
