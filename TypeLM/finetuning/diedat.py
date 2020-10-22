@@ -10,9 +10,6 @@ import sys
 import os
 
 
-_PROC_DATA = ['proc_train_filtered.p', 'proc_dev_filtered.p', 'proc_test_filtered.p']
-
-
 def sprint(s: str) -> None:
     print(s)
     sys.stdout.flush()
@@ -67,7 +64,7 @@ def eval_epoch(model: TypedLMForTokenClassification, loss_fn: Module, dataloader
 
 
 def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
-         num_epochs: int, zero_shot: bool) -> None:
+         num_epochs: int, zero_shot: bool, checkpoint: bool) -> None:
 
     tokenizer = default_tokenizer()
     mask_token_id = tokenizer.word_tokenizer.core.mask_token_id
@@ -75,20 +72,23 @@ def main(diedat_path: str, model_path: str, device: str, batch_size_train: int, 
     token_pad_id = -100
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
 
-    # diedat = create_diedat(diedat_path)
-    # processed_train = tokenize_data(tokenizer, [t for t in diedat.train_data if len(t) <= 100], \
-    #     token_pad_id)
-    # processed_dev = tokenize_data(tokenizer, [t for t in diedat.dev_data if len(t) <= 100], \
-    #     token_pad_id)
-    # processed_test = tokenize_data(tokenizer, [t for t in diedat.test_data if len(t) <= 100], \
-    #     token_pad_id)
-    # pickle.dump(processed_train, open(os.path.join(diedat_path, _PROC_DATA[0], "wb"))
-    # pickle.dump(processed_dev, open(os.path.join(diedat_path, _PROC_DATA[1], "wb"))
-    # pickle.dump(processed_test, open(os.path.join(diedat_path, _PROC_DATA[2], "wb"))
-
-    processed_train = pickle.load(open(os.path.join(diedat_path, _PROC_DATA[0]), "rb"))
-    processed_dev = pickle.load(open(os.path.join(diedat_path, _PROC_DATA[1]), "rb"))
-    processed_test = pickle.load(open(os.path.join(diedat_path, _PROC_DATA[2]), "rb"))
+    if not checkpoint:
+        diedat = create_diedat(diedat_path)
+        class_map = diedat.class_map
+        processed_train = tokenize_data(tokenizer, [t for t in diedat.train_data if len(t) <= 100], \
+            token_pad_id)
+        processed_dev = tokenize_data(tokenizer, [t for t in diedat.dev_data if len(t) <= 100], \
+            token_pad_id)
+        processed_test = tokenize_data(tokenizer, [t for t in diedat.test_data if len(t) <= 100], \
+            token_pad_id)
+        pickle.dump((class_map,
+                     processed_train, 
+                     processed_dev,
+                     processed_test),
+                    open(os.path.join(diedat_path, 'proc.p'), 'wb'))
+    else:
+        class_map, processed_train, processed_dev, processed_test = pickle.load(
+            open(os.path.join(diedat_path, 'proc.p'), 'rb'))           
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=token_collator(word_pad_id, token_pad_id))
@@ -163,11 +163,13 @@ if __name__ == '__main__':
     parser.add_argument('-bd', '--batch_size_dev', help='Validation batch size', default=512, type=int)
     parser.add_argument('-e', '--num_epochs', help='How many epochs to train for', default=10, type=int)
     parser.add_argument('--zero_shot', dest='zero_shot', action='store_true', help='Whether to go zero-shot')
+    parser.add_argument('--checkpoint', dest='checkpoint', action='store_true', default=False,
+        help='Whether to load tokenized data from checkpoint or start from scratch')
 
     kwargs = vars(parser.parse_args())
     if kwargs['zero_shot']:
         model = default_pretrained(kwargs['model_path'])().to(kwargs['device'])
-        processed_test = pickle.load(open(os.path.join(kwargs['diedat_path'], _PROC_DATA[2]), "rb"))
+        _, _, _, processed_test = pickle.load(open(os.path.join(kwargs['diedat_path'], 'proc.p'), "rb"))
         word_pad, token_pad, mask_pad = (model.tokenizer.word_tokenizer.core.pad_token_id,
                                          -100,
                                          model.tokenizer.word_tokenizer.core.mask_token_id)
