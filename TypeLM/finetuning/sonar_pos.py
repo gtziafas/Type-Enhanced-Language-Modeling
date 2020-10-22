@@ -29,7 +29,7 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     #     token_pad_id)
     # processed_test = tokenize_data(tokenizer, [t for t in sonar.test_data if len(t) <= 100], \
     #     token_pad_id)
-    # pickle.dump((len(sonar.class_map),
+    # pickle.dump((sonar.class_map,
     #              processed_train, 
     #              processed_dev,
     #              processed_test),

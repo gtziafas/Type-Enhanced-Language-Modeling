@@ -45,7 +45,7 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     # processed_train = tokenize_data(tokenizer, [t for t in sonar_ner.train_data if len(t) <= 100], token_pad_id, offset)
     # processed_dev = tokenize_data(tokenizer, [t for t in sonar_ner.dev_data if len(t) <= 100], token_pad_id, offset)
     # processed_test = tokenize_data(tokenizer, [t for t in sonar_ner.test_data if len(t) <= 100], token_pad_id, offset)
-    # pickle.dump((len(sonar_ner.class_map),
+    # pickle.dump((sonar_ner.class_map,
     #              processed_train, 
     #              processed_dev,
     #              processed_test),
