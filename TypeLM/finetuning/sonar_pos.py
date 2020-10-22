@@ -11,7 +11,7 @@ import os
 
 
 def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
-         num_epochs: int, coarse: bool) -> None:
+         num_epochs: int, coarse: bool, checkpoint: bool) -> None:
     def sprint(s: str) -> None:
         print(s)
         sys.stdout.flush()
@@ -22,21 +22,23 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
     index = 'coarse_' if coarse else 'fine_'
 
-    # sonar = create_sonar_pos(sonar_path, coarse)
-    # processed_train = tokenize_data(tokenizer, [t for t in sonar.train_data if len(t) <= 100], \
-    #     token_pad_id)
-    # processed_dev = tokenize_data(tokenizer, [t for t in sonar.dev_data if len(t) <= 100], \
-    #     token_pad_id)
-    # processed_test = tokenize_data(tokenizer, [t for t in sonar.test_data if len(t) <= 100], \
-    #     token_pad_id)
-    # pickle.dump((sonar.class_map,
-    #              processed_train, 
-    #              processed_dev,
-    #              processed_test),
-    #             open(os.path.join(sonar_path, index + 'proc.p'), 'wb'))
-    
-    class_map, processed_train, processed_dev, processed_test = pickle.load(
-        open(os.path.join(sonar_path, index + 'proc.p'), 'rb'))
+    if not checkpoint:
+        sonar = create_sonar_pos(sonar_path, coarse)
+        class_map = sonar.class_map
+        processed_train = tokenize_data(tokenizer, [t for t in sonar.train_data if len(t) <= 100], \
+            token_pad_id)
+        processed_dev = tokenize_data(tokenizer, [t for t in sonar.dev_data if len(t) <= 100], \
+            token_pad_id)
+        processed_test = tokenize_data(tokenizer, [t for t in sonar.test_data if len(t) <= 100], \
+            token_pad_id)
+        pickle.dump((class_map,
+                     processed_train, 
+                     processed_dev,
+                     processed_test),
+                    open(os.path.join(sonar_path, index + 'proc.p'), 'wb'))
+    else:
+        class_map, processed_train, processed_dev, processed_test = pickle.load(
+            open(os.path.join(sonar_path, index + 'proc.p'), 'rb'))
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=token_collator(word_pad_id, token_pad_id))
@@ -76,6 +78,8 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--num_epochs', help='How many epochs to train for', default=10, type=int)
     parser.add_argument('--coarse', dest='coarse', action='store_true', default=False, 
         help='Whether to use coarse or fine-grained version')
+    parser.add_argument('--checkpoint', dest='checkpoint', action='store_true', default=False,
+        help='Whether to load tokenized data from checkpoint or start from scratch')
 
     kwargs = vars(parser.parse_args())
 
