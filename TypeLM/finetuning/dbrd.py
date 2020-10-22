@@ -11,11 +11,10 @@ import os
 
 
 _T = TypeVar('_T')
-_PROC_DATA = ['proc_train.p', 'proc_dev.p', 'proc_test.p']
 
 
 def main(dbrd_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
-         num_epochs: int) -> None:
+         num_epochs: int, checkpoint: bool) -> None:
     def sprint(s: str) -> None:
         print(s)
         sys.stdout.flush()
@@ -27,20 +26,23 @@ def main(dbrd_path: str, model_path: str, device: str, batch_size_train: int, ba
     word_pad_id = tokenizer.word_tokenizer.core.pad_token_id
     loss_fn = CrossEntropyLoss(reduction='mean')
 
-    # dbrd = create_dbrd(dbrd_path)
-    # split = int(0.9 * len(dbrd.train_data))
-    # processed_train = tokenize_data(tokenizer, [(subsample(ws, 100), t) for (ws, t) in dbrd.train_data[:split]])
-    # processed_dev = tokenize_data(tokenizer, sorted(
-    #     [(subsample(ws, 100), t) for (ws, t) in dbrd.train_data[split:]], key=lambda x: len(x[0])))
-    # processed_test = tokenize_data(tokenizer, sorted(
-    #     [(subsample(ws, 100), t) for (ws, t) in dbrd.test_data], key=lambda x: len(x[0])))
-    # pickle.dump(processed_train, open(os.path.join(dbrd_path, _PROC_DATA[0]), "wb"))
-    # pickle.dump(processed_dev, open(os.path.join(dbrd_path, _PROC_DATA[1]), "wb"))
-    # pickle.dump(processed_test, open(os.path.join(dbrd_path, _PROC_DATA[2]), "wb"))
-
-    processed_train = pickle.load(open(os.path.join(dbrd_path, _PROC_DATA[0]), "rb"))
-    processed_dev = pickle.load(open(os.path.join(dbrd_path, _PROC_DATA[1]), "rb"))
-    processed_test = pickle.load(open(os.path.join(dbrd_path, _PROC_DATA[2]), "rb"))
+    if not checkpoint:
+        dbrd = create_dbrd(dbrd_path)
+        class_map = dbrd.class_map
+        split = int(0.9 * len(dbrd.train_data))
+        processed_train = tokenize_data(tokenizer, [(subsample(ws, 100), t) for (ws, t) in dbrd.train_data[:split]])
+        processed_dev = tokenize_data(tokenizer, sorted(
+            [(subsample(ws, 100), t) for (ws, t) in dbrd.train_data[split:]], key=lambda x: len(x[0])))
+        processed_test = tokenize_data(tokenizer, sorted(
+            [(subsample(ws, 100), t) for (ws, t) in dbrd.test_data], key=lambda x: len(x[0])))
+        pickle.dump((class_map,
+                     processed_train, 
+                     processed_dev,
+                     processed_test),
+                    open(os.path.join(udls_path, 'proc.p'), 'wb'))
+    else:
+        class_map, processed_train, processed_dev, processed_test = pickle.load(
+            open(os.path.join(sonar_path, 'proc.p'), 'rb'))        
 
     train_loader = DataLoader(dataset=SequenceDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=sequence_collator(word_pad_id))
@@ -78,6 +80,8 @@ if __name__ == '__main__':
     parser.add_argument('-b', '--batch_size_train', help='Training batch size', default=32, type=int)
     parser.add_argument('-bd', '--batch_size_dev', help='Validation batch size', default=512, type=int)
     parser.add_argument('-e', '--num_epochs', help='How many epochs to train for', default=10, type=int)
+    parser.add_argument('--checkpoint', dest='checkpoint', action='store_true', default=False,
+        help='Whether to load tokenized data from checkpoint or start from scratch')
 
     kwargs = vars(parser.parse_args())
 
