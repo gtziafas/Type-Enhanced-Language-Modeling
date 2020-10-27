@@ -41,7 +41,7 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     token_pad_id = -100
     offset = 0
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
-    index = 'main_' if mod else 'mod_'
+    index = 'srl-preds' if mod else 'srl-mods'
 
     if not checkpoint:
         sonar_srl = create_sonar_srl(sonar_path, mod)
@@ -56,10 +56,10 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
                      processed_train, 
                      processed_dev,
                      processed_test),
-                    open(os.path.join(sonar_path, index + 'proc.p'), 'wb'))
+                    open(os.path.join(sonar_path, index, 'proc.p'), 'wb'))
     else:
         class_map, processed_train, processed_dev, processed_test = pickle.load(
-            open(os.path.join(sonar_path, index + 'proc.p'), 'rb'))
+            open(os.path.join(sonar_path, index, 'proc.p'), 'rb'))
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=token_collator(word_pad_id, token_pad_id))

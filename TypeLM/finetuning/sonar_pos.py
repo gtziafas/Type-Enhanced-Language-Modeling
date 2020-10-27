@@ -20,7 +20,7 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     word_pad_id = tokenizer.word_tokenizer.core.pad_token_id
     token_pad_id = -100
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
-    index = 'coarse_' if coarse else 'fine_'
+    index = 'pos' if coarse else 'pos-fine'
 
     if not checkpoint:
         sonar = create_sonar_pos(sonar_path, coarse)
@@ -35,10 +35,10 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
                      processed_train, 
                      processed_dev,
                      processed_test),
-                    open(os.path.join(sonar_path, index + 'proc.p'), 'wb'))
+                    open(os.path.join(sonar_path, index, 'proc.p'), 'wb'))
     else:
         class_map, processed_train, processed_dev, processed_test = pickle.load(
-            open(os.path.join(sonar_path, index + 'proc.p'), 'rb'))
+            open(os.path.join(sonar_path, index, 'proc.p'), 'rb'))
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=token_collator(word_pad_id, token_pad_id))
