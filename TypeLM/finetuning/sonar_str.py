@@ -1,5 +1,5 @@
 from TypeLM.preprocessing.defaults import default_tokenizer
-from nlp_nl.nl_eval.datasets import create_sonar_str
+from nlp_nl.nl_eval.datasets import create_sonar_spt
 from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, DataLoader, CrossEntropyLoss, tensor,
                                            TypedLMForTokenClassification, default_pretrained, token_collator,
                                            train_epoch, eval_epoch, train_batch, eval_batch)
@@ -52,7 +52,7 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     index = 'spt-temp' if temp else 'spt'
 
     if not checkpoint:
-        sonar_str = create_sonar_str(sonar_path)
+        sonar_str = create_sonar_spt(sonar_path, temp)
         class_map = sonar_str.class_map
         processed_train = tokenize_data(tokenizer, [t for t in sonar_str.train_data if len(t) <= 100], \
             token_pad_id)
