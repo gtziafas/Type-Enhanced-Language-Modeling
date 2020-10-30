@@ -1,5 +1,5 @@
 from TypeLM.preprocessing.defaults import default_tokenizer
-from nlp_nl.nl_eval.datasets import create_sonar_str
+from nlp_nl.nl_eval.datasets import create_sonar_spt
 from TypeLM.finetuning.token_level import (tokenize_data, TokenDataset, DataLoader, CrossEntropyLoss, tensor,
                                            TypedLMForTokenClassification, default_pretrained, token_collator,
                                            train_epoch, eval_epoch, train_batch, eval_batch)
@@ -39,7 +39,7 @@ def measure_ner_accuracy(predictions: List[List[int]], truths: List[List[int]], 
 
 
 def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, batch_size_dev: int,
-         num_epochs: int, checkpoint: bool) -> None:
+         num_epochs: int, temp: bool, checkpoint: bool) -> None:
     def sprint(s: str) -> None:
         print(s)
         sys.stdout.flush()
@@ -49,9 +49,10 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
     token_pad_id = -100
     loss_fn = CrossEntropyLoss(ignore_index=token_pad_id, reduction='mean')
     offset = 0
+    index = 'spt-temp' if temp else 'spt'
 
     if not checkpoint:
-        sonar_str = create_sonar_str(sonar_path)
+        sonar_str = create_sonar_spt(sonar_path, temp)
         class_map = sonar_str.class_map
         processed_train = tokenize_data(tokenizer, [t for t in sonar_str.train_data if len(t) <= 100], \
             token_pad_id)
@@ -63,10 +64,10 @@ def main(sonar_path: str, model_path: str, device: str, batch_size_train: int, b
                      processed_train, 
                      processed_dev,
                      processed_test),
-                    open(os.path.join(sonar_path, 'spt-temp', 'proc.p'), 'wb'))
+                    open(os.path.join(sonar_path, index, 'proc.p'), 'wb'))
     else:
         class_map, processed_train, processed_dev, processed_test = pickle.load(
-            open(os.path.join(sonar_path, 'spt-temp', 'proc.p'), 'rb'))
+            open(os.path.join(sonar_path, index, 'proc.p'), 'rb'))
 
     train_loader = DataLoader(dataset=TokenDataset(processed_train), batch_size=batch_size_train, shuffle=True,
                               collate_fn=token_collator(word_pad_id, token_pad_id))
@@ -113,6 +114,8 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--num_epochs', help='How many epochs to train for', default=10, type=int)
     parser.add_argument('--checkpoint', dest='checkpoint', action='store_true', default=False,
         help='Whether to load tokenized data from checkpoint or start from scratch')
+    parser.add_argument('--temp', dest='temp', action='store_true', default=False, 
+        help='Whether to use spatio-temporal or past verbe tense version')
 
     kwargs = vars(parser.parse_args())
 
