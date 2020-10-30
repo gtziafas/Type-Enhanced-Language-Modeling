@@ -190,6 +190,7 @@ def _parse_dump_full(dump: str = './TypeLM/data/extraction/dump', start_from: in
                     sent = f.__next__().strip('\n')
                 else:
                     sent = next_line
+                sent = ' '.join(sent.split('\t'))
                 types = _parse_line(f.__next__())
 
                 read += 1
@@ -198,6 +199,8 @@ def _parse_dump_full(dump: str = './TypeLM/data/extraction/dump', start_from: in
                 with open('./TypeLM/data/indexing/last_file', 'w') as h:
                     h.write(str(read + 1))
                 if sent in ignoring:
+                    with open('./TypeLM/data/indexing/ignored', 'a') as i:
+                        i.write(f'{sent}\n')
                     continue
                 s_ids_int, t_ids_int = tokenizer.convert_pair_to_ids(sent, types)
                 if len(s_ids_int) != len(t_ids_int):
