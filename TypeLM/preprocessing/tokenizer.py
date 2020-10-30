@@ -26,7 +26,7 @@ class WordTokenizer:
         return self.core.convert_ids_to_tokens(ids)
 
     def convert_sent_to_ids_and_wordstarts(self, sent: str) -> Tuple[ints, ints]:
-        words = self.core.prepare_for_tokenization(sent).split()
+        words = self.core.prepare_for_tokenization(sent)[0].split()
         tokens = [self.core.tokenize(word) for word in words]
         word_starts = sum([[1] + [0] * (len(t) - 1) for t in tokens], [])
         tokens = [self.core.cls_token] + sum(tokens, []) + [self.core.sep_token]
@@ -175,37 +175,9 @@ def _make_small_type_set(type_dump: str = './TypeLM/data/indexing/typeset.txt', 
     return kept
 
 
-def _parse_dump_atomic(dump: str = './TypeLM/data/extraction/dump', start_from: int = 0):
-    with open('./TypeLM/data/indexing/atomset.txt', 'r') as f:
-        atomset = set(f.read().split('\n'))
-    tokenizer = Tokenizer(type_vocabulary=atomset, atomic=True)
-    with open(dump, 'r') as f:
-        read = 0
-        with open('./TypeLM/data/indexing/atomic_dump', 'a') as g:
-            while True:
-                next_line = f.__next__().strip('\n')
-                if next_line == '':
-                    sent = f.__next__().strip('\n')
-                else:
-                    sent = next_line
-                types = _parse_line(f.__next__())
+def _parse_dump_full(dump: str = './TypeLM/data/extraction/dump', start_from: int = 0) -> None:
+    from TypeLM.preprocessing.prefiltering import all_sents as ignoring
 
-                read += 1
-                if read <= start_from:
-                    continue
-
-                atoms = list(chain.from_iterable([t.split() + [tokenizer.type_tokenizer.SEP_TOKEN] for t in types]))
-                s_ids_int, t_ids_int = tokenizer.convert_pair_to_ids(sent, atoms)
-                s_ids = list(map(str, s_ids_int))
-                t_ids = list(map(str, t_ids_int))
-                line = f'{s_ids}\t{t_ids}\n'
-                g.write(line)
-
-                with open('./TypeLM/data/indexing/last_file', 'w') as h:
-                    h.write(str(read + 1))
-
-
-def _parse_dump_full(dump: str = './TypeLM/data/extraction/dump', start_from: int = 3774747) -> None:
     with open('./TypeLM/data/indexing/small_typeset.txt', 'r') as f:
         typeset = set(f.read().split('\n'))
     tokenizer = Tokenizer(type_vocabulary=typeset, atomic=False)
@@ -225,6 +197,8 @@ def _parse_dump_full(dump: str = './TypeLM/data/extraction/dump', start_from: in
                     continue
                 with open('./TypeLM/data/indexing/last_file', 'w') as h:
                     h.write(str(read + 1))
+                if sent in ignoring:
+                    continue
                 s_ids_int, t_ids_int = tokenizer.convert_pair_to_ids(sent, types)
                 if len(s_ids_int) != len(t_ids_int):
                     print(f'failed at {read}')

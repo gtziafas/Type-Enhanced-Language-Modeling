@@ -27,21 +27,28 @@ def unzip(file: str) -> str:
     return bytes_.decode('utf-8')
 
 
-def split_xml(uncompressed: str) -> Sequence[Tuple[str, str]]:
-    def getname(xml_block: str) -> str:
-        """
-            Finds the sentence name attribute of an xml part.
-        :param xml_block:
-        :type xml_block:
-        :return:
-        :rtype:
-        """
-        return xml_block.split('sentid="')[1].split('"')[0]
+def getname(xml_block: str) -> str:
+    """
+        Finds the sentence name attribute of an xml part.
+    :param xml_block:
+    :type xml_block:
+    :return:
+    :rtype:
+    """
+    return xml_block.split('sentid="')[1].split('"')[0]
 
+
+def split_xml(uncompressed: str) -> Sequence[Tuple[str, str]]:
     xmls = uncompressed.split('</alpino_ds>\n')[:-1]
     xmls = list(map(lambda x: x + '</alpino_ds>', xmls))
     names = list(map(getname, xmls))
     return list(zip(xmls, names))
+
+
+def file_to_sourcenames(uncompressed: str) -> Iterator[str]:
+    xmls = uncompressed.split('</alpino_ds>\n')[:-1]
+    xmls = map(lambda x: x + '</alpino_ds>', xmls)
+    return map(getname, xmls)
 
 
 def get_files(inner_dir: str) -> Sequence[str]:
@@ -64,6 +71,10 @@ class DatasetMaker(object):
         else:
             self.filelist = filelist
         print('Added a total of {} compressed files.'.format(len(self.filelist)))
+
+    def iterate_names(self) -> Iterator[str]:
+        for i, file in enumerate(tqdm(self.filelist)):
+            yield from file_to_sourcenames(unzip(file))
 
     @staticmethod
     def file_to_trees(file: str) -> Iterator[Tree.ElementTree]:
@@ -133,8 +144,8 @@ def compose(tree: Tree.ElementTree) -> Projections:
                [t.polish() for t in get_types(dag)]) for dag in dags if dag is not None]
     return tuples
 
-
-with open('./TypeLM/preprocessing/filelist.txt', 'r') as f:
-    filelist = f.read().split('\n')
-dsmk = DatasetMaker(None, filelist)
-dsmk.iterate_data(compose, file_id=7562)
+#
+# with open('./TypeLM/preprocessing/filelist.txt', 'r') as f:
+#     filelist = f.read().split('\n')
+# dsmk = DatasetMaker(None, filelist)
+# dsmk.iterate_data(compose, file_id=7562)
