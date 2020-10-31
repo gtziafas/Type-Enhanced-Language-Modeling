@@ -7,7 +7,7 @@ from torch import Tensor, LongTensor, ones
 
 with open('./TypeLM/data/indexing/small_typeset.txt', 'r') as f:
     typeset = set(f.read().split('\n'))
-_tokenizer = Tokenizer(type_vocabulary=typeset, atomic=False)
+_tokenizer = Tokenizer(type_vocabulary=typeset)
 
 
 def non_masker() -> Callable[[Sequence[int]], Tuple[Sequence[int], Sequence[int]]]:
