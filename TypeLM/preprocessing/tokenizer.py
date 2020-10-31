@@ -33,43 +33,7 @@ class WordTokenizer:
         return self.core.convert_tokens_to_ids(tokens), [0] + word_starts + [0]
 
 
-class TypeTokenizer(ABC):
-    @abstractmethod
-    def __len__(self):
-        pass
-
-    @abstractmethod
-    def convert_types_to_ids(self, types: strs) -> ints:
-        pass
-
-    @abstractmethod
-    def convert_ids_to_types(self, ids: ints) -> strs:
-        pass
-
-
-class AtomTokenizer(TypeTokenizer):
-    def __init__(self, vocabulary: Set[str]):
-        self.special_tokens = ['[PAD]', '[SOS]', '[SEP]']
-        self.vocabulary = {k: i for i, k in enumerate(self.special_tokens + sorted(vocabulary))}
-        self.inverse_vocabulary = {v: k for k, v in self.vocabulary.items()}
-        self.PAD_TOKEN = '[PAD]'
-        self.SOS_TOKEN = '[SOS]'
-        self.SEP_TOKEN = '[SEP]'
-        self.PAD_TOKEN_ID = self.vocabulary['[PAD]']
-        self.SOS_TOKEN_ID = self.vocabulary['[SOS]']
-        self.SEP_TOKEN_ID = self.vocabulary['[SEP]']
-
-    def __len__(self) -> int:
-        return len(self.vocabulary)
-
-    def convert_types_to_ids(self, types: strs) -> ints:
-        return [self.vocabulary[atom] for atom in types]
-
-    def convert_ids_to_types(self, ids: ints) -> strs:
-        return [self.inverse_vocabulary[_id] for _id in ids]
-
-
-class FullTokenizer(TypeTokenizer):
+class TypeTokenizer:
     def __init__(self, vocabulary: Set[str]):
         self.special_tokens = ['[PAD]', '[UNK]', '[MWU]']
         vocabulary = {k: i for i, k in enumerate(self.special_tokens + sorted(vocabulary))}
@@ -93,9 +57,9 @@ class FullTokenizer(TypeTokenizer):
 
 
 class Tokenizer:
-    def __init__(self, type_vocabulary: Set[str], atomic: bool):
+    def __init__(self, type_vocabulary: Set[str]):
         self.word_tokenizer = WordTokenizer()
-        self.type_tokenizer = AtomTokenizer(type_vocabulary) if atomic else FullTokenizer(type_vocabulary)
+        self.type_tokenizer = TypeTokenizer(type_vocabulary)
 
     def convert_sent_to_ids(self, sent: str, **kwargs) -> ints:
         return self.word_tokenizer.convert_sent_to_ids(sent, **kwargs)
@@ -104,19 +68,16 @@ class Tokenizer:
         return self.type_tokenizer.convert_types_to_ids(types)
 
     def convert_pair_to_ids(self, sent: str, types: strs) -> Optional[Tuple[ints, ints]]:
-        if isinstance(self.type_tokenizer, FullTokenizer):
-            words = sent.split('\t')
-            words = [w.split() for w in words]
-            types = [[t] + [self.type_tokenizer.MWU_TOKEN] * (len(w)-1) for w, t in zip(words, types)]
-            types = sum(types, [])
-            s_ids, word_starts = self.word_tokenizer.convert_sent_to_ids_and_wordstarts(sent)
-            t_ids = self.convert_types_to_ids(types)
-            type_iter = iter(t_ids)
-            t_ids = [self.type_tokenizer.PAD_TOKEN_ID if ws == 0 else type_iter.__next__()
-                     for ws in word_starts]
-            return s_ids, t_ids
-        else:
-            raise NotImplementedError
+        words = sent.split('\t')
+        words = [w.split() for w in words]
+        types = [[t] + [self.type_tokenizer.MWU_TOKEN] * (len(w)-1) for w, t in zip(words, types)]
+        types = sum(types, [])
+        s_ids, word_starts = self.word_tokenizer.convert_sent_to_ids_and_wordstarts(sent)
+        t_ids = self.convert_types_to_ids(types)
+        type_iter = iter(t_ids)
+        t_ids = [self.type_tokenizer.PAD_TOKEN_ID if ws == 0 else type_iter.__next__()
+                 for ws in word_starts]
+        return s_ids, t_ids
 
 
 def _parse_line(line_: str) -> strs:
@@ -180,7 +141,7 @@ def _parse_dump_full(dump: str = './TypeLM/data/extraction/dump', start_from: in
 
     with open('./TypeLM/data/indexing/small_typeset.txt', 'r') as f:
         typeset = set(f.read().split('\n'))
-    tokenizer = Tokenizer(type_vocabulary=typeset, atomic=False)
+    tokenizer = Tokenizer(type_vocabulary=typeset)
     with open(dump, 'r') as f:
         read = 0
         with open('./TypeLM/data/indexing/full_dump', 'a') as g:
@@ -190,7 +151,6 @@ def _parse_dump_full(dump: str = './TypeLM/data/extraction/dump', start_from: in
                     sent = f.__next__().strip('\n')
                 else:
                     sent = next_line
-                sent = ' '.join(sent.split('\t'))
                 types = _parse_line(f.__next__())
 
                 read += 1
@@ -198,7 +158,7 @@ def _parse_dump_full(dump: str = './TypeLM/data/extraction/dump', start_from: in
                     continue
                 with open('./TypeLM/data/indexing/last_file', 'w') as h:
                     h.write(str(read + 1))
-                if sent in ignoring:
+                if ' '.join(sent.split('\t')) in ignoring:
                     with open('./TypeLM/data/indexing/ignored', 'a') as i:
                         i.write(f'{sent}\n')
                     continue
@@ -213,4 +173,14 @@ def _parse_dump_full(dump: str = './TypeLM/data/extraction/dump', start_from: in
                 line = f'{" ".join(s_ids)}\t{" ".join(t_ids)}\n'
                 g.write(line)
 
+
+def _len_threshold(dump: str = './TypeLM/data/indexing/full_dump_deduplicated_shuffled',
+                   out: str = './TypeLM/data/indexing/full_dump_small'):
+
+    with open(dump, 'r') as inp:
+        with open(out, 'a') as outp:
+            for line in inp:
+                words, types = line.split('\t')
+                if 3 < len(words.split()) < 100:
+                    outp.write(line)
 
