@@ -120,6 +120,7 @@ def eval_batch(model: TypedLMForTokenClassification, loss_fn: Module, words: Lon
     batch_loss = loss_fn(predictions.view(num_tokens, -1), tokens.flatten())
     return batch_loss.item(), token_stats, predictions_sharp.tolist()
 
+
 @no_grad()
 def eval_epoch(model: TypedLMForTokenClassification, loss_fn: Module, dataloader: DataLoader, token_pad: int,
                word_pad: int, device: str) -> Tuple[float, float, List[List[int]]]:
