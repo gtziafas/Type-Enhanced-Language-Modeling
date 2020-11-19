@@ -1,7 +1,7 @@
 from transformers import RobertaTokenizer, RobertaForTokenClassification
 from nlp_nl.nl_eval.datasets import create_sonar_ner
-from TypeLM.finetuning.token_level import (Module, TokenDataset, token_collator, DataLoader, CrossEntropyLoss,
-                                            Optimizer, LongTensor, Tensor, tensor, long, no_grad, load)
+from TypeLM.finetuning.token_level import (Module, TokenDataset, token_collator, DataLoader, CrossEntropyLoss, load,
+                                            Optimizer, LongTensor, Tensor, tensor, long, no_grad, token_accuracy)
 from TypeLM.finetuning.conlleval import evaluate
 from torch.optim import AdamW
 from typing import List, Dict, Tuple
