@@ -1,10 +1,8 @@
 from TypeLM.preprocessing.defaults import default_tokenizer
 from TypeLM.finetuning.bisequence_level import *
 from torch.optim import AdamW
-from typing import List, TypeVar, Tuple
-import pickle
+from typing import TypeVar, Tuple
 import sys
-import os
 
 
 def proc_sent(sample: Tuple[str, str, str, float]) -> Sample:
@@ -22,7 +20,7 @@ class SICK(object):
     def load_data(self):
         with open(self.sick_fn, 'r') as in_file:
             lines = [ln.strip().split('\t') for ln in in_file.readlines()[1:]]
-        sentence_data = [tuple(ln[1:5]+ln[-1:]) for ln in lines[:-1]]
+        sentence_data = [tuple(ln[1:5]+ln[-1:]) for ln in lines]
         sentence_data = [(s1, s2, el, float(rl), split)
                          for (s1, s2, el, rl, split) in sentence_data]
         return sentence_data
