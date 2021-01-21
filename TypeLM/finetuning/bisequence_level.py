@@ -31,7 +31,7 @@ def tokenize_words(wtokenizer: WordTokenizer, words: List[str]) -> List[int]:
     return _cls + word_ids + _sep
 
 
-class SequenceDataset(Dataset):
+class BiSequenceDataset(Dataset):
     def __init__(self, data: Samples):
         self._data = data
 
