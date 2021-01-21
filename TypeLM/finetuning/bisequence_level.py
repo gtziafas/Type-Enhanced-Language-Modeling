@@ -111,11 +111,10 @@ def eval_batch(model: TypedLMForBiSequenceClassification, loss_fn: Module, words
         -> Tuple[float, float]:
     model.eval()
 
-    num_tokens = words.shape[0] * words.shape[1]
     predictions = model.forward(words, padding_mask)
     accuracy = vanilla_accuracy(predictions, tokens)
 
-    batch_loss = loss_fn(predictions.view(num_tokens, -1), tokens.flatten())
+    batch_loss = loss_fn(predictions, tokens)
     return batch_loss.item(), accuracy
 
 
