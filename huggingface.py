@@ -70,7 +70,7 @@ class Wrapped(Module):
         hs = self.bert(xs, mask)['hidden_states']
         types_out = self.type_cls(hs[5])
         words_out = linear(hs[-1], self.bert.embeddings.word_embeddings.weight / sqrt(self.bert.config.hidden_size))
-        return types_out, words_out
+        return words_out, types_out
 
     @staticmethod
     def from_typedlm(typed_lm: TypedLM) -> 'Wrapped':

@@ -1,7 +1,7 @@
 from TypeLM.neural.defaults import *
 from TypeLM.neural.training import *
 from TypeLM.preprocessing.defaults import *
-from .huggingface import Wrapped
+from huggingface import Wrapped
 from typing import Optional
 import sys
 
@@ -15,13 +15,14 @@ _warmup_steps = 10000
 _total_epochs = 10
 _total_batches = _total_epochs * _num_batches_in_dset
 _device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+#_device = 'cpu'
 
 print(f'Training a dataset of {_sents_in_dset} samples with a batch size of {_batch_size}.')
 print(f'Reporting averages every {_num_batches_per_subepoch * _batch_size} samples.')
 
 loader = default_dataloader(path='/data/s3913171/Lassy-Large/full_dump_small', chunk_size=1024000,
                             batch_size=_batch_size)
-model = default_model().to('cuda')
+model = default_model().to(_device)
 loss_fn = default_loss()
 
 optim = Scheduler(AdamW(model.parameters(), lr=1e10, betas=(0.9, 0.999), eps=1e-09, weight_decay=1e-02),
@@ -66,14 +67,14 @@ def resume(epoch: int, save_path: str, load_path: Optional[str]):
 
 
 def convert(save_path: str, load_path: str):
+    model = default_model().to(_device)
     tmp = torch.load(load_path)
     model.load_state_dict(tmp['model_state_dict'])
-    wrapped = Wrapped.from_typedlm(model)
+    wrapped = Wrapped.from_typedlm(model).to(_device)
     wrap_optim = Scheduler(AdamW(wrapped.parameters(), lr=1e10, betas=(0.9, 0.999), eps=1e-09, weight_decay=1e-02),
                            make_linear_schedule(warmup_steps=1000, total_steps=_num_batches_in_dset,
                                                 max_lr=5e-05), [1])
     del model
-    del optim
 
     sprint('=' * 64)
     sprint(f'CONVERTING...')
@@ -88,7 +89,7 @@ def convert(save_path: str, load_path: str):
         sprint(f'\tST Loss:\t\t{st_loss:.5f}')
         sprint(f'\tSentence acc:\t\t{s_acc:.5f}')
         sprint(f'\tAtom acc:\t\t{atom_acc:.5f}')
-        sprint(f'\tCurrent lr:\t\t{optim.lr}')
+        sprint(f'\tCurrent lr:\t\t{wrap_optim.lr}')
 
     sprint('Finished training epoch.')
     torch.save(wrapped.bert.state_dict(), save_path)
@@ -101,12 +102,12 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--save_path', help='where to save the model once training ends', type=str)
     parser.add_argument('-l', '--load_path', help='where to load the model from for resuming training', type=str, default=None)
     parser.add_argument('-e', '--epoch', help='which epoch to resume training from', type=int, default=None)
-    parser.add_argument('-c', '--convert_to_hf', help='converts to hugging face format', type=int, default=False)
+    parser.add_argument('-c', '--convert_to_hf', help='converts to hugging face format', type=bool, default=False)
 
     kwargs = vars(parser.parse_args())
-    if kwargs['epoch'] is None:
-        start(kwargs['save_path'])
-    elif kwargs['convert_to_hf']:
+    if kwargs['convert_to_hf'] == True:
         convert(kwargs['save_path'], kwargs['load_path'])
+    elif kwargs['epoch'] is None:
+        start(kwargs['save_path'])
     else:
         resume(**kwargs)

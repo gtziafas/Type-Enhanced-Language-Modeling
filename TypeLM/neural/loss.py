@@ -29,6 +29,7 @@ class MixedLoss(Module):
                         type_truth: LongTensor, mask: LongTensor) -> Tuple[Tensor, Tensor]:
         lang_loss = masked_loss_wrapper(self.lang_loss)(word_predictions, word_truth, mask)
         type_loss = self.type_loss(type_predictions, type_truth)
+        lang_loss = lang_loss if not lang_loss.isnan().any().item() else torch.tensor(0, dtype=torch.float, device=lang_loss.device)
         return lang_loss, type_loss
 
 
