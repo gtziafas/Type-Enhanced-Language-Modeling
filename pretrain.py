@@ -70,7 +70,7 @@ def convert(save_path: str, load_path: str):
     model.load_state_dict(tmp['model_state_dict'])
     wrapped = Wrapped.from_typedlm(model)
     wrap_optim = Scheduler(AdamW(wrapped.parameters(), lr=1e10, betas=(0.9, 0.999), eps=1e-09, weight_decay=1e-02),
-                           make_linear_schedule(warmup_steps=1000, total_steps=_num_batches_per_subepoch,
+                           make_linear_schedule(warmup_steps=1000, total_steps=_num_batches_in_dset,
                                                 max_lr=5e-05), [1])
     del model
     del optim
