@@ -89,7 +89,7 @@ def convert(save_path: str, load_path: str):
         sprint(f'\tST Loss:\t\t{st_loss:.5f}')
         sprint(f'\tSentence acc:\t\t{s_acc:.5f}')
         sprint(f'\tAtom acc:\t\t{atom_acc:.5f}')
-        sprint(f'\tCurrent lr:\t\t{optim.lr}')
+        sprint(f'\tCurrent lr:\t\t{wrap_optim.lr}')
 
     sprint('Finished training epoch.')
     torch.save(wrapped.bert.state_dict(), save_path)
